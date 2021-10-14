@@ -392,7 +392,14 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>TASK</GroupName>
+          <GroupName>APP</GroupName>
+          <Files>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\LED.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>BSP</GroupName>
@@ -411,6 +418,54 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\usart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>TASK</GroupName>
+        </Group>
+        <Group>
+          <GroupName>RMLIB</GroupName>
+          <Files>
+            <File>
+              <FileName>common.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RmLib\common.h</FilePath>
+            </File>
+            <File>
+              <FileName>fifo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RmLib\fifo.h</FilePath>
+            </File>
+            <File>
+              <FileName>LostCounter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RmLib\LostCounter.h</FilePath>
+            </File>
+            <File>
+              <FileName>pid_regulator.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RmLib\pid_regulator.h</FilePath>
+            </File>
+            <File>
+              <FileName>ramp.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RmLib\ramp.h</FilePath>
+            </File>
+            <File>
+              <FileName>ramp_second.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\RmLib\ramp_second.c</FilePath>
+            </File>
+            <File>
+              <FileName>ramp_second.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RmLib\ramp_second.h</FilePath>
+            </File>
+            <File>
+              <FileName>RMLib.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>.\RmLib\RMLib.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -516,51 +571,6 @@
               <FileName>stm32f4xx_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\STLIB\stm32f4xx_usart.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>RMLIB</GroupName>
-          <Files>
-            <File>
-              <FileName>common.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\RmLib\common.h</FilePath>
-            </File>
-            <File>
-              <FileName>fifo.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\RmLib\fifo.h</FilePath>
-            </File>
-            <File>
-              <FileName>LostCounter.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\RmLib\LostCounter.h</FilePath>
-            </File>
-            <File>
-              <FileName>pid_regulator.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\RmLib\pid_regulator.h</FilePath>
-            </File>
-            <File>
-              <FileName>ramp.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\RmLib\ramp.h</FilePath>
-            </File>
-            <File>
-              <FileName>ramp_second.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\RmLib\ramp_second.c</FilePath>
-            </File>
-            <File>
-              <FileName>ramp_second.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\RmLib\ramp_second.h</FilePath>
-            </File>
-            <File>
-              <FileName>RMLib.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>.\RmLib\RMLib.lib</FilePath>
             </File>
           </Files>
         </Group>
