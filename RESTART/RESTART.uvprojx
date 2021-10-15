@@ -392,16 +392,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>APP</GroupName>
-          <Files>
-            <File>
-              <FileName>LED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\APP\LED.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>BSP</GroupName>
           <Files>
             <File>
@@ -415,14 +405,31 @@
               <FilePath>.\BSP\delay.c</FilePath>
             </File>
             <File>
+              <FileName>output2vs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\output2vs.c</FilePath>
+            </File>
+            <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>key_scan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\key_scan.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>TASK</GroupName>
+          <Files>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\LED.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>RMLIB</GroupName>
@@ -472,6 +479,11 @@
         <Group>
           <GroupName>STLIB</GroupName>
           <Files>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\STLIB\pid.c</FilePath>
+            </File>
             <File>
               <FileName>startup_stm32f4xx.s</FileName>
               <FileType>2</FileType>

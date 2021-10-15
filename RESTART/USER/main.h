@@ -7,5 +7,5 @@
 #include "common.h"
 #include "bsp.h"
 #include "LED.h"
-
+#include "key_scan.h"
 #endif 

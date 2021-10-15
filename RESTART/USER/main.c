@@ -1,5 +1,4 @@
 #include "main.h"
-
 int main(void)
 {
 	BSP_Init();	
