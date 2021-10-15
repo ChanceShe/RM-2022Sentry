@@ -8,4 +8,5 @@
 #include "bsp.h"
 #include "LED.h"
 #include "key_scan.h"
+#include "usart3.h"
 #endif 
