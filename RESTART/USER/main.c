@@ -8,6 +8,10 @@ int main(void)
 		delay_ms(500);
 		GREEN_LED_OFF();
 		delay_ms(500);
+		if(key_scan1(GPIOA,KEY_GPIO_PIN1) == KEY_S3)
+		{
+			RED_LED_TOGGLE();
+		}
 	}
 }
 

@@ -186,7 +186,7 @@
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -389,16 +389,16 @@
               <FileType>1</FileType>
               <FilePath>.\USER\main.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>BSP</GroupName>
-          <Files>
             <File>
               <FileName>bsp.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\bsp.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BSP</GroupName>
+          <Files>
             <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
@@ -410,14 +410,19 @@
               <FilePath>.\BSP\output2vs.c</FilePath>
             </File>
             <File>
-              <FileName>usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\usart.c</FilePath>
-            </File>
-            <File>
               <FileName>key_scan.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\key_scan.c</FilePath>
+            </File>
+            <File>
+              <FileName>uasrt3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\uasrt3.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\timer.c</FilePath>
             </File>
           </Files>
         </Group>

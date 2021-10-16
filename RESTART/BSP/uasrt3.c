@@ -26,51 +26,16 @@ int fputc(int ch, FILE *f)
 	return ch;
 }
 #endif
-//void USART3_Configuration_Send()
-//{
-//    USART_InitTypeDef usart;
-//    GPIO_InitTypeDef  gpio;
-//    NVIC_InitTypeDef  nvic;
-//		DMA_InitTypeDef dma;
-
-//		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); 
-////    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
-//		RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE); 
-//	
-//		//串口1对应引脚复用映射
-//		GPIO_PinAFConfig(GPIOB,GPIO_PinSource10,GPIO_AF_USART3); //GPIOA9复用为USART1
-//		GPIO_PinAFConfig(GPIOB,GPIO_PinSource11,GPIO_AF_USART3); //GPIOA10复用为USART1
-//		
-//		//USART1端口配置
-//		gpio.GPIO_Pin 	= GPIO_Pin_10 | GPIO_Pin_11; //GPIOA9与GPIOA10
-//		gpio.GPIO_Mode 	= GPIO_Mode_AF;//复用功能
-//		gpio.GPIO_OType = GPIO_OType_PP;
-//		gpio.GPIO_Speed = GPIO_Speed_50MHz;	//速度50MHz
-//		gpio.GPIO_PuPd 	= GPIO_PuPd_NOPULL; //上拉
-//		GPIO_Init(GPIOB,&gpio); //初始化PA9，PA10
-
-//    USART_DeInit(USART3);
-//    USART_StructInit(&usart);
-//    usart.USART_BaudRate = 115200;
-//    usart.USART_WordLength = USART_WordLength_8b;
-//    usart.USART_StopBits = USART_StopBits_1;
-//    usart.USART_Parity = USART_Parity_No;
-//    usart.USART_Mode = USART_Mode_Tx;
-//    usart.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-//    USART_Init(USART3, &usart);   
-//		
-//    USART_Cmd(USART3,ENABLE);
-//}
 
 void USART3_Configuration_Send()
 {
     USART_InitTypeDef usart;
     GPIO_InitTypeDef  gpio;
     NVIC_InitTypeDef  nvic;
-		DMA_InitTypeDef dma;
+	DMA_InitTypeDef dma;
 
 		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); 
-		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
+//    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE); 
 	
 		//串口1对应引脚复用映射
