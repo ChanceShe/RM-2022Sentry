@@ -322,7 +322,7 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -424,15 +424,30 @@
               <FileType>1</FileType>
               <FilePath>.\BSP\timer.c</FilePath>
             </File>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\LED.c</FilePath>
+            </File>
+            <File>
+              <FileName>iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\iwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\pwm.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>TASK</GroupName>
           <Files>
             <File>
-              <FileName>LED.c</FileName>
+              <FileName>ControlTask.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\APP\LED.c</FilePath>
+              <FilePath>.\APP\ControlTask.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,4 +1,3 @@
-//#include "main.h"
 #include "stm32f4xx_usart.h"
 #include "main.h"
 //***************************************函数***************************************************
@@ -10,6 +9,8 @@
 *功能：配合串口示波器校验数据
 ************************************************************************************************
 */
+
+float OutData[4] = {0.0};
 
 
 
@@ -41,7 +42,7 @@ unsigned short CRC_CHECK(unsigned char *Buf, unsigned char CRC_CNT)
 *     2 每次输出字节总数10个，最后两个字节为校验位
 ************************************************************************************************
 */
-void OutPut_Data(int OutData[4])
+void OutPut_Data(float OutData[4])
 {
   int temp[4] = {0};
   unsigned int temp1[4] = {0};
@@ -63,7 +64,6 @@ void OutPut_Data(int OutData[4])
   databuf[8] = CRC16%256;
   databuf[9] = CRC16/256;
   
-//  Usart3SendBytesInfoProc(databuf,10);
   
 //  for(i=0;i<10;i++)
 //	{

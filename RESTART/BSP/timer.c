@@ -42,16 +42,14 @@ void TIM6_Configuration(void)
     tim.TIM_Prescaler = 84-1;        //84M internal clock
     tim.TIM_CounterMode = TIM_CounterMode_Up;
     tim.TIM_ClockDivision = TIM_CKD_DIV1;
-    tim.TIM_Period = 1000;  //1ms,1000Hz
+    tim.TIM_Period = 1000-1;  //1ms,1000Hz
     TIM_TimeBaseInit(TIM6,&tim);
+		
+		TIM_Cmd(TIM6, ENABLE);	 //使能定时器6
+    TIM_ITConfig(TIM6, TIM_IT_Update,ENABLE);
+    TIM_ClearFlag(TIM6, TIM_FLAG_Update);
 }
 
-void TIM6_Start(void)
-{
-    TIM_Cmd(TIM6, ENABLE);	 
-    TIM_ITConfig(TIM6, TIM_IT_Update,ENABLE);
-    TIM_ClearFlag(TIM6, TIM_FLAG_Update);	
-}
 
 void TIM4_Configuration(void)
 {
@@ -93,7 +91,6 @@ void TIM2_IRQHandler(void)
 		{
 			  TIM_ClearITPendingBit(TIM2,TIM_IT_Update);
         TIM_ClearFlag(TIM2, TIM_FLAG_Update);
-			  BOTH_LED_TOGGLE();
 		}
 } 
 
@@ -103,12 +100,11 @@ void TIM6_DAC_IRQHandler(void)
     if (TIM_GetITStatus(TIM6,TIM_IT_Update)!= RESET) 
 	  {
 			
-		    TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
-        TIM_ClearFlag(TIM6, TIM_FLAG_Update);
-				GPIO_ToggleBits(GPIOC,GPIO_Pin_0);  //硬件喂狗
+		  TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
+      TIM_ClearFlag(TIM6, TIM_FLAG_Update);
+			GPIO_ToggleBits(GPIOC,GPIO_Pin_0);  //硬件喂狗
 
-//		if(SYS_START)
-//			Control_Task();         //底盘、云台控制任务
+			Control_Task();         //底盘、云台控制任务
      }
  
 }

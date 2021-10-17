@@ -32,10 +32,9 @@ typedef enum
 
 
 
-#define   KEY_PORT        	    GPIOA
-#define   KEY_GPIO_PIN		      GPIO_Pin_9
-#define   KEY_PORT1        	    GPIOA
-#define   KEY_GPIO_PIN1		      GPIO_Pin_10
+#define   KEY_PORT        	    GPIOB
+#define   KEY_GPIO_PIN		      GPIO_Pin_14
+
 
 
 
