@@ -27,6 +27,11 @@ void Control_Task(void)
 			PWM1--;
 		}
 	}
+	OutData[0] = time_tick_1ms%40000;
+	OutData[1] = 10000;
+	OutData[2] = 20000;
+	OutData[3] = 30000;
+		OutPut_Data(OutData);		
 }
 	
 	
