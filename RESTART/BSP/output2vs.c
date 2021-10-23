@@ -61,16 +61,8 @@ void OutPut_Data(float OutData[4])
     CRC16 = CRC_CHECK(databuf,8);
     databuf[8] = CRC16%256;
     databuf[9] = CRC16/256;
-		
 
 		Usart3SendBytesInfoProc(databuf,10);
-//    for(i=0; i<10; i++)
-//    {
-//        USART_SendData(USART3,databuf[i]);
-//        while(USART_GetFlagStatus(USART3, USART_FLAG_TC) == RESET);//STM32单片机这一句必须加上，不加上不出波形
-//    }
-
-
 
 }
 //****************************************END***************************************************

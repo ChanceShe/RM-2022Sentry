@@ -140,49 +140,7 @@ float pid_calc(pid_t *pid, float fdb, float ref);
 float pid_calc1(pid_t *pid, float get, float set);
 void  pid_clr(pid_t *pid);
 		
-extern pid_t pid_pit_follow;
-extern pid_t pid_yaw_follow;
-extern pid_t pid_pit_speed_follow;
-extern pid_t pid_yaw_speed_follow;
-	
-extern pid_t pid_yaw_small_buff;
-extern pid_t pid_pit_small_buff;
-extern pid_t pid_pit_speed_small_buff;
-extern pid_t pid_yaw_speed_small_buff;
-	
-extern pid_t pid_yaw_big_buff;
-extern pid_t pid_pit_big_buff;
-extern pid_t pid_pit_speed_big_buff;
-extern pid_t pid_yaw_speed_big_buff;
-	
-extern pid_t pid_yaw_auto_angle;
-extern pid_t pid_pit_auto_angle;
-extern pid_t pid_pit_speed_auto_angle;
-extern pid_t pid_yaw_speed_auto_angle;
-	
-	
-extern pid_t pid_yaw_follow_chassis_angle ;
-extern pid_t pid_yaw_follow_chassis_speed ;
-		
-extern pid_t pid_pit;
-extern pid_t pid_yaw;
-extern pid_t pid_pit_speed;
-extern pid_t pid_yaw_speed;
-extern pid_t pid_auto_aim_pit;
-extern pid_t pid_auto_aim_yaw;
-extern pid_t pid_voltage;
-extern pid_t pid_software_limit;
-extern pid_t pid_spd[4];
+extern pid_t pid_motor1;
+extern pid_t pid_motor2;
 
-
-extern pid_t pid_chassis_angle;
-extern pid_t pid_trigger;
-extern pid_t pid_trigger_speed;
-extern pid_t pid_imu_tmp;
-extern pid_t pid_rotate[4];
-extern pid_t pid_speed_bias;
-extern pid_t pid_front_distance;
-extern pid_t pid_right_distance;
-extern pid_t pid_angle_distance;
-extern pid_t pid_spring[2];
 #endif

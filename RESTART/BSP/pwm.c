@@ -1,13 +1,6 @@
 #include "stm32f4xx.h"
 #include "pwm.h"
-/*-LEFT---(PB3---TIM2_CH2)--*/
-/*-RIGHT--(PA15--TIM2_CH1)--*/
-
 #include "stm32f4xx.h"
-
-//???????
-/*-LEFT---(PC6---TIM3_CH1)--TIM3->CCR1 ???? PWM4*/
-/*-RIGHT--(PC7---TIM3_CH2)--TIM3->CCR2 ???? PWM5*/
 
 void PWM_Configuration(void)
 {
@@ -31,7 +24,6 @@ void PWM_Configuration(void)
 	  GPIO_PinAFConfig(GPIOC,GPIO_PinSource6, GPIO_AF_TIM3);  //TIM3->CCR1 ????PWM4
 	  GPIO_PinAFConfig(GPIOC,GPIO_PinSource7, GPIO_AF_TIM3);  //TIM3->CCR2 ????PWM5
 	
-	  /* ??????TIM3 */
 	  tim.TIM_Prescaler = 1000-1;    //???
     tim.TIM_CounterMode = TIM_CounterMode_Up;
     tim.TIM_Period = 1680-1;   
@@ -55,7 +47,7 @@ void PWM_Configuration(void)
     TIM_ARRPreloadConfig(TIM3,ENABLE);
     TIM_Cmd(TIM3,ENABLE);
 		
-		CloseDoor;
+		PWM1=100,PWM2=100;
 
 }
 

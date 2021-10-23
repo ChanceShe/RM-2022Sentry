@@ -199,55 +199,7 @@ void pid_clr(pid_t *pid)
 }
 
 
-//自瞄模式外环的参数
-pid_t pid_yaw_follow    = {0};
-pid_t pid_pit_follow    = {0};
-pid_t pid_pit_speed_follow    = {0};
-pid_t pid_yaw_speed_follow    = {0};
-
-
-//小符下的PID参数
-pid_t pid_yaw_small_buff    = {0};
-pid_t pid_pit_small_buff    = {0};
-pid_t pid_pit_speed_small_buff    = {0};
-pid_t pid_yaw_speed_small_buff    = {0};
-
-//大符下的PID参数
-pid_t pid_yaw_big_buff    = {0};
-pid_t pid_pit_big_buff    = {0};
-pid_t pid_pit_speed_big_buff    = {0};
-pid_t pid_yaw_speed_big_buff    = {0};
-
-//吊射下的PID参数
-pid_t pid_yaw_auto_angle    = {0};
-pid_t pid_pit_auto_angle    = {0};
-pid_t pid_pit_speed_auto_angle    = {0};
-pid_t pid_yaw_speed_auto_angle    = {0};
-
-
-//自动补弹的PID参数
-pid_t pid_yaw_follow_chassis_angle    = {0};
-pid_t pid_yaw_follow_chassis_speed    = {0};
-
-
-//普通模式PID参数
-pid_t pid_yaw           = {0};
-pid_t pid_pit           = {0};
-pid_t pid_auto_aim_yaw  = {0};
-pid_t pid_auto_aim_pit  = {0};
-pid_t pid_yaw_speed     = {0};
-pid_t pid_pit_speed     = {0};
-pid_t pid_spd[4]        = {0};
-pid_t pid_chassis_angle = {0};
-pid_t pid_trigger       = {0};
-pid_t pid_trigger_speed = {0};
-pid_t pid_rotate[4]     = {0};
-pid_t pid_imu_tmp       = {0};
-pid_t pid_voltage       = {0};
-pid_t pid_software_limit= {0};
-pid_t pid_speed_bias    = {0};
-pid_t pid_front_distance= {0};
-pid_t pid_right_distance= {0};
-pid_t pid_angle_distance= {0};
-pid_t pid_spring[2] = {0};
+//pid参数
+pid_t pid_motor1    = {0};
+pid_t pid_motor2    = {0};
 

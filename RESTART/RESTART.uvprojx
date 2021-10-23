@@ -439,6 +439,21 @@
               <FileType>1</FileType>
               <FilePath>.\BSP\pwm.c</FilePath>
             </File>
+            <File>
+              <FileName>usart4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\usart4.c</FilePath>
+            </File>
+            <File>
+              <FileName>can1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\can1.c</FilePath>
+            </File>
+            <File>
+              <FileName>can2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\can2.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -448,6 +463,16 @@
               <FileName>ControlTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\ControlTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>CanbusTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\CanbusTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>MotorControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\MotorControl.c</FilePath>
             </File>
           </Files>
         </Group>

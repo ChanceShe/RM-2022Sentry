@@ -27,11 +27,18 @@ void Control_Task(void)
 			PWM1--;
 		}
 	}
+	
+	if(time_tick_1ms%2 == 0)
+  {        	
+	  moter_control();//电机控制任务				   			
+	}		
+
+	
 	OutData[0] = time_tick_1ms%40000;
 	OutData[1] = 10000;
 	OutData[2] = 20000;
 	OutData[3] = 30000;
-		OutPut_Data(OutData);		
+	OutPut_Data(OutData);		
 }
 	
 	

@@ -8,8 +8,7 @@
 
 extern u8 USART3_DMA_RX_BUF[USART3_RX_BUF_LENGTH];
 
-void USART3_Configuration_Send();
-void USART3_Configuration_For_Hi220();
+void USART3_Configuration_Send(void);
 void Usart3DmaSendDataProc(DMA_Stream_TypeDef *DMA_Streamx,u16 ndtr);
 void Usart3SendByteInfoProc(u8 nSendInfo);
 void Usart3SendBytesInfoProc(u8* pSendInfo, u16 nSendCount);
