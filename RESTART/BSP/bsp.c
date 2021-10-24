@@ -2,8 +2,9 @@
 
 void BSP_Init(void)
 {
- 	Led_Configuration();
+	IWDG_Configuration();
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	Led_Configuration();
 	TIM6_Configuration();
 	PWM_Configuration();
 	USART3_Configuration_Send();

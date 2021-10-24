@@ -5,7 +5,6 @@
 int main(void)
 {
 	BSP_Init();	
-	IWDG_Configuration();
   while(1)
 	{
     GREEN_LED_TOGGLE();

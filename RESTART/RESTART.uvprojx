@@ -440,11 +440,6 @@
               <FilePath>.\BSP\pwm.c</FilePath>
             </File>
             <File>
-              <FileName>usart4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\usart4.c</FilePath>
-            </File>
-            <File>
               <FileName>can1.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\can1.c</FilePath>
