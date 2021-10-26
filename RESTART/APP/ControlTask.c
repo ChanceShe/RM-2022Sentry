@@ -1,7 +1,7 @@
 #include "main.h"
 
 uint32_t time_tick_1ms = 0;
-extern int dir=0;
+int dir=1;
 
 void Control_Task(void)
 {
@@ -10,13 +10,9 @@ void Control_Task(void)
 	IWDG_ReloadCounter();
 	if(time_tick_1ms % 10 == 0)
 	{
-		if(PWM1>=200)
+		if(PWM1>=200 || PWM1<=100)
 		{
-			dir=0;
-		}
-		if(PWM1<=100)
-		{
-			dir=1;
+			dir=!dir;
 		}
 		if(dir)
 		{
@@ -34,8 +30,8 @@ void Control_Task(void)
 	}		
 
 	
-	OutData[0] = time_tick_1ms%40000;
-	OutData[1] = 10000;
+	OutData[0] = CM11Encoder.filter_rate;
+	OutData[1] = pid_motor1.set;
 	OutData[2] = 20000;
 	OutData[3] = 30000;
 	OutPut_Data(OutData);		

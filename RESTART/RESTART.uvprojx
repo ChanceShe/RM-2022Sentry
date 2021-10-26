@@ -405,19 +405,14 @@
               <FilePath>.\BSP\delay.c</FilePath>
             </File>
             <File>
-              <FileName>output2vs.c</FileName>
+              <FileName>iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\BSP\output2vs.c</FilePath>
+              <FilePath>.\BSP\iwdg.c</FilePath>
             </File>
             <File>
               <FileName>key_scan.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\key_scan.c</FilePath>
-            </File>
-            <File>
-              <FileName>uasrt3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\uasrt3.c</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>
@@ -430,14 +425,29 @@
               <FilePath>.\APP\LED.c</FilePath>
             </File>
             <File>
-              <FileName>iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\iwdg.c</FilePath>
-            </File>
-            <File>
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\usart1.c</FilePath>
+            </File>
+            <File>
+              <FileName>uasrt3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\uasrt3.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\usart4.c</FilePath>
+            </File>
+            <File>
+              <FileName>output2vs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\output2vs.c</FilePath>
             </File>
             <File>
               <FileName>can1.c</FileName>
@@ -468,6 +478,11 @@
               <FileName>MotorControl.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\MotorControl.c</FilePath>
+            </File>
+            <File>
+              <FileName>RemoteTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\RemoteTask.c</FilePath>
             </File>
           </Files>
         </Group>

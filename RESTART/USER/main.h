@@ -15,6 +15,7 @@
 #include "LED.h"
 #include "key_scan.h"
 
+#include "usart1.h"
 #include "usart3.h"
 #include "output2vs.h"
 #include "usart4.h"
@@ -26,5 +27,12 @@
 
 #include "ControlTask.h"
 #include "CanbusTask.h"
+
+#include "RemoteTask.h"
+
+#include "ramp.h"
+#include "fifo.h"
+#include "LostCounter.h"
+
 
 #endif 

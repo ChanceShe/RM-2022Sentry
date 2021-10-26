@@ -2,6 +2,6 @@
 #define __MOTORCONTROL_H__
 #include "main.h"
 void motorcontrol_init(void);
-void moter_control(void);//²É¿óµç»ú¿ØÖÆÈÎÎñ
+void moter_control(void); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 #endif
