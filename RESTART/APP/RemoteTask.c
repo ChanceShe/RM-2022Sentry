@@ -67,6 +67,13 @@ void SetInputMode(Remote *rc)
     }
 
 }
+//遥控器控制模式处理
+void RemoteControlProcess(Remote *rc)
+{
+      pid_motor2.set= (rc->ch3 - (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_PITCH_ANGLE_INC_FACT;
+      pid_motor1.set = (rc->ch2 - (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_YAW_ANGLE_INC_FACT;
+
+}
 
 //遥控器数据处理
 void RemoteDataPrcess(uint8_t *pData)
@@ -99,19 +106,19 @@ void RemoteDataPrcess(uint8_t *pData)
     {
       //遥控器控制模式
       RemoteControlProcess(&(RC_CtrlData.rc));
-      SetWorkState(NORMAL_STATE);
+//      SetWorkState(NORMAL_STATE);
     }
     break;
     case KEY_MOUSE_INPUT:
     {
       //键盘控制模式
-      MouseKeyControlProcess(&RC_CtrlData.mouse,&RC_CtrlData.key);
-      SetWorkState(NORMAL_STATE);
+//      MouseKeyControlProcess(&RC_CtrlData.mouse,&RC_CtrlData.key);
+//      SetWorkState(NORMAL_STATE);
     }
     break;
     case STOP:
     {
-      SetWorkState(PREPARE_STATE);
+//      SetWorkState(PREPARE_STATE);
       //紧急停车
     }
     break;

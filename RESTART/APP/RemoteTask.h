@@ -4,6 +4,11 @@
 #include "ramp_second.h"
 
 #define REMOTE_SWITCH_VALUE_BUF_DEEP   16u
+#define REMOTE_CONTROLLER_STICK_OFFSET      1024u   
+#define STICK_TO_CHASSIS_SPEED_REF_FACT     0.6f
+#define STICK_TO_PITCH_ANGLE_INC_FACT       2.0f
+#define STICK_TO_YAW_ANGLE_INC_FACT         2.0f//0.005f
+
 
 typedef __packed struct
 {
@@ -57,5 +62,8 @@ typedef struct RemoteSwitch_t
 	 uint8_t buf_last_index;
 	 uint8_t buf_end_index;
 }RemoteSwitch_t;
+
+
+void RemoteDataPrcess(uint8_t *pData);
 
 #endif
