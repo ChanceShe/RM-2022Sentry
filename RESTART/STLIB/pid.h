@@ -142,5 +142,7 @@ void  pid_clr(pid_t *pid);
 		
 extern pid_t pid_motor1;
 extern pid_t pid_motor2;
+extern pid_t pid_spd[4];
+
 
 #endif

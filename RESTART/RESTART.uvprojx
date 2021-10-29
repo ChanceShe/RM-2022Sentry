@@ -394,6 +394,11 @@
               <FileType>1</FileType>
               <FilePath>.\BSP\bsp.c</FilePath>
             </File>
+            <File>
+              <FileName>config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\config.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -483,6 +488,11 @@
               <FileName>RemoteTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\RemoteTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>ChassisTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\ChassisTask.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -29,6 +29,7 @@
 #include "CanbusTask.h"
 
 #include "RemoteTask.h"
+#include "ChassisTask.h"
 
 #include "ramp.h"
 #include "fifo.h"

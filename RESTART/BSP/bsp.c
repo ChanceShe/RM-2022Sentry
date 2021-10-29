@@ -2,6 +2,7 @@
 
 void BSP_Init(void)
 {
+	RemoteTaskInit();
 	IWDG_Configuration();
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	Led_Configuration();
@@ -15,6 +16,7 @@ void BSP_Init(void)
 	CAN1_Init();
 	CAN2_Init();
 	motorcontrol_init();
+	chassis_param_init();
 	
 	KEY_Init();
 	

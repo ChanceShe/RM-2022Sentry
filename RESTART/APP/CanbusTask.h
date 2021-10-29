@@ -3,12 +3,16 @@
 #include "main.h"
 
 /* CAN Bus 1 */  
-#define CAN1_MOTOR1_ID  0x201
+
 
 /* CAN Bus 2 */  
-#define CAN2_MOTOR1_ID  0x201
+#define CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID           0x201//右前 逆时针
+#define CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID           0x202 
+#define CAN_BUS2_MOTOR3_FEEDBACK_MSG_ID           0x203
+#define CAN_BUS2_MOTOR4_FEEDBACK_MSG_ID           0x204
 
-#define RATE_BUF_SIZE 6										 							 				    
+
+#define RATE_BUF_SIZE 6						//滤波数量
 typedef struct{
 	int32_t raw_value;   				    //编码器不经处理的原始值
 	int32_t last_raw_value;				  //上一次的编码器原始值
@@ -24,8 +28,10 @@ typedef struct{
 	float ecd_angle;					      //角度
 }Encoder;
 
-extern volatile Encoder CM11Encoder;
-extern volatile Encoder CM21Encoder;
+extern volatile Encoder CM1Encoder;
+extern volatile Encoder CM2Encoder;
+extern volatile Encoder CM3Encoder;
+extern volatile Encoder CM4Encoder;
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg);
 void Can1ReceiveMsgProcess(CanRxMsg * msg);

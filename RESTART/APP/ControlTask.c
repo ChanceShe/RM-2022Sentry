@@ -24,9 +24,9 @@ void Control_Task(void)
 		}
 	}
 	
-	if(time_tick_1ms%2 == 0)
-  {        	
-	  moter_control();//电机控制任务				   			
+	if(time_tick_1ms%10 == 0)
+  {
+			chassis_task();
 	}		
 
 	

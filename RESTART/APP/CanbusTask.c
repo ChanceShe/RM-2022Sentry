@@ -4,9 +4,12 @@ static uint32_t can1_count = 0;
 static uint32_t can2_count = 0;
 
 //CAN1电机编码器
-volatile Encoder CM11Encoder = {0,0,0,0,0,0,0,0,0};
 //CAN2电机编码器
-volatile Encoder CM21Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder CM2Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder CM3Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder CM4Encoder = {0,0,0,0,0,0,0,0,0};
+
 
 
 void GetEncoderBias(volatile Encoder *v, CanRxMsg * msg) 

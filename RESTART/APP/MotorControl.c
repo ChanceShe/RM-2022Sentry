@@ -1,5 +1,8 @@
 #include "main.h"
 
+volatile Encoder CM11Encoder = {0,0,0,0,0,0,0,0,0};
+volatile Encoder CM21Encoder = {0,0,0,0,0,0,0,0,0};
+
 void motorcontrol_init(void)
 {
 	PID_struct_init(&pid_motor1 , POSITION_PID , 5000 , 5000 , 50 ,0 ,40);

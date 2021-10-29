@@ -2,8 +2,31 @@
 #include "main.h"
 
 RC_Ctl_t RC_CtrlData;
+ChassisSpeed_Ref_t ChassisSpeedRef;
+Gimbal_Ref_t GimbalRef;
+
 static InputMode_e inputmode = STOP;//REMOTE_INPUT;   //输入模式设定
 int rotate_num_ture=0;		//掉头标志
+
+//遥控器数据初始化，斜坡函数等的初始化
+RampGen_t frictionRamp = RAMP_GEN_DAFAULT;  //摩擦轮斜坡
+RampGen_t LRSpeedRamp = RAMP_GEN_DAFAULT;   //mouse左右移动斜坡
+RampGen_t FBSpeedRamp = RAMP_GEN_DAFAULT;   //mouse前后移动斜坡
+void RemoteTaskInit()
+{
+  frictionRamp.ResetCounter(&frictionRamp);
+  LRSpeedRamp.ResetCounter(&LRSpeedRamp);
+  FBSpeedRamp.ResetCounter(&FBSpeedRamp);
+  //底盘云台给定值初始化
+  GimbalRef.pitch_angle_dynamic_ref = 0.0f;
+  GimbalRef.yaw_angle_dynamic_ref = 0.0f;
+  ChassisSpeedRef.forward_back_ref = 0.0f;
+  ChassisSpeedRef.left_right_ref = 0.0f;
+  ChassisSpeedRef.rotate_ref = 0.0f;
+
+}
+
+
 InputMode_e GetInputMode()
 {
   return inputmode;
@@ -68,10 +91,21 @@ void SetInputMode(Remote *rc)
 
 }
 //遥控器控制模式处理
+RemoteSwitch_t switch1;   //遥控器左侧拨杆
 void RemoteControlProcess(Remote *rc)
 {
-      pid_motor2.set= (rc->ch3 - (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_PITCH_ANGLE_INC_FACT;
-      pid_motor1.set = (rc->ch2 - (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_YAW_ANGLE_INC_FACT;
+			ChassisSpeedRef.forward_back_ref = (rc->ch1- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
+      ChassisSpeedRef.left_right_ref   = (rc->ch0- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
+//      pid_motor2.set= (rc->ch3 - (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_PITCH_ANGLE_INC_FACT;
+//      pid_motor1.set = (rc->ch2 - (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_YAW_ANGLE_INC_FACT;
+	
+//  /*******************遥控器拨杆数据处理*******************/
+//#if REMOTE_SHOOT == 1
+//  RemoteShootControl(&switch1, rc->s1);			//此处两个函数二选一，左拨杆功能分别是发射
+//#elif REMOTE_SHOOT == 0
+//  Remote_Rotate_Reverse_Control(&switch1, rc->s1);        //小陀螺
+//#endif
+//  /***********************************************************/
 
 }
 
@@ -98,7 +132,6 @@ void RemoteDataPrcess(uint8_t *pData)
   RC_CtrlData.key.v = ((int16_t)pData[14]) | ((int16_t)pData[15] << 8);
   SetInputMode(&RC_CtrlData.rc);
 
-  //RemoteControlProcess(&(RC_CtrlData.rc));
 
   switch(GetInputMode( ))
     {
@@ -123,4 +156,90 @@ void RemoteDataPrcess(uint8_t *pData)
     }
     break;
     }
+}
+/*********************遥控模式射击***********************/
+/*
+flag： friction_rotor    0：摩擦轮停止   1：摩擦轮开启   2：摩擦轮关闭（REF -> 0）
+*/
+void RemoteShootControl(RemoteSwitch_t *sw, uint8_t val)
+{
+}
+
+
+
+int rotate_num = 0;
+
+/*********************遥控模式小陀螺***********************/
+
+u8 close_rotate_flag = 0;		//小陀螺停转
+void Remote_Rotate_Reverse_Control(RemoteSwitch_t *sw, uint8_t val)
+{
+  GetRemoteSwitchAction(sw, val);
+  switch (chassis.ctrl_mode)
+    {
+			
+    case MANUAL_FOLLOW_GIMBAL:
+    {
+
+//      if(sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1)
+//        {
+
+//          chassis.ctrl_mode = CHASSIS_ROTATE;
+//        }
+//      if(sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO2)
+//        {
+//          chassis.ctrl_mode = CHASSIS_CHANGE_REVERSE;
+//          GimbalRef.yaw_angle_dynamic_ref +=180;
+//        }
+    }
+    break;
+		
+    case CHASSIS_ROTATE:
+    {
+//      if((sw->switch_value1 == REMOTE_SWITCH_CHANGE_1TO3)&&(close_rotate_flag==0))
+//        {
+//          // 底盘云台相对角度给到下一个360的倍数
+//          rotate_num = GMYawEncoder.ecd_angle/360 ;
+//          close_rotate_flag = 1;
+//        }
+//      if((close_rotate_flag==1)&&(GMYawEncoder.ecd_angle-((rotate_num+1)*360)<=35)&&(GMYawEncoder.ecd_angle-((rotate_num+1)*360)>=-35))
+//        {
+//          chassis.ctrl_mode = MANUAL_FOLLOW_GIMBAL;
+//          chassis_rotate_flag ^=1;
+//          chassis.position_ref = (rotate_num+1)*360;
+//          close_rotate_flag = 0;
+//        }
+//      else if((close_rotate_flag==1)&&(GMYawEncoder.ecd_angle-((rotate_num-1)*360)<=35)&&(GMYawEncoder.ecd_angle-((rotate_num-1)*360)>=-35))
+//        {
+//          chassis.ctrl_mode = MANUAL_FOLLOW_GIMBAL;
+//          chassis_rotate_flag ^=1;
+//          chassis.position_ref = (rotate_num-1)*360;
+//          close_rotate_flag = 0;
+//        }
+//      else if((close_rotate_flag==1)&&(GMYawEncoder.ecd_angle-(rotate_num*360)<=35)&&(GMYawEncoder.ecd_angle-(rotate_num*360)>=-35))
+//        {
+//          chassis.ctrl_mode = MANUAL_FOLLOW_GIMBAL;
+//          chassis_rotate_flag ^=1;
+//          chassis.position_ref = rotate_num*360;
+//          close_rotate_flag = 0;
+//        }
+
+    }
+    break;
+
+    case CHASSIS_REVERSE:
+    {
+//      if(sw->switch_value1 == REMOTE_SWITCH_CHANGE_2TO3)
+//        {
+//          chassis.ctrl_mode = MANUAL_FOLLOW_GIMBAL;
+//        }
+
+    }
+    break;
+		
+    default:
+    break;
+		
+    }
+
 }
