@@ -3,6 +3,8 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_it.h"
 #include "stm32f4xx_spi.h"
+#include "string.h"
+#include <stdarg.h>
 
 #include "delay.h"
 #include "iwdg.h"
@@ -30,6 +32,7 @@
 
 #include "RemoteTask.h"
 #include "ChassisTask.h"
+#include "SuperviseTask.h"
 
 #include "ramp.h"
 #include "fifo.h"

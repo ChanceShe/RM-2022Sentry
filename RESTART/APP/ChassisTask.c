@@ -1,6 +1,6 @@
 #include  "main.h"
-
 chassis_t chassis;
+
 
 void chassis_task(void)
 {
@@ -27,6 +27,7 @@ void chassis_task(void)
     {
       chassis_separate_handle();
     }
+		break;
     default:
     {
       chassis_stop_handle();
@@ -59,7 +60,7 @@ void chassis_separate_handle(void)
 {
   chassis.vy = 0.75*ChassisSpeedRef.left_right_ref;
   chassis.vx = ChassisSpeedRef.forward_back_ref;
-  chassis.vw=0;
+//  chassis.vw=1;
 }
 void chassis_remove_task(void)
 {

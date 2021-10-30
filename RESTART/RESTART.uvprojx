@@ -494,6 +494,11 @@
               <FileType>1</FileType>
               <FilePath>.\APP\ChassisTask.c</FilePath>
             </File>
+            <File>
+              <FileName>SuperviseTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\SuperviseTask.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

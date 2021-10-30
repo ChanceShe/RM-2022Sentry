@@ -71,17 +71,82 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
 }
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg)
-{	
-	can2_count++;
-	
-	switch(msg->StdId)
-	{
-		case CAN2_MOTOR1_ID:
+{      
+        can2_count++;
+		switch(msg->StdId)
 		{
-			(can2_count<=50) ? GetEncoderBias(&CM21Encoder ,msg):EncoderProcess(&CM21Encoder ,msg);    //获取到编码器的初始偏差值 
-		}break;
-	}
-				
+			
+				case CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID:
+				{
+					LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR1));
+					(can2_count<=50) ? GetEncoderBias(&CM1Encoder ,msg):EncoderProcess(&CM1Encoder ,msg);       //获取到编码器的初始偏差值            
+                    
+				}break;
+				case CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID:
+				{
+					LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR2));
+					(can2_count<=50) ? GetEncoderBias(&CM2Encoder ,msg):EncoderProcess(&CM2Encoder ,msg);
+				}break;
+				case CAN_BUS2_MOTOR3_FEEDBACK_MSG_ID:
+				{
+					LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR3));
+					(can2_count<=50) ? GetEncoderBias(&CM3Encoder ,msg):EncoderProcess(&CM3Encoder ,msg);   
+				}break;
+				case CAN_BUS2_MOTOR4_FEEDBACK_MSG_ID:
+				{
+					LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR4));
+				 	(can2_count<=50) ? GetEncoderBias(&CM4Encoder ,msg):EncoderProcess(&CM4Encoder ,msg);
+				}break;
+
+//				case CAN_BUS2_MOTOR5_FEEDBACK_MSG_ID:
+//				{
+////					EncoderProcess(&GMYawEncoder ,msg);
+//					LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR5));
+//					 //GMYawEncoder.ecd_bias = yaw_ecd_bias;
+//					 PitchEncoderProcess(&GMYawEncoder ,msg);    
+//						// 比较保存编码器的值和偏差值，如果编码器的值和初始偏差之间差距超过阈值，将偏差值做处理，防止出现云台反方向运动
+//					// if(can_count>=90 && can_count<=100)
+//					if(GetWorkState() == PREPARE_STATE)   //准备阶段要求二者之间的差值一定不能大于阈值，否则肯定是出现了临界切换
+//					 {
+//							 if((GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value) <-4000)
+//							 {
+//								GMYawEncoder.ecd_bias =GMYawEncoder_Offset + 8192;
+//							 }
+//							 else if((GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value) > 4000)
+//							 {
+//								GMYawEncoder.ecd_bias = GMYawEncoder_Offset - 8192;
+//							 }
+//					 }
+//				}break;
+//				case CAN_BUS2_MOTOR6_FEEDBACK_MSG_ID:
+//				{
+//					LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR6));
+//						//GMPitchEncoder.ecd_bias = pitch_ecd_bias;
+//						PitchEncoderProcess(&GMPitchEncoder ,msg);
+//						//码盘中间值设定也需要修改
+//						 if(can2_count<=100)
+//						 {
+//							 if((GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value) <-4000)
+//							 {
+//								 GMPitchEncoder.ecd_bias = GMPitchEncoder_Offset + 8192;
+//							 }
+//							 else if((GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value) > 4000)
+//							 {
+//								 GMPitchEncoder.ecd_bias = GMPitchEncoder_Offset - 8192;
+//							 }
+//						 }
+//				}break;				
+				default:
+				{
+				}
+				break;
+		}	
+		
+		LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_DEADLOCK));
+//			if(!(fabs(pid_yaw.get), 70.0f) || GetWorkState() == STOP_STATE)  //如果是停止模式，一直喂狗防止重新启动失败
+//			{
+//				LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_DEADLOCK));
+//			}		 
 }
 
 void CAN1_Send_Msg(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3_iq, int16_t cm4_iq)//CAN1发送函数 前四个ID
