@@ -15,7 +15,6 @@ void BSP_Init(void)
 	
 	CAN1_Init();
 	CAN2_Init();
-	motorcontrol_init();
 	chassis_param_init();
 	
 	KEY_Init();

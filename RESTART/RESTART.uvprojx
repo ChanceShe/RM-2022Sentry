@@ -480,11 +480,6 @@
               <FilePath>.\APP\CanbusTask.c</FilePath>
             </File>
             <File>
-              <FileName>MotorControl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\APP\MotorControl.c</FilePath>
-            </File>
-            <File>
               <FileName>RemoteTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\RemoteTask.c</FilePath>

@@ -63,10 +63,6 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
 	can1_count++;
 	switch(msg->StdId)
   {
-		case CAN1_MOTOR1_ID:
-	  {
-			(can1_count<=50) ? GetEncoderBias(&CM11Encoder ,msg):EncoderProcess(&CM11Encoder,msg);    //获取到编码器的初始偏差值                                
-		}break;
 	}
 }
 

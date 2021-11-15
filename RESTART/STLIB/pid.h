@@ -137,12 +137,10 @@ void PID_struct_init(
     float kd);
 
 float pid_calc(pid_t *pid, float fdb, float ref);
-float pid_calc1(pid_t *pid, float get, float set);
 void  pid_clr(pid_t *pid);
 		
-extern pid_t pid_motor1;
-extern pid_t pid_motor2;
-extern pid_t pid_spd[4];
+
+extern pid_t pid_spd;
 
 
 #endif

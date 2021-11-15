@@ -194,48 +194,7 @@ void Remote_Rotate_Reverse_Control(RemoteSwitch_t *sw, uint8_t val)
     }
     break;
 		
-    case CHASSIS_ROTATE:
-    {
-//      if((sw->switch_value1 == REMOTE_SWITCH_CHANGE_1TO3)&&(close_rotate_flag==0))
-//        {
-//          // 底盘云台相对角度给到下一个360的倍数
-//          rotate_num = GMYawEncoder.ecd_angle/360 ;
-//          close_rotate_flag = 1;
-//        }
-//      if((close_rotate_flag==1)&&(GMYawEncoder.ecd_angle-((rotate_num+1)*360)<=35)&&(GMYawEncoder.ecd_angle-((rotate_num+1)*360)>=-35))
-//        {
-//          chassis.ctrl_mode = MANUAL_FOLLOW_GIMBAL;
-//          chassis_rotate_flag ^=1;
-//          chassis.position_ref = (rotate_num+1)*360;
-//          close_rotate_flag = 0;
-//        }
-//      else if((close_rotate_flag==1)&&(GMYawEncoder.ecd_angle-((rotate_num-1)*360)<=35)&&(GMYawEncoder.ecd_angle-((rotate_num-1)*360)>=-35))
-//        {
-//          chassis.ctrl_mode = MANUAL_FOLLOW_GIMBAL;
-//          chassis_rotate_flag ^=1;
-//          chassis.position_ref = (rotate_num-1)*360;
-//          close_rotate_flag = 0;
-//        }
-//      else if((close_rotate_flag==1)&&(GMYawEncoder.ecd_angle-(rotate_num*360)<=35)&&(GMYawEncoder.ecd_angle-(rotate_num*360)>=-35))
-//        {
-//          chassis.ctrl_mode = MANUAL_FOLLOW_GIMBAL;
-//          chassis_rotate_flag ^=1;
-//          chassis.position_ref = rotate_num*360;
-//          close_rotate_flag = 0;
-//        }
 
-    }
-    break;
-
-    case CHASSIS_REVERSE:
-    {
-//      if(sw->switch_value1 == REMOTE_SWITCH_CHANGE_2TO3)
-//        {
-//          chassis.ctrl_mode = MANUAL_FOLLOW_GIMBAL;
-//        }
-
-    }
-    break;
 		
     default:
     break;

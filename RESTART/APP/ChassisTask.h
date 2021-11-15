@@ -11,16 +11,12 @@ typedef enum
 {
   CHASSIS_RELAX          = 0,
   CHASSIS_STOP           = 1,
-  MANUAL_SEPARATE_GIMBAL = 2,
-  MANUAL_FOLLOW_GIMBAL   = 3,
+  MANUAL_SEPARATE_GIMBAL = 2,		//Ò£¿ØÆ÷¿ØÖÆµ¥µ×ÅÌ
+  MANUAL_FOLLOW_GIMBAL   = 3,		//Ò£¿ØÆ÷¿ØÖÆµ×ÅÌÔÆÌ¨
   DODGE_MODE             = 4,
   AUTO_SEPARATE_GIMBAL   = 5,
   AUTO_FOLLOW_GIMBAL     = 6,
-  CHASSIS_ROTATE         = 7,
-  CHASSIS_REVERSE        = 8,
-  CHASSIS_CHANGE_REVERSE = 9,
-  CHASSIS_SEPARATE 		 = 10,
-  CHASSIS_AUTO_SUP       = 11,
+  CHASSIS_PATROL		 		 = 7,		//Ñ²ÂßÄ£Ê½
 } chassis_mode_e;
 
 typedef struct
@@ -35,9 +31,9 @@ typedef struct
   float           gyro_angle;
   float           gyro_palstance;
 
-  int16_t         wheel_speed_fdb[4];
-  int16_t         wheel_speed_ref[4];
-  int16_t         current[4];
+  int16_t         wheel_speed_fdb;
+  int16_t         wheel_speed_ref;
+  int16_t         current;
   
   int32_t         position_ref;
   uint8_t         follow_gimbal;
@@ -46,10 +42,10 @@ typedef struct
 
 extern chassis_t chassis;
 
+void chassis_param_init(void);//µ×ÅÌ²ÎÊý³õÊ¼»¯
 
 void chassis_task(void);
-void chassis_separate_handle(void);
-void chassis_remove_task(void);
+void follow_gimbal_handle(void);
 static void chassis_stop_handle(void);
 
 static void mecanum_calc(float vx, float vy, float vw, int16_t speed[]);

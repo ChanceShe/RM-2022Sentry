@@ -25,7 +25,6 @@
 #include "can1.h"
 #include "can2.h"
 #include "CanbusTask.h"
-#include "MotorControl.h"
 
 #include "ControlTask.h"
 #include "CanbusTask.h"

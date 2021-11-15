@@ -30,8 +30,8 @@ void Control_Task(void)
 	}		
 
 	
-	OutData[0] = CM11Encoder.filter_rate;
-	OutData[1] = pid_motor1.set;
+	OutData[0] = 0;
+	OutData[1] = 0;
 	OutData[2] = 20000;
 	OutData[3] = 30000;
 	OutPut_Data(OutData);		
