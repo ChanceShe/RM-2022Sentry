@@ -96,16 +96,8 @@ void RemoteControlProcess(Remote *rc)
 {
 			ChassisSpeedRef.forward_back_ref = (rc->ch1- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
       ChassisSpeedRef.left_right_ref   = (rc->ch0- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
-//      chassis.vw = (rc->ch3 - (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_PITCH_ANGLE_INC_FACT;
       chassis.vw = (rc->ch2 - (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_YAW_ANGLE_INC_FACT;
 	
-//  /*******************遥控器拨杆数据处理*******************/
-//#if REMOTE_SHOOT == 1
-//  RemoteShootControl(&switch1, rc->s1);			//此处两个函数二选一，左拨杆功能分别是发射
-//#elif REMOTE_SHOOT == 0
-//  Remote_Rotate_Reverse_Control(&switch1, rc->s1);        //小陀螺
-//#endif
-//  /***********************************************************/
 
 }
 
@@ -157,48 +149,4 @@ void RemoteDataPrcess(uint8_t *pData)
     break;
     }
 }
-/*********************遥控模式射击***********************/
-/*
-flag： friction_rotor    0：摩擦轮停止   1：摩擦轮开启   2：摩擦轮关闭（REF -> 0）
-*/
-void RemoteShootControl(RemoteSwitch_t *sw, uint8_t val)
-{
-}
 
-
-
-int rotate_num = 0;
-
-/*********************遥控模式小陀螺***********************/
-
-u8 close_rotate_flag = 0;		//小陀螺停转
-void Remote_Rotate_Reverse_Control(RemoteSwitch_t *sw, uint8_t val)
-{
-  GetRemoteSwitchAction(sw, val);
-  switch (chassis.ctrl_mode)
-    {
-			
-    case MANUAL_FOLLOW_GIMBAL:
-    {
-
-//      if(sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1)
-//        {
-
-//          chassis.ctrl_mode = CHASSIS_ROTATE;
-//        }
-//      if(sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO2)
-//        {
-//          chassis.ctrl_mode = CHASSIS_CHANGE_REVERSE;
-//          GimbalRef.yaw_angle_dynamic_ref +=180;
-//        }
-    }
-    break;
-		
-
-		
-    default:
-    break;
-		
-    }
-
-}

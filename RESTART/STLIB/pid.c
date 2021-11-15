@@ -161,7 +161,5 @@ void pid_clr(pid_t *pid)
 
 
 //pid参数
-pid_t pid_motor1   	  = {0};		//测试电机can1
-pid_t pid_motor2    	= {0};		//测试电机can2
 pid_t pid_spd      = {0};		//底盘四电机速度环
 

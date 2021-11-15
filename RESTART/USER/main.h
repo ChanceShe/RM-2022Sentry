@@ -4,7 +4,8 @@
 #include "stm32f4xx_it.h"
 #include "stm32f4xx_spi.h"
 #include "string.h"
-#include <stdarg.h>
+#include "stdarg.h"
+#include "config.h"
 
 #include "delay.h"
 #include "iwdg.h"

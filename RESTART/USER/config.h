@@ -7,6 +7,10 @@
 // <1=> 发射
 #define REMOTE_SHOOT        0                 //1:遥控器左拨杆为发射  0:小陀螺
 
+#define GMPitchEncoder_Offset  	4444
+#define GMYawEncoder_Offset   	6435
+
+
 //==========================================================
 
 #endif

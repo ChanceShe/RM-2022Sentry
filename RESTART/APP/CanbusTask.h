@@ -5,11 +5,14 @@
 /* CAN Bus 1 */  
 
 
-/* CAN Bus 2 */  
-#define CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID           0x201//右前 逆时针
-#define CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID           0x202 
-#define CAN_BUS2_MOTOR3_FEEDBACK_MSG_ID           0x203
-#define CAN_BUS2_MOTOR4_FEEDBACK_MSG_ID           0x204
+/* CAN Bus 2 */ 
+#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    // 6  yaw       can2        0x206上云台yaw
+#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   //  7   pitch    can2       0x207上云台pitch
+
+#define CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID           0x205    //       底盘
+#define CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID           0x201    //   上云台摩擦轮  
+#define CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID           0x202    //   上云台摩擦轮   
+
 
 
 #define RATE_BUF_SIZE 6						//滤波数量
@@ -29,9 +32,6 @@ typedef struct{
 }Encoder;
 
 extern volatile Encoder CM1Encoder;
-extern volatile Encoder CM2Encoder;
-extern volatile Encoder CM3Encoder;
-extern volatile Encoder CM4Encoder;
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg);
 void Can1ReceiveMsgProcess(CanRxMsg * msg);

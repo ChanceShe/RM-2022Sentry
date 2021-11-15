@@ -48,7 +48,6 @@ void chassis_task(void);
 void follow_gimbal_handle(void);
 static void chassis_stop_handle(void);
 
-static void mecanum_calc(float vx, float vy, float vw, int16_t speed[]);
 
 
 #endif
