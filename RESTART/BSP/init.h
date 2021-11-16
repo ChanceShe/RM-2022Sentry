@@ -1,5 +1,5 @@
-#ifndef _BSP_H_
-#define _BSP_H_
+#ifndef _INIT_H_
+#define _INIT_H_
 
 /*
 *********************************************************************************************************
@@ -11,5 +11,7 @@
 #define     BSP_USART3_TX_BUF_SIZE            512u
 
 void BSP_Init(void);
+void ControtLoopTaskInit(void);
+
 #endif
 

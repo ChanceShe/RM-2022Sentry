@@ -390,14 +390,14 @@
               <FilePath>.\USER\main.c</FilePath>
             </File>
             <File>
-              <FileName>bsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\bsp.c</FilePath>
-            </File>
-            <File>
               <FileName>config.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\USER\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\init.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -493,6 +493,11 @@
               <FileName>SuperviseTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\SuperviseTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>ShootTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\ShootTask.c</FilePath>
             </File>
           </Files>
         </Group>

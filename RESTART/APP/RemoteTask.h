@@ -9,16 +9,38 @@
 #define STICK_TO_PITCH_ANGLE_INC_FACT       2.0f
 #define STICK_TO_YAW_ANGLE_INC_FACT         0.05f//0.005f
 
+#define REMOTE_SWITCH_VALUE_UP         		0x01u
+#define REMOTE_SWITCH_VALUE_DOWN			0x02u
+#define REMOTE_SWITCH_VALUE_CENTRAL			0x03u
 
+#define REMOTE_SWITCH_CHANGE_1TO3      (uint8_t)((REMOTE_SWITCH_VALUE_UP << 2) | REMOTE_SWITCH_VALUE_CENTRAL)
+#define REMOTE_SWITCH_CHANGE_2TO3      (uint8_t)((REMOTE_SWITCH_VALUE_DOWN << 2) | REMOTE_SWITCH_VALUE_CENTRAL)
+#define REMOTE_SWITCH_CHANGE_3TO1      (uint8_t)((REMOTE_SWITCH_VALUE_CENTRAL << 2) | REMOTE_SWITCH_VALUE_UP)
+#define REMOTE_SWITCH_CHANGE_3TO2      (uint8_t)((REMOTE_SWITCH_VALUE_CENTRAL << 2) | REMOTE_SWITCH_VALUE_DOWN)
+
+#define REMOTE_SWITCH_CHANGE_1TO3TO2   (uint8_t)((REMOTE_SWITCH_VALUE_UP << 4) |\
+                                                 (REMOTE_SWITCH_VALUE_CENTRAL << 2) |\
+                                                 (REMOTE_SWITCH_VALUE_DOWN))
+
+#define REMOTE_SWITCH_CHANGE_2TO3TO1   (uint8_t)((REMOTE_SWITCH_VALUE_DOWN << 4) |\
+                                                 (REMOTE_SWITCH_VALUE_CENTRAL << 2) |\
+                                                 (REMOTE_SWITCH_VALUE_UP))
+
+#define REMOTE_SWITCH_VALUE_BUF_DEEP   16u
+
+
+//遥控器
 typedef __packed struct
 {
-	int16_t ch0;
-	int16_t ch1;
-	int16_t ch2;
-	int16_t ch3;
-	int8_t s1;
-	int8_t s2;
+	int16_t ch0;		//右摇杆X
+	int16_t ch1;		//右摇杆Y
+	int16_t ch2;		//左摇杆X
+	int16_t ch3;		//左摇杆Y
+	int8_t s1;			//左拨杆
+	int8_t s2;			//右拨杆
 }Remote;
+
+//鼠标
 typedef __packed struct
 {
 	int16_t x;
@@ -28,12 +50,15 @@ typedef __packed struct
 	uint8_t last_press_r;
 	uint8_t press_l;
 	uint8_t press_r;
-}Mouse;	
+}Mouse;
+
+//按键
 typedef	__packed struct
 {
 	uint16_t v;
 	uint16_t last_v;
 }Key;
+
 typedef __packed struct
 {
 	Remote rc;
@@ -50,8 +75,38 @@ typedef enum
 	STOP = 2,
 }InputMode_e;
 
+//拨杆动作枚举
+typedef enum
+{
+    FROM1TO2,
+    FROM1TO3,
+    FROM2TO1,
+    FROM3TO1,
+    FROM3TO2,
+} RC_SWITCH_ACTION_e;
 
-//remote data process底盘前后左右速度给定
+//摩擦轮状态枚举
+typedef enum
+{
+    FRICTION_WHEEL_OFF = 0,
+    FRICTION_WHEEL_START_TURNNING = 1,
+    FRICTION_WHEEL_ON = 2,
+    FRICTION_WHEEL_STOP_TURNNING = 3,
+} FrictionWheelState_e;
+
+typedef enum
+{
+    NOSHOOTING = 0,
+    SHOOTING = 1,
+} Shoot_State_e;
+typedef enum
+{
+    NORMAL_SHOOTING = 0,//正常射击模式，鼠标按住一直转
+    ONE_SHOOTING = 1,//鼠标单击一次只发一颗弹丸
+    THREE_SHOOTING = 2,//单击一次三连发
+} Shooting_State_e; //弹丸射击模式
+
+//remote data process底盘前后/左右/旋转速度给定
 typedef __packed struct
 {
     int16_t forward_back_ref;
@@ -59,7 +114,7 @@ typedef __packed struct
     int16_t rotate_ref;
 }ChassisSpeed_Ref_t;
 
-//remote data process云台pitch\yaw速度给定
+//remote data process云台pitch/yaw速度给定
 typedef struct
 {
     float pitch_angle_dynamic_ref;
@@ -89,10 +144,19 @@ extern ChassisSpeed_Ref_t ChassisSpeedRef;
 extern Gimbal_Ref_t GimbalRef;
 
 
-void RemoteTaskInit(void);		//斜坡初始化
+void RemoteTaskInit(void);								//斜坡初始化
+extern RampGen_t frictionRamp;  					//摩擦轮斜坡
+#define FRICTION_RAMP_TICK_COUNT			100 //起转斜坡斜率
+#define FRICTION_RAMP_OFF_TICK_COUNT	30	//停转斜坡斜率
+
+
 void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val);		//遥控器读值
 void RemoteControlProcess(Remote *rc);		//遥控器控制模式处理
 void RemoteDataPrcess(uint8_t *pData);		//遥控器数据处理
+void SetInputMode(Remote *rc);
+InputMode_e GetInputMode();
+Shoot_State_e GetShootState ( void );
+Shooting_State_e GetShootingState ( void );
 void RemoteShootControl(RemoteSwitch_t *sw, uint8_t val);		//遥控左拨杆模式射击
 void Remote_Rotate_Reverse_Control(RemoteSwitch_t *sw, uint8_t val);		//遥控左拨杆模式小陀螺
 

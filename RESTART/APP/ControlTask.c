@@ -23,7 +23,11 @@ void Control_Task(void)
 			PWM1--;
 		}
 	}
-	
+	if(time_tick_1ms%5 == 0)
+  {
+			shot_task();
+	}		
+
 	if(time_tick_1ms%10 == 0)
   {
 			chassis_task();
@@ -36,5 +40,4 @@ void Control_Task(void)
 	OutData[3] = 30000;
 	OutPut_Data(OutData);		
 }
-	
 	

@@ -12,7 +12,7 @@ void chassis_task(void)
       chassis_stop_handle();
     }
     break;
-    case MANUAL_FOLLOW_GIMBAL:  //跟随云台模式
+    case MANUAL_FOLLOW_GIMBAL:  //遥控器控制
     {
       follow_gimbal_handle();
     }

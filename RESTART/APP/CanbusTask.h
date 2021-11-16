@@ -3,15 +3,16 @@
 #include "main.h"
 
 /* CAN Bus 1 */  
+#define CAN_BUS1_POKE_FEEDBACK_MSG_ID            			 0x205    		//拨盘
 
 
 /* CAN Bus 2 */ 
-#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    // 6  yaw       can2        0x206上云台yaw
-#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   //  7   pitch    can2       0x207上云台pitch
+#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    		// 6  yaw       can2        0x206上云台yaw
+#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   			//  7   pitch    can2       0x207上云台pitch
 
-#define CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID           0x205    //       底盘
-#define CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID           0x201    //   上云台摩擦轮  
-#define CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID           0x202    //   上云台摩擦轮   
+#define CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID         0x205    		//   底盘主动轮
+#define CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID       0x201    		//   上云台摩擦轮  
+#define CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID       0x202    		//   上云台摩擦轮   
 
 
 
@@ -31,7 +32,14 @@ typedef struct{
 	float ecd_angle;					      //角度
 }Encoder;
 
-extern volatile Encoder CM1Encoder;
+//CAN1
+extern volatile Encoder PokeEncoder;					//拨盘
+//CAN2
+extern volatile Encoder CM1Encoder;						//主动轮
+extern volatile Encoder GMYawEncoder ;				//上云台Yaw
+extern volatile Encoder GMPitchEncoder ;			//上云台Pitch
+extern volatile Encoder Friction1Encoder ;		//上云台Pitch
+extern volatile Encoder Friction2Encoder ;		//上云台Pitch
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg);
 void Can1ReceiveMsgProcess(CanRxMsg * msg);

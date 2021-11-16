@@ -10,8 +10,11 @@
 #include "delay.h"
 #include "iwdg.h"
 #include "common.h"
-#include "bsp.h"
 #include "pid.h"
+#include "ramp.h"
+#include "Fifo.h"
+#include "LostCounter.h"
+#include "init.h"
 
 #include "timer.h"
 #include "pwm.h"
@@ -32,11 +35,7 @@
 
 #include "RemoteTask.h"
 #include "ChassisTask.h"
+#include "ShootTask.h"
 #include "SuperviseTask.h"
-
-#include "ramp.h"
-#include "fifo.h"
-#include "LostCounter.h"
-
 
 #endif 

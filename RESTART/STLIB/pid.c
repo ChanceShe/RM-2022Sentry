@@ -161,5 +161,8 @@ void pid_clr(pid_t *pid)
 
 
 //pid参数
-pid_t pid_spd      = {0};		//底盘四电机速度环
+pid_t pid_spd      			= {0};		//底盘电机速度环
+pid_t pid_rotate[2]     = {0};		//摩擦轮
+pid_t pid_trigger 			= {0};		//拨盘角度环
+pid_t pid_trigger_speed = {0};		//拨盘速度环
 
