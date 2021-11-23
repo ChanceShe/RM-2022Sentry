@@ -8,24 +8,10 @@ void Control_Task(void)
 	
   time_tick_1ms++;
 	IWDG_ReloadCounter();
-	if(time_tick_1ms % 10 == 0)
-	{
-		if(PWM1>=200 || PWM1<=100)
-		{
-			dir=!dir;
-		}
-		if(dir)
-		{
-			PWM1++;
-		}
-		else 
-		{
-			PWM1--;
-		}
-	}
 	if(time_tick_1ms%5 == 0)
   {
-			shot_task();
+		modeswitch_task();	
+		shot_task();
 	}		
 
 	if(time_tick_1ms%10 == 0)

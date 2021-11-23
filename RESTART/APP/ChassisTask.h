@@ -12,7 +12,7 @@ typedef enum
   CHASSIS_RELAX          = 0,
   CHASSIS_STOP           = 1,
   MANUAL_SEPARATE_GIMBAL = 2,		//遥控器控制单底盘
-  MANUAL_FOLLOW_GIMBAL   = 3,		//遥控器控制底盘云台
+  CHASSIS_CONTROL   = 3,		//遥控器控制底盘云台
   DODGE_MODE             = 4,
   AUTO_SEPARATE_GIMBAL   = 5,
   AUTO_FOLLOW_GIMBAL     = 6,
@@ -42,10 +42,25 @@ typedef struct
 
 extern chassis_t chassis;
 
+typedef enum
+{
+    sensor_off 	    = 0,
+    sensor_on       = 1,
+} sensor_state_e;			//		光电管状态
+
+typedef enum
+{
+    position_middle         = 0,
+    position_left           = 1,
+    position_right          = 2,
+} position_e;    			//   自动模式下的运动方向
+extern position_e robot_position;
+
 void chassis_param_init(void);//底盘参数初始化
 
 void chassis_task(void);
-void follow_gimbal_handle(void);
+void chassis_control_handle(void);
+void chassis_patrol_handle(void);
 static void chassis_stop_handle(void);
 
 

@@ -64,6 +64,7 @@ void RemoteDataPrcess(uint8_t *pData)
     case KEY_MOUSE_INPUT:
     {
       //Ñ²ÂßÄ£Ê½
+			chassis.ctrl_mode = CHASSIS_PATROL;
     }
     break;
     case STOP:
@@ -85,11 +86,6 @@ Shoot_State_e GetShootState()     					//»ñµÃ²¦ÅÌ×´Ì¬     ºÍÄ¦²ÁÂÖ×´Ì¬ÉèÖÃ
     return shootState;
 }
 
-
-void SetShootState ( Shoot_State_e state )  //ÉèÖÃ²¦ÅÌ×ªÌ¬
-{
-    shootState = state;
-}
 
 
 //Ò£¿ØÆ÷¶ÁÖµ
@@ -170,7 +166,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //Ò£¿ØÆ÷  -Ñ¡Ôñ¿ªÆôÄ
             frictionRamp.ResetCounter ( &frictionRamp );
             if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1  ) //´Ó¹Ø±Õµ½start turning
             {
-                SetShootState ( NOSHOOTING ); //²¦ÅÌÑ¡ÔñÊÇ·ñ¿ªÆô
+                shootState = NOSHOOTING ; //²¦ÅÌÑ¡ÔñÊÇ·ñ¿ªÆô
                 friction_rotor = 0;
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
@@ -182,7 +178,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //Ò£¿ØÆ÷  -Ñ¡Ôñ¿ªÆôÄ
         {
             if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1 ) //¸ÕÆô¶¯¾Í±»¹Ø±Õ
             {
-                SetShootState ( NOSHOOTING ); //²¦ÅÌÑ¡ÔñÊÇ·ñ¿ªÆô
+                shootState = NOSHOOTING ; //²¦ÅÌÑ¡ÔñÊÇ·ñ¿ªÆô
                 friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
@@ -207,15 +203,15 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //Ò£¿ØÆ÷  -Ñ¡Ôñ¿ªÆôÄ
                 friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
-                SetShootState ( NOSHOOTING ); //²¦ÅÌÑ¡ÔñÊÇ·ñ¿ªÆô
+                shootState = NOSHOOTING ; //²¦ÅÌÑ¡ÔñÊÇ·ñ¿ªÆô
             }
             else if ( sw->switch_value_raw == 2 )
             {
-                SetShootState ( SHOOTING );  		//²¦ÅÌ¿ªÆô
+                shootState = SHOOTING ;  		//²¦ÅÌ¿ªÆô
             }
             else
             {
-                SetShootState ( NOSHOOTING );   //²¦ÅÌ¹Ø±Õ
+                shootState = NOSHOOTING ;   //²¦ÅÌ¹Ø±Õ
             }
         }
         break;

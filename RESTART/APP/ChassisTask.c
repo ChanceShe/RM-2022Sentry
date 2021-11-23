@@ -12,11 +12,15 @@ void chassis_task(void)
       chassis_stop_handle();
     }
     break;
-    case MANUAL_FOLLOW_GIMBAL:  //遥控器控制
+    case CHASSIS_CONTROL:  //遥控器拨杆控制
     {
-      follow_gimbal_handle();
+      chassis_control_handle();
     }
 		break;
+		case CHASSIS_PATROL:				//巡逻模式
+		{
+			chassis_patrol_handle();
+		}
     default:
     {
       chassis_stop_handle();
@@ -36,10 +40,113 @@ void chassis_task(void)
 
 }
 
-void follow_gimbal_handle(void)
+void chassis_control_handle(void)
 {
-  chassis.vy = 0.75*ChassisSpeedRef.left_right_ref;
+//  chassis.vy = ChassisSpeedRef.left_right_ref;
   chassis.vx = ChassisSpeedRef.forward_back_ref;
+}
+
+
+position_e robot_position;
+sensor_state_e sensor_l = sensor_off;
+sensor_state_e sensor_r = sensor_off;
+void chassis_patrol_handle(void)
+{
+  if ( sensor_l == sensor_off )	 //没有识别到
+    {
+
+        if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_0 ) == 0 )
+        {
+            sensor_l = sensor_on;
+            robot_position = position_left;
+        }
+    }
+   else
+   {
+
+       if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_0 ) == 1 )
+       {
+           sensor_l = sensor_off;
+       }
+   }
+
+    if ( sensor_r == sensor_off )	 //没有识别到
+    {
+
+        if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_1 ) == 0 )
+        {
+
+            sensor_r = sensor_on;
+            robot_position = position_right;
+        }
+    }
+    else
+    {
+
+        if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_1 ) == 1 )
+        {
+            sensor_r = sensor_off;
+        }
+    }
+
+    if ( sensor_r == sensor_off && sensor_l == sensor_off )
+    {
+        robot_position = position_middle;
+    }
+
+//    switch ( robot_position )
+//    {
+//        case position_middle:    //中间位置
+//        {
+
+//        }
+//        break;
+//        case position_left:    //靠左
+//        {
+//            chassis.vx = 100;
+
+//        }
+//        break;
+//        case position_right:      //靠右
+//        {
+//            chassis.vx = -100 ;
+
+//        }
+//        break;
+//        default:
+//				{
+//					chassis.vx = 0;
+//				}
+//        break;
+//    }
+
+
+
+
+
+//    /*   检测两侧圆柱   放在最后 确保不撞柱子  */
+//    if ( ( sensor_r == sensor_on && chassis.vx < 0 ) || ( sensor_l == 1 && sensor_r == 1 && chassis.vx < 0 ) )
+//    {   //红外开关，
+//        chassis.vx = -chassis.vx ;
+
+//    }
+//    if ( ( sensor_l == sensor_on && chassis.vx > 0 ) || ( sensor_l == 1 && sensor_r == 1 && chassis.vx > 0 ) )
+//    {
+//        chassis.vx = -chassis.vx ;
+
+//    }
+
+//    if ( sensor_r == sensor_on) 
+//    {
+//        chassis.vx = 0;
+//    }
+//    else if ( sensor_l == sensor_on) 
+//    {
+//        chassis.vx = 0;
+//    }
+
+
+
 }
 
 void chassis_stop_handle(void)
@@ -58,7 +165,7 @@ void chassis_stop_handle(void)
 void chassis_param_init(void)//底盘参数初始化
 {
   memset(&chassis, 0, sizeof(chassis_t));
-  chassis.ctrl_mode      = MANUAL_FOLLOW_GIMBAL;
+  chassis.ctrl_mode      = CHASSIS_CONTROL;
   chassis.last_ctrl_mode = CHASSIS_RELAX;
 
   chassis.position_ref = 0;

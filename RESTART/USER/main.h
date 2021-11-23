@@ -36,6 +36,7 @@
 #include "RemoteTask.h"
 #include "ChassisTask.h"
 #include "ShootTask.h"
+#include "ModeswitchTask.h"
 #include "SuperviseTask.h"
 
 #endif 
