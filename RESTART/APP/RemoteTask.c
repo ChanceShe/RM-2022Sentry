@@ -58,6 +58,7 @@ void RemoteDataPrcess(uint8_t *pData)
     case REMOTE_INPUT:
     {
       //Ò£¿ØÆ÷¿ØÖÆÄ£Ê½
+			chassis.ctrl_mode = CHASSIS_CONTROL;
       RemoteControlProcess(&(RC_CtrlData.rc));
     }
     break;
@@ -70,6 +71,7 @@ void RemoteDataPrcess(uint8_t *pData)
     case STOP:
     {
       //½ô¼±Í£³µ
+			chassis.ctrl_mode = CHASSIS_STOP;
     }
     break;
     }

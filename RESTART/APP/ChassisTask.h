@@ -35,7 +35,6 @@ typedef struct
   int16_t         wheel_speed_ref;
   int16_t         current;
   
-  int32_t         position_ref;
   uint8_t         follow_gimbal;
 } chassis_t;
 
@@ -53,8 +52,17 @@ typedef enum
     position_middle         = 0,
     position_left           = 1,
     position_right          = 2,
-} position_e;    			//   自动模式下的运动方向
+} position_e;    			//   自动模式下的位置状态
 extern position_e robot_position;
+typedef enum
+{
+	direction_left						= 0,
+	direction_right						= 1,
+	direction_stop						= 2,
+	direction_stopleft				= 3,
+	direction_stopright				= 4,
+}	direction_e;					//自动模式下的运动方向
+extern direction_e robot_direction;
 
 void chassis_param_init(void);//底盘参数初始化
 
