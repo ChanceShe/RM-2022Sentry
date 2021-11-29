@@ -3,7 +3,7 @@
 #include "stm32f4xx.h"
 
 
-#define LOST_COUNTER_NUM                             11u
+#define LOST_COUNTER_INDEX_IMU                       1u    //red always on
 
 #define LOST_COUNTER_INDEX_MOTOR1                    3u    //green:red:green 1 1 1 
 #define LOST_COUNTER_INDEX_MOTOR2                    4u    //green:red:green 1 2 1 
@@ -12,6 +12,7 @@
 #define LOST_COUNTER_INDEX_MOTOR5                    7u    //green:red:green 1 5 1 
 #define LOST_COUNTER_INDEX_MOTOR6                    8u    //green:red:green 1 6 1 
 #define LOST_COUNTER_INDEX_DEADLOCK                  9u    //red:red:red 1:1:1
+#define LOST_COUNTER_NUM                             11u
 
 uint32_t *GetLostCounter(uint8_t index);
 

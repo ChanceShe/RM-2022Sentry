@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\RESTART;.\CORE;.\RmLib;.\STLIB;.\USER;.\APP;.\BSP</IncludePath>
+              <IncludePath>..\RESTART;.\CORE;.\RmLib;.\STLIB;.\USER;.\APP;.\BSP;.\Hi220</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -463,6 +463,11 @@
               <FileName>can2.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\can2.c</FilePath>
+            </File>
+            <File>
+              <FileName>hi220.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hi220\hi220.c</FilePath>
             </File>
           </Files>
         </Group>

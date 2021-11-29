@@ -25,6 +25,7 @@
 #include "usart3.h"
 #include "output2vs.h"
 #include "usart4.h"
+#include "hi220.h"
 
 #include "can1.h"
 #include "can2.h"

@@ -12,6 +12,7 @@ void Control_Task(void)
   {
 //		modeswitch_task();	
 		shot_task();
+		Hi220_getYawPitchRoll();
 	}		
 
 	if(time_tick_1ms%10 == 0)
