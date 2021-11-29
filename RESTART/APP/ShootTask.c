@@ -109,8 +109,6 @@ static void shoot_bullet_handle ( void ) //   ¸ù¾Ý (GetShootState() == ????)  À´
         pid_calc ( &pid_trigger_speed, pid_trigger_speed.get, pid_trigger_speed.set );
         CAN1_Send_Msg1 ( CAN1, pid_trigger_speed.out, frictioSpeed ,0,0);
 
-        // Set_Poke_Current(CAN1,0);
-
 
     }
 

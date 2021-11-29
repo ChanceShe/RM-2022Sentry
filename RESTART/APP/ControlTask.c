@@ -10,9 +10,10 @@ void Control_Task(void)
 	IWDG_ReloadCounter();
 	if(time_tick_1ms%5 == 0)
   {
+		gimbal_task();
 //		modeswitch_task();	
 		shot_task();
-		Hi220_getYawPitchRoll();
+		
 	}		
 
 	if(time_tick_1ms%10 == 0)

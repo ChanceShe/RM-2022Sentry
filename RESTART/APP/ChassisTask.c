@@ -1,7 +1,7 @@
 #include  "main.h"
 chassis_t chassis;
-position_e robot_position;
-direction_e robot_direction;
+position_e robot_position;			
+direction_e robot_direction;		
 sensor_state_e sensor_l = sensor_off;
 sensor_state_e sensor_r = sensor_off;
 uint8_t    crazyflag = 1;
@@ -19,9 +19,9 @@ void chassis_task(void)
       chassis_stop_handle();
     }
     break;
-    case CHASSIS_CONTROL:  //遥控器拨杆控制
+    case CHASSIS_REMOTE:  //遥控器拨杆控制
     {
-      chassis_control_handle();
+      chassis_remote_handle();
     }
 		break;
 		case CHASSIS_PATROL:				//巡逻模式
@@ -69,13 +69,12 @@ void chassis_task(void)
 		chassis.current = pid_calc(&pid_spd, chassis.wheel_speed_fdb, chassis.wheel_speed_ref);
 
 		CAN2_Send_Msg1(CAN2,chassis.current,0,0,0);
-//	  CAN2_Send_Msg1(CAN2,0,0,0,0);
 
     
 
 }
 
-void chassis_control_handle(void)
+void chassis_remote_handle(void)
 {
 //  chassis.vy = ChassisSpeedRef.left_right_ref;
   chassis.vx = ChassisSpeedRef.forward_back_ref;
@@ -122,7 +121,6 @@ void chassis_patrol_handle(void)
 //				crazyflag = 1;
 //				
 //		}
-//		while(crazyflag)
 		if(1)
 		{
 			if(crazytime <= 0)
@@ -148,15 +146,6 @@ void chassis_patrol_handle(void)
 		}
 		
 
-//    /*   检测两侧圆柱   放在最后 确保不撞柱子  */
-//    if ( ( sensor_r == sensor_on && chassis.vx > 0 ) || ( sensor_l == 1 && sensor_r == 1 && chassis.vx < 0 ) )
-//    {   //红外开关，
-//        chassis.vx = 0;
-//    }
-//    if ( ( sensor_l == sensor_on && chassis.vx < 0 ) || ( sensor_l == 1 && sensor_r == 1 && chassis.vx > 0 ) )
-//    {
-//        chassis.vx = 0;
-//    }
 
 }
 
@@ -175,8 +164,8 @@ void chassis_stop_handle(void)
   */
 void chassis_param_init(void)//底盘参数初始化
 {
-  memset(&chassis, 0, sizeof(chassis_t));
-  chassis.ctrl_mode      = CHASSIS_CONTROL;
+  memset(&chassis, 0, sizeof(chassis_t));			
+  chassis.ctrl_mode      = CHASSIS_REMOTE;
   chassis.last_ctrl_mode = CHASSIS_RELAX;
 	
 	robot_direction = direction_right;

@@ -11,12 +11,11 @@ typedef enum
 {
   CHASSIS_RELAX          = 0,
   CHASSIS_STOP           = 1,
-  MANUAL_SEPARATE_GIMBAL = 2,		//遥控器控制单底盘
-  CHASSIS_CONTROL   = 3,		//遥控器控制底盘云台
-  DODGE_MODE             = 4,
-  AUTO_SEPARATE_GIMBAL   = 5,
-  AUTO_FOLLOW_GIMBAL     = 6,
-  CHASSIS_PATROL		 		 = 7,		//巡逻模式
+  CHASSIS_REMOTE  			 = 2,		//遥控器控制底盘云台
+  DODGE_MODE             = 3,
+  AUTO_SEPARATE_GIMBAL   = 4,
+  AUTO_FOLLOW_GIMBAL     = 5,
+  CHASSIS_PATROL		 		 = 6,		//巡逻模式
 } chassis_mode_e;
 
 typedef struct
@@ -67,7 +66,7 @@ extern direction_e robot_direction;
 void chassis_param_init(void);//底盘参数初始化
 
 void chassis_task(void);
-void chassis_control_handle(void);
+void chassis_remote_handle(void);
 void chassis_patrol_handle(void);
 static void chassis_stop_handle(void);
 

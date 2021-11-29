@@ -7,7 +7,7 @@ Gimbal_Ref_t GimbalRef;
 FrictionWheelState_e friction_wheel_state = FRICTION_WHEEL_OFF;
 
 
-static InputMode_e inputmode = STOP;															//ÊäÈëÄ£Ê½Éè¶¨
+ InputMode_e inputmode = STOP;															//ÊäÈëÄ£Ê½Éè¶¨
 static volatile Shoot_State_e shootState = NOSHOOTING;						//Éä»÷Ä£Ê½
 static volatile Shooting_State_e Shooting_State = NORMAL_SHOOTING;//Õý³£Éä»÷Ä£Ê½
 
@@ -58,7 +58,7 @@ void RemoteDataPrcess(uint8_t *pData)
     case REMOTE_INPUT:
     {
       //Ò£¿ØÆ÷¿ØÖÆÄ£Ê½
-			chassis.ctrl_mode = CHASSIS_CONTROL;
+			chassis.ctrl_mode = CHASSIS_REMOTE;
       RemoteControlProcess(&(RC_CtrlData.rc));
     }
     break;
@@ -147,12 +147,21 @@ void SetInputMode(Remote *rc)
     }
 
 }
+void GimbalAngleLimit()
+{
+    VAL_LIMIT ( GimbalRef.pitch_angle_dynamic_ref, PITCH_MIN, PITCH_MAX ); //pitchÖáÔÆÌ¨¸©ÑöÏÞÖÆ
+    VAL_LIMIT ( GimbalRef.yaw_angle_dynamic_ref, Init_Yaw_Angle + YAW_MIN, Init_Yaw_Angle + YAW_MAX ); //yawÖáÔÆÌ¨½Ç¶ÈÏÞÖÆ
+}
+
 //Ò£¿ØÆ÷¿ØÖÆÄ£Ê½´¦Àí
 RemoteSwitch_t switch1;   //Ò£¿ØÆ÷×ó²à²¦¸Ë
 void RemoteControlProcess(Remote *rc)
 {
 	ChassisSpeedRef.forward_back_ref = (rc->ch1- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
   ChassisSpeedRef.left_right_ref   = (rc->ch0- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
+	GimbalRef.pitch_angle_dynamic_ref += ( rc->ch3 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_PITCH_ANGLE_INC_FACT;
+  GimbalRef.yaw_angle_dynamic_ref   += ( rc->ch2 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_YAW_ANGLE_INC_FACT  ;
+	GimbalAngleLimit();
 	RemoteShootControl ( &switch1, rc->s1 ); //s1   Ò£¿ØÆ÷¿ØÖÆ·¢Éä
 
 }
@@ -218,7 +227,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //Ò£¿ØÆ÷  -Ñ¡Ôñ¿ªÆôÄ
         }
         break;
 
-        case FRICTION_WHEEL_STOP_TURNNING:
+        case FRICTION_WHEEL_STOP_TURNNING:			//Ä¦²ÁÂÖÍ£×ª
         {
             friction_rotor = 2;
             if ( frictionRamp.IsOverflow ( &frictionRamp ) )

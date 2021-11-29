@@ -126,13 +126,13 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
           }
 			}
 			break;
-		  case CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID:
+		  case CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID:		//摩擦轮电机处理
       {
           LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
           ( can2_count <= 50 ) ? GetEncoderBias ( &Friction1Encoder , msg ) : EncoderProcess ( &Friction1Encoder , msg );
       }
       break;
-      case CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID:
+      case CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID:		//摩擦轮电机处理
       {
           LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
           ( can2_count <= 50 ) ? GetEncoderBias ( &Friction2Encoder , msg ) : EncoderProcess ( &Friction2Encoder , msg );
@@ -217,4 +217,22 @@ void CAN2_Send_Msg1(CAN_TypeDef *CANx, int16_t cm5_iq, int16_t cm6_iq, int16_t c
     tx_message.Data[7] = (uint8_t)cm8_iq;
     CAN_Transmit(CANx,&tx_message);
 }
+void CAN2_Gimbal_Msg ( int16_t gimbal_yaw_iq, int16_t gimbal_pitch_iq )
+{
+    CanTxMsg tx_message;
+    tx_message.StdId = 0x2FF;
+    tx_message.IDE = CAN_Id_Standard;
+    tx_message.RTR = CAN_RTR_Data;
+    tx_message.DLC = 0x08;
 
+    tx_message.Data[0] = 0x00;
+    tx_message.Data[1] = 0x00;
+    tx_message.Data[2] = ( unsigned char ) ( gimbal_yaw_iq >> 8 );
+    tx_message.Data[3] = ( unsigned char ) gimbal_yaw_iq;
+    tx_message.Data[4] = ( unsigned char ) ( gimbal_pitch_iq >> 8 );
+    tx_message.Data[5] = ( unsigned char ) gimbal_pitch_iq;
+    tx_message.Data[6] = 0x00;
+    tx_message.Data[7] = 0x00;
+    CAN_Transmit ( CAN2, &tx_message );
+
+}

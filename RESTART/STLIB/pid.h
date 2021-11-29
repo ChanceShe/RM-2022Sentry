@@ -139,6 +139,10 @@ void PID_struct_init(
 float pid_calc(pid_t *pid, float fdb, float ref);
 void  pid_clr(pid_t *pid);
 		
+extern pid_t pid_pit;
+extern pid_t pid_yaw;
+extern pid_t pid_pit_speed;
+extern pid_t pid_yaw_speed;
 
 extern pid_t pid_spd;
 extern pid_t pid_rotate[2];
