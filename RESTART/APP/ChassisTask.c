@@ -121,30 +121,30 @@ void chassis_patrol_handle(void)
 //				crazyflag = 1;
 //				
 //		}
-		if(1)
-		{
-			if(crazytime <= 0)
-			{
-				crazyspeeddir = rand()%2;
-				if(crazyspeeddir)
-				{
-					crazyspeed = rand()%200 + 400;
-				}
-				else
-				{
-					crazyspeed = -(rand()%200 + 400);
-				}
-				crazytime  = rand()%300 + 300;
-			}
-			if(sensor_l == sensor_on || sensor_r == sensor_on)
-			{
-				crazytime +=200;
-				crazyspeed = -crazyspeed;
-			}
-			chassis.vx = crazyspeed;
-			crazytime--;
-		}
-		
+//		if(1)
+//		{
+//			if(crazytime <= 0)
+//			{
+//				crazyspeeddir = rand()%2;
+//				if(crazyspeeddir)
+//				{
+//					crazyspeed = rand()%200 + 400;
+//				}
+//				else
+//				{
+//					crazyspeed = -(rand()%200 + 400);
+//				}
+//				crazytime  = rand()%300 + 300;
+//			}
+//			if(sensor_l == sensor_on || sensor_r == sensor_on)
+//			{
+//				crazytime +=200;
+//				crazyspeed = -crazyspeed;
+//			}
+//			chassis.vx = crazyspeed;
+//			crazytime--;
+//		}
+//		
 
 
 }

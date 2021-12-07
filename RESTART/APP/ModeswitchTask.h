@@ -3,8 +3,10 @@
 
 #include "main.h"
 
-void mode_switch_task (void);
+void modeswitch_task (void);
 void get_gimbal_mode  (void);
 void get_chassis_mode (void);
+void gimbal_mode_handle ( void );
+static void get_gimbal_last_mode ( void );
 
 #endif

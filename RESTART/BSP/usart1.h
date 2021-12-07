@@ -1,10 +1,7 @@
 #ifndef __USART1_H__
 #define __USART1_H__
 #include "main.h"
-#define PITCH_MAX 35.0f
-#define PITCH_MIN -30.0f
-#define YAW_MAX 40				//cyq:ÔÆÌ¨½Ç¶ÈµÄ·¶Î§
-#define YAW_MIN -40
+
 /*
 *********************************************************************************************************
 *                                               MACROS

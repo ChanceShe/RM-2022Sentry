@@ -83,13 +83,16 @@ typedef struct
     gimbal_cmd_e  auto_ctrl_cmd;
 } gimbal_t;
 
+extern gimbal_t gim;
 extern float Init_Yaw_Angle  , Init_Pitch_Angle;
+extern RampGen_t GMPitchRamp ;
+extern RampGen_t GMYawRamp ;
 
 static void cascade_pid_ctrl ( void );
 
 void gimbal_task( void );
 static void gimbal_init_handle	( void );
-static void gimbal_stop_handle	( void );
+static void no_action_handle	( void );
 static void gimbal_remote_handle( void );
 static void gimbal_patrol_handle( void );
 void gimbal_param_init ( void );

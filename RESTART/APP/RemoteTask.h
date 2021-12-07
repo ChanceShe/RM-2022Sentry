@@ -6,8 +6,8 @@
 #define REMOTE_SWITCH_VALUE_BUF_DEEP   16u
 #define REMOTE_CONTROLLER_STICK_OFFSET      1024u   //遥控器拨杆中间位置值
 #define STICK_TO_CHASSIS_SPEED_REF_FACT     0.6f
-#define STICK_TO_PITCH_ANGLE_INC_FACT       0.05f
-#define STICK_TO_YAW_ANGLE_INC_FACT         0.05f//0.005f
+#define STICK_TO_PITCH_ANGLE_INC_FACT       0.003f
+#define STICK_TO_YAW_ANGLE_INC_FACT         0.005f//0.005f
 
 #define REMOTE_SWITCH_VALUE_UP         		0x01u
 #define REMOTE_SWITCH_VALUE_DOWN			0x02u
@@ -28,6 +28,10 @@
 
 #define REMOTE_SWITCH_VALUE_BUF_DEEP   16u
 
+#define PITCH_MAX 35.0f
+#define PITCH_MIN -30.0f
+#define YAW_MAX 100				//云台角度的范围
+#define YAW_MIN -70
 
 //遥控器
 typedef __packed struct
@@ -154,6 +158,7 @@ void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val);		//遥控器读值
 void RemoteControlProcess(Remote *rc);		//遥控器控制模式处理
 void RemoteDataPrcess(uint8_t *pData);		//遥控器数据处理
 void SetInputMode(Remote *rc);
+uint8_t IsRemoteBeingAction ( void );
 InputMode_e GetInputMode();
 Shoot_State_e GetShootState ( void );
 Shooting_State_e GetShootingState ( void );

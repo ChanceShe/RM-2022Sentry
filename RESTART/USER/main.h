@@ -15,6 +15,7 @@
 #include "Fifo.h"
 #include "LostCounter.h"
 #include "init.h"
+#include "bsp_flash.h"
 
 #include "timer.h"
 #include "pwm.h"
@@ -25,7 +26,10 @@
 #include "usart3.h"
 #include "output2vs.h"
 #include "usart4.h"
+
 #include "hi220.h"
+#include "protocal.h"
+
 
 #include "can1.h"
 #include "can2.h"
@@ -40,5 +44,6 @@
 #include "ShootTask.h"
 #include "ModeswitchTask.h"
 #include "SuperviseTask.h"
+#include "IOTask.h"
 
 #endif 

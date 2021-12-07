@@ -58,14 +58,15 @@ void RemoteDataPrcess(uint8_t *pData)
     case REMOTE_INPUT:
     {
       //遥控器控制模式
-			chassis.ctrl_mode = CHASSIS_REMOTE;
+//			chassis.ctrl_mode = CHASSIS_REMOTE;
+//			gim.ctrl_mode = GIMBAL_REMOTE_MODE;
       RemoteControlProcess(&(RC_CtrlData.rc));
     }
     break;
     case KEY_MOUSE_INPUT:
     {
       //巡逻模式
-			chassis.ctrl_mode = CHASSIS_PATROL;
+//			chassis.ctrl_mode = CHASSIS_PATROL;
     }
     break;
     case STOP:
@@ -78,6 +79,12 @@ void RemoteDataPrcess(uint8_t *pData)
 }
 
 
+uint8_t IsRemoteBeingAction ( void )
+{
+
+    return ( fabs ( ChassisSpeedRef.forward_back_ref ) >= 10 || fabs ( ChassisSpeedRef.left_right_ref ) >= 10 || fabs ( GimbalRef.yaw_speed_ref ) >= 10 || fabs ( GimbalRef.pitch_speed_ref ) >= 10 );
+
+}
 
 InputMode_e GetInputMode()									//获取控制模式
 {
@@ -104,6 +111,7 @@ void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val)
   /* 最老的状态值的索引 */
   sw->buf_end_index = (sw->buf_index + 1)%REMOTE_SWITCH_VALUE_BUF_DEEP;
 
+	
   /* 合并三个值 */
   sw->switch_value2 = (sw->switch_value_buf[sw->buf_end_index]<<4)|sw->switch_value1;
   /* 长按判断 */
@@ -131,12 +139,12 @@ void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val)
 //输入模式设置
 void SetInputMode(Remote *rc)
 {
-  if(rc->s2 == 1)
+  if(rc->s2 == 3)
     {
       inputmode = REMOTE_INPUT;				//遥控器模式
 
     }
-  else if(rc->s2 == 3)
+  else if(rc->s2 == 1)
     {
       inputmode = KEY_MOUSE_INPUT;		//巡逻模式
 

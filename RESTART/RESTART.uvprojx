@@ -469,6 +469,11 @@
               <FileType>1</FileType>
               <FilePath>.\Hi220\hi220.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\bsp_flash.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -513,6 +518,11 @@
               <FileName>GimbalTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\GimbalTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>IOTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\IOTask.c</FilePath>
             </File>
           </Files>
         </Group>

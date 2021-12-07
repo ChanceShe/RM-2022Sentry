@@ -17,7 +17,7 @@ void BSP_Init(void)			//外设初始化
 	CAN1_Init();
 	CAN2_Init();
 	
-	KEY_Init();
+	KEY_Init(); 
 		
 }
 
@@ -25,7 +25,9 @@ void BSP_Init(void)			//外设初始化
 void ControtLoopTaskInit(void)
 {
   time_tick_1ms = 0;   		//中断中的计数清零
-//  gimbal_param_init();		//云台任务初始化
+	AppParamInit();    //在iotask里面
+  GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
+  GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
   chassis_param_init();		//底盘任务初始化
   shot_param_init();			//射击任务初始化
 	gimbal_param_init();		//云台任务初始化
