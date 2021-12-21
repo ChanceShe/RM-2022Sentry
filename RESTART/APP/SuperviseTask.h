@@ -4,7 +4,7 @@
 
 
 #define LOST_COUNTER_INDEX_IMU                       1u    //red always on
-
+#define LOST_COUNTER_INDEX_ZGYRO                     2u    //…œœ¬‘∆Ã®
 #define LOST_COUNTER_INDEX_MOTOR1                    3u    //green:red:green 1 1 1 
 #define LOST_COUNTER_INDEX_MOTOR2                    4u    //green:red:green 1 2 1 
 #define LOST_COUNTER_INDEX_MOTOR3                    5u    //green:red:green 1 3 1 

@@ -155,11 +155,6 @@ void SetInputMode(Remote *rc)
     }
 
 }
-void GimbalAngleLimit()
-{
-    VAL_LIMIT ( GimbalRef.pitch_angle_dynamic_ref, PITCH_MIN, PITCH_MAX ); //pitch轴云台俯仰限制
-    VAL_LIMIT ( GimbalRef.yaw_angle_dynamic_ref, Init_Yaw_Angle + YAW_MIN, Init_Yaw_Angle + YAW_MAX ); //yaw轴云台角度限制
-}
 
 //遥控器控制模式处理
 RemoteSwitch_t switch1;   //遥控器左侧拨杆
@@ -169,7 +164,6 @@ void RemoteControlProcess(Remote *rc)
   ChassisSpeedRef.left_right_ref   = (rc->ch0- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
 	GimbalRef.pitch_angle_dynamic_ref += ( rc->ch3 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_PITCH_ANGLE_INC_FACT;
   GimbalRef.yaw_angle_dynamic_ref   += ( rc->ch2 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_YAW_ANGLE_INC_FACT  ;
-	GimbalAngleLimit();
 	RemoteShootControl ( &switch1, rc->s1 ); //s1   遥控器控制发射
 
 }

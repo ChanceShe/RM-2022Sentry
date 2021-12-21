@@ -13,6 +13,7 @@ volatile Encoder GMPitchEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
 volatile Encoder Friction1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
 volatile Encoder Friction2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
 
+refrom_info_t  main_info = {0};
 
 
 
@@ -62,6 +63,14 @@ void EncoderProcess(volatile Encoder *v, CanRxMsg * msg)
 	v->filter_rate = (int32_t)(temp_sum/RATE_BUF_SIZE);					
 }
 
+void revice_main_information ( refrom_info_t *data, CanRxMsg * msg )		//上下云台通讯
+{
+    data->Communication_Flag = ( msg->Data[0] << 8 ) | msg->Data[1];
+    data->ch3 = ( msg->Data[2] << 8 ) | msg->Data[3];
+    data->location_Flag = msg->Data[3];
+    data->s2 = msg->Data[7];
+}
+
 void Can1ReceiveMsgProcess(CanRxMsg * msg)
 {
 	can1_count++;
@@ -73,9 +82,44 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
        ( can1_count <= 50 ) ? GetEncoderBias ( &PokeEncoder , msg ) : EncoderProcess ( &PokeEncoder , msg );
     }
     break;
+	
+		case CAN_BUS1_BOSS_FEEDBACK_MSG_ID:                  //上下云台通信
+	{
+
+			LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_ZGYRO ) );
+			revice_main_information ( &main_info, msg );
+			#if Share_remotecontrols
+			set_imput_mode ( &main_info );
+			switch ( GetInputMode() )
+			{
+					case REMOTE_INPUT:
+					{
+							mainBoard_control ( &main_info ); ////遥控器拨杆不同模式  给定量处理
+					}
+					break;
+					case KEY_MOUSE_INPUT:
+					{
+							RandomControl();     //底盘模式和云台模式选择
+					}
+					break;
+					case STOP:
+					{
+							//紧急停车
+					}
+					break;
+					default :
+					{
+//						mainBoard_control ( &main_info );
+							RandomControl();
+					}
+					break;
+			}
+			#endif
+        }
+        break;
+
 	}
 }
-
 void Can2ReceiveMsgProcess(CanRxMsg * msg)
 {      
     can2_count++;

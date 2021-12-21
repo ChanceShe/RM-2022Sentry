@@ -4,7 +4,7 @@
 
 /* CAN Bus 1 */  
 #define CAN_BUS1_POKE_FEEDBACK_MSG_ID            			 0x205    		//拨盘
-
+#define CAN_BUS1_BOSS_FEEDBACK_MSG_ID   		      		 0x307      	//上下云台通讯
 
 /* CAN Bus 2 */ 
 #define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    		// 6  yaw       can2        0x206上云台yaw
@@ -31,6 +31,17 @@ typedef struct{
 	int32_t filter_rate;				    //速度
 	float ecd_angle;					      //角度
 }Encoder;
+
+typedef struct
+{
+    uint8_t s1;
+    uint8_t s2;
+    int16_t ch2;
+    int16_t ch3;
+	  uint8_t Communication_Flag;  //下云台发送通讯标志位
+    uint8_t location_Flag;
+	
+} refrom_info_t;  //   云台通信接收结构体
 
 //CAN1
 extern volatile Encoder PokeEncoder;					//拨盘

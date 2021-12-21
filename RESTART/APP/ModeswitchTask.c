@@ -47,8 +47,17 @@ static void get_gimbal_last_mode ( void ) //云台和底盘的上一个模式
 }
 void get_chassis_mode ( void )
 {
+		    if ( gim.ctrl_mode == GIMBAL_INIT )
+    {
+        chassis.ctrl_mode = CHASSIS_STOP;
+    }
+    else
+    {
+        chassis_mode_handle();
+    }
+
 }
-void gimbal_mode_handle ( void )    //模式切换写的好乱        细品
+void gimbal_mode_handle ( void )    //云台模式切换
 {
     switch ( gim.ctrl_mode )
     {
@@ -105,4 +114,14 @@ void gimbal_mode_handle ( void )    //模式切换写的好乱        细品
         default:
         break;
     }
+}
+void chassis_mode_handle(void)
+{
+		if ( GetInputMode() == KEY_MOUSE_INPUT )
+		{
+				chassis.ctrl_mode = CHASSIS_PATROL;
+		}
+		else
+				chassis.ctrl_mode  =  CHASSIS_REMOTE;
+
 }
