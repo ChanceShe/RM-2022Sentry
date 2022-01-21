@@ -3,7 +3,7 @@ void modeswitch_task ( void )   //在controltask里
 {
     get_gimbal_mode();
     get_chassis_mode();
-	  get_gimbal_last_mode();
+	  get_last_mode();
 }
 static action_mode_e remote_is_action ( void )
 {
@@ -40,7 +40,7 @@ void get_gimbal_mode ( void )  // 从上往下数第一个获得模式，云台
     }
 }
 
-static void get_gimbal_last_mode ( void ) //云台和底盘的上一个模式
+static void get_last_mode ( void ) //云台和底盘的上一个模式
 {
     gim.last_ctrl_mode = gim.ctrl_mode;
     chassis.last_ctrl_mode = chassis.ctrl_mode;

@@ -11,8 +11,8 @@ typedef enum
 {
   CHASSIS_RELAX          = 0,
   CHASSIS_STOP           = 1,
-  CHASSIS_REMOTE  			 = 2,		//Ò£¿ØÆ÷¿ØÖÆµ×ÅÌÔÆÌ¨
-  DODGE_MODE             = 3,
+  CHASSIS_REMOTE  			 = 2,		//Ò£¿ØÆ÷¿ØÖÆµ×ÅÌ
+  CHASSIS_SEPARATE_GIMBAL= 3,
   AUTO_SEPARATE_GIMBAL   = 4,
   AUTO_FOLLOW_GIMBAL     = 5,
   CHASSIS_PATROL		 		 = 6,		//Ñ²ÂßÄ£Ê½

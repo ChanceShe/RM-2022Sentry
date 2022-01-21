@@ -58,15 +58,12 @@ void RemoteDataPrcess(uint8_t *pData)
     case REMOTE_INPUT:
     {
       //遥控器控制模式
-//			chassis.ctrl_mode = CHASSIS_REMOTE;
-//			gim.ctrl_mode = GIMBAL_REMOTE_MODE;
       RemoteControlProcess(&(RC_CtrlData.rc));
     }
     break;
     case KEY_MOUSE_INPUT:
     {
       //巡逻模式
-//			chassis.ctrl_mode = CHASSIS_PATROL;
     }
     break;
     case STOP:
@@ -82,7 +79,8 @@ void RemoteDataPrcess(uint8_t *pData)
 uint8_t IsRemoteBeingAction ( void )
 {
 
-    return ( fabs ( ChassisSpeedRef.forward_back_ref ) >= 10 || fabs ( ChassisSpeedRef.left_right_ref ) >= 10 || fabs ( GimbalRef.yaw_speed_ref ) >= 10 || fabs ( GimbalRef.pitch_speed_ref ) >= 10 );
+    return ( fabs ( ChassisSpeedRef.forward_back_ref ) >= 10 || fabs ( ChassisSpeedRef.left_right_ref ) >= 10 \
+					|| fabs ( GimbalRef.yaw_speed_ref ) >= 10 || fabs ( GimbalRef.pitch_speed_ref ) >= 10 );
 
 }
 
@@ -168,7 +166,7 @@ void RemoteControlProcess(Remote *rc)
 
 }
 
-void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器  -选择开启摩擦轮和激光
+void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器控制发射
 {
     GetRemoteSwitchAction ( sw, val ); //   遥控器的复杂s1  ，模式切换的索引
 

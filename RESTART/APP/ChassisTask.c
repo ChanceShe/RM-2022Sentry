@@ -19,7 +19,7 @@ void chassis_task(void)
       chassis_stop_handle();
     }
     break;
-    case CHASSIS_REMOTE:  //Ò£¿ØÆ÷²¦¸Ë¿ØÖÆ
+    case CHASSIS_REMOTE:  			//Ò£¿ØÆ÷²¦¸Ë¿ØÖÆ
     {
       chassis_remote_handle();
     }
@@ -29,6 +29,12 @@ void chassis_task(void)
 			chassis_patrol_handle();
 		}
 		break;
+		case CHASSIS_SEPARATE_GIMBAL:
+    {
+      chassis.vx = ChassisSpeedRef.forward_back_ref;
+    }
+    break;
+
     default:
     {
       chassis_stop_handle();

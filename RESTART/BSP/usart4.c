@@ -8,6 +8,10 @@
 uint8_t UART4_DMA_RX_BUF[UART4_RX_BUF_LENGTH];
 uint8_t UART4_DMA_TX_BUF[UART4_TX_BUF_LENGTH];
 
+uint8_t length = 0;
+uint8_t USARTShootFlag = 0;
+
+
 FIFO_S_t* UART_TranFifo1;
 void UART4_Configuration(void)
 {
@@ -112,6 +116,9 @@ void UART4_IRQHandler(void)
 		  (void)UART4->DR;
 			DMA_Cmd(DMA1_Stream2, DISABLE);  
 			DMA_ClearFlag(DMA1_Stream2, DMA_FLAG_TCIF2 | DMA_FLAG_HTIF2);  
+			length = UART4_RX_BUF_LENGTH - DMA_GetCurrDataCounter ( DMA1_Stream2 );
+			USARTShootFlag = 1;
+			targetOffsetDataDeal ( length , UART4_DMA_RX_BUF );  //自瞄接收函数
 			DMA_SetCurrDataCounter(DMA1_Stream2,UART4_RX_BUF_LENGTH);
 			DMA_Cmd(DMA1_Stream2, ENABLE);
 		}       

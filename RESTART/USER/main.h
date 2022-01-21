@@ -6,6 +6,7 @@
 #include "string.h"
 #include "stdarg.h"
 #include "config.h"
+#include "math.h"
 
 #include "delay.h"
 #include "iwdg.h"
@@ -16,6 +17,8 @@
 #include "LostCounter.h"
 #include "init.h"
 #include "bsp_flash.h"
+#include "Protocol.h"
+#include "Judge.h"
 
 #include "timer.h"
 #include "pwm.h"
@@ -28,7 +31,6 @@
 #include "usart4.h"
 
 #include "hi220.h"
-#include "protocal.h"
 
 
 #include "can1.h"
@@ -42,8 +44,16 @@
 #include "ChassisTask.h"
 #include "GimbalTask.h"
 #include "ShootTask.h"
+#include "AutoshootTask.h"
 #include "ModeswitchTask.h"
 #include "SuperviseTask.h"
 #include "IOTask.h"
+
+#include "protobuf-c.h"
+#include "Attack.pb-c.h"
+#include "Signal.pb-c.h"
+#include "TurretCommand.pb-c.h"
+
+extern int testflag;		
 
 #endif 

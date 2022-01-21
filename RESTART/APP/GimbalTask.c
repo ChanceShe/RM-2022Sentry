@@ -44,12 +44,12 @@ void gimbal_task(void)
 
 		pid_calc ( &pid_yaw, gim.pid.yaw_angle_fdb, gim.pid.yaw_angle_ref );
     pid_calc ( &pid_pit, gim.pid.pit_angle_fdb, gim.pid.pit_angle_ref );
-    cascade_pid_ctrl();   //¼¶Áªpidº¯Êý
+    cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
     pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
     pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
 		CAN2_Gimbal_Msg (  ( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
 }
-void cascade_pid_ctrl ( void )
+void cascade_pid_ctrl ( void )	//¼¶Áªpidº¯Êý
 {
     gim.pid.yaw_speed_ref = pid_yaw.out;
     gim.pid.pit_speed_ref = pid_pit.out;

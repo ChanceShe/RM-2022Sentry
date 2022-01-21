@@ -1,11 +1,11 @@
-#ifndef __PROTOCAL_H__
-#define __PROTOCAL_H__
+#ifndef __PROTOCOL_H__
+#define __PROTOCOL_H__
 #include "stm32f4xx.h"
 #include <stdint.h>
 
-#define PROTOCAL_FRAME_MAX_SIZE  256
-// Protocal Version
-#define PROTOCAL_HEADER                                             0x5A
+#define PROTOCOL_FRAME_MAX_SIZE  256
+// Protocol Version
+#define PROTOCOL_HEADER                                             0x5A
 #define CMD_ID_SENSOR_INFO   									    0x40			//传感器数据发送ID
 #define CMD_ID_IMU_INFO												0X41			//姿态结算角度发送ID
 #define CMD_ID_MAG_CALI												0X42     //磁力计校准数据发送ID
@@ -159,4 +159,4 @@ void IMU_Info_Send(int16_t yaw, int16_t pitch, int16_t roll, int16_t yaw_encoder
 void Offset_Info_Send(int8_t error_code,int16_t gx_offset,int16_t gy_offset,int16_t gz_offset, int16_t hx_offset,int16_t hy_offset,
 	int16_t hz_offset,int16_t yaw_encoder_offset,int16_t pitch_encoder_offset);
 
-#endif  //__PROTOCAL_H__
+#endif // __PROTOCOL_H__

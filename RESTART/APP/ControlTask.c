@@ -2,6 +2,7 @@
 
 uint32_t time_tick_1ms = 0;
 int dir=1;
+uint8_t   is_judge_on = 0;
 
 void Control_Task(void)
 {
@@ -21,7 +22,7 @@ void Control_Task(void)
 
 	if(time_tick_1ms%10 == 0)
   {
-			chassis_task();
+//			chassis_task();
 	}		
 
 	

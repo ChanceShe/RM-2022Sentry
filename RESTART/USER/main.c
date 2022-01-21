@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-
+int testflag = 0;		
 int main(void)
 {
 	BSP_Init();							//外设初始化
