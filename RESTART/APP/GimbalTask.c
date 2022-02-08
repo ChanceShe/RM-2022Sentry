@@ -1,4 +1,6 @@
 #include "main.h"
+#include "AHRS_MiddleWare.h"		//´ó½®×ËÌ¬½âËã
+
 gimbal_t gim;
 float Init_Yaw_Angle  =  0 , Init_Pitch_Angle = 0;
 RampGen_t GMPitchRamp = RAMP_GEN_DAFAULT;
@@ -14,8 +16,6 @@ int YAW_PERIOD = 1200 ;
 int16_t yaw_timer = 0;
 int8_t yaw_dir = 1;
 /****************************************************************************************/
-int8_t dir_yaw = 0;			//yaw·½Ïò
-int8_t dir_pitch = 0;		//pitch·½Ïò
 
 
 void gimbal_task(void)
@@ -29,8 +29,8 @@ void gimbal_task(void)
     case GIMBAL_REMOTE_MODE:			//Ò£¿ØÆ÷¿ØÖÆÄ£Ê½
       gimbal_remote_handle();
       break;
-    case GIMBAL_PATROL_MODE:			//Ñ²ÂßÄ£Ê½
-      gimbal_patrol_handle();
+    case GIMBAL_AUTO_MODE:				//×Ô¶¯Ä£Ê½
+      gimbal_auto_handle();
       break;
 		case GIMBAL_NO_ARTI_INPUT:		//²ÎÊý³õÊ¼»¯
 			no_action_handle();
@@ -39,16 +39,49 @@ void gimbal_task(void)
       break;
    }
 	 
-	  VAL_LIMIT ( gim.pid.pit_angle_ref, PITCH_MIN, PITCH_MAX ); //pitchÖáÔÆÌ¨¸©ÑöÏÞÖÆ
-    VAL_LIMIT ( gim.pid.yaw_angle_ref, Init_Yaw_Angle + YAW_MIN, Init_Yaw_Angle + YAW_MAX ); //yawÖáÔÆÌ¨½Ç¶ÈÏÞÖÆ
+	 if(gim.ctrl_mode != GIMBAL_RELAX)
+	 {
+		 VAL_LIMIT ( gim.pid.pit_angle_ref, PITCH_MIN, PITCH_MAX ); //pitchÖáÔÆÌ¨¸©ÑöÏÞÖÆ
+		 VAL_LIMIT ( gim.pid.yaw_angle_ref, Init_Yaw_Angle + YAW_MIN, Init_Yaw_Angle + YAW_MAX ); //yawÖáÔÆÌ¨½Ç¶ÈÏÞÖÆ
 
-		pid_calc ( &pid_yaw, gim.pid.yaw_angle_fdb, gim.pid.yaw_angle_ref );
-    pid_calc ( &pid_pit, gim.pid.pit_angle_fdb, gim.pid.pit_angle_ref );
-    cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
-    pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
-    pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-		CAN2_Gimbal_Msg (  ( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+		 pid_calc ( &pid_yaw, gim.pid.yaw_angle_fdb, gim.pid.yaw_angle_ref );
+     pid_calc ( &pid_pit, gim.pid.pit_angle_fdb, gim.pid.pit_angle_ref );
+     cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
+     pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
+     pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
+		 CAN2_Gimbal_Msg (  ( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+	 }
+	 else
+	 {
+		 CAN2_Gimbal_Msg(0,0);
+	 }
 }
+void gimbal_param_init ( void )		//ÔÆÌ¨ÈÎÎñ³õÊ¼»¯
+{
+		memset(&gim, 0, sizeof(gimbal_t));
+		gim.ctrl_mode      = GIMBAL_NO_ARTI_INPUT;  
+		gim.last_ctrl_mode = GIMBAL_RELAX;
+		gim.input.ac_mode        = NO_ACTION;
+		gim.input.action_angle   = 5.0f;
+		Init_Pitch_Angle = 0;
+		Init_Yaw_Angle = 80;
+		PID_struct_init ( &pid_pit, POSITION_PID , 200, 20,
+                      10, 0.05, 0 );
+		PID_struct_init ( &pid_pit_speed, POSITION_PID , 29000, 29000,
+                      300, 0, 10 );
+
+
+		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 80,
+                      12, 0.05, 0 );
+		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 29000, 29000,
+                      200.0f, 0, 0 );
+	//Ð±ÆÂ³õÊ¼»¯
+    GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
+    GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
+    GMPitchRamp.ResetCounter ( &GMPitchRamp );
+    GMYawRamp.ResetCounter ( &GMYawRamp );
+}
+
 void cascade_pid_ctrl ( void )	//¼¶Áªpidº¯Êý
 {
     gim.pid.yaw_speed_ref = pid_yaw.out;
@@ -59,6 +92,7 @@ void cascade_pid_ctrl ( void )	//¼¶Áªpidº¯Êý
 
 void gimbal_init_handle( void )		//ÔÆÌ¨»Ø³õÊ¼Î»ÖÃ
 {
+		auto_mode = AUTO_PATROL ; //×Ô¶¯Ä£Ê½ÇÐ»»ÎªÑ²Âß
     int32_t init_rotate_num = 0;
 
     gim.pid.pit_angle_fdb = GMPitchEncoder.ecd_angle;       //ÏòÉÏÎª¸º
@@ -73,15 +107,20 @@ void gimbal_init_handle( void )		//ÔÆÌ¨»Ø³õÊ¼Î»ÖÃ
     if ( gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref >= -1.0f && gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref <= 1.0f && gim.pid.pit_angle_fdb >= -1.0f && gim.pid.pit_angle_fdb <= 1.0f ) //ÔÆÌ¨»Øµ½³õÊ¼½Ç¶Èºó½øÈëÒ£¿ØÆ÷Ä£Ê½
     {
         /* yaw arrive and switch gimbal state */
-        if ( GetInputMode() == REMOTE_INPUT )
+        if (GetInputMode() == REMOTE_INPUT)
         {
             gim.ctrl_mode = GIMBAL_REMOTE_MODE
 					;
         }
-        if ( GetInputMode() == KEY_MOUSE_INPUT )
+        else if (GetInputMode() == KEY_MOUSE_INPUT)
         {
-            gim.ctrl_mode = GIMBAL_PATROL_MODE;
+            gim.ctrl_mode = GIMBAL_AUTO_MODE;
         }
+				else if(GetInputMode() == STOP)//
+				{
+						gim.ctrl_mode = GIMBAL_RELAX;
+				}
+				
         Init_Yaw_Angle = yaw_Angle;  //-GMYawEncoder.ecd_angle;
         Init_Pitch_Angle = pitch_Angle;
 
@@ -110,62 +149,531 @@ void gimbal_remote_handle(void)
     gim.pid.pit_angle_fdb = pitch_Angle;	//GMPitchEncoder.ecd_angle;    //ÏòÉÏÎªÕý
 		gim.pid.yaw_angle_fdb = yaw_Angle;		// -GMYawEncoder.ecd_angle;
 }
-void gimbal_patrol_handle(void)		//Ñ²ÂßÄ£Ê½
-{
-	  gim.pid.yaw_angle_fdb =  yaw_Angle;    //GMYawEncoder.ecd_angle;
-    gim.pid.pit_angle_fdb =  pitch_Angle;  // GMPitchEncoder.ecd_angle;               //Êµ¼ÊÖµ
-		if ( yaw_dir == 1 )
-		{
-				if ( yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD >= YAW_MAX )
-						yaw_dir = -1;
-				yaw_timer ++ ;
-		}
-		else
-		{
-				if ( yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD <= YAW_MIN )
-						yaw_dir = 1;
-				yaw_timer -- ;
-		}
-		gim.pid.yaw_angle_ref = ( float ) ( Init_Yaw_Angle + yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD )  ; //*(2*(YAW_MAX-YAW_MIN))/YAW_PERIOD
 
-		if ( pitch_dir == 1 )
-		{
-				if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD >= PITCH_MAX )
-						pitch_dir = -1;
-				pitch_timer ++ ;
+auto_mode_e auto_mode = AUTO_PATROL;	//×Ô¶¯Ä£Ê½³õÊ¼ÎªÑ²Âß×´Ì¬
+uint8_t auto_lost = 0;
+int8_t dir_yaw = 0;			//yaw·½Ïò
+int8_t dir_pitch = 0;		//pitch·½Ïò
+int auto_lost_timer = 0;
+uint8_t flag_lost = 0;
+float shoot_angle_speed = 0;
+float distance_s, distance_x, distance_y;
+float x1, x2, x3, x4;
+float angle_tan , shoot_radian;
+
+void gimbal_auto_handle(void)
+{
+	switch ( auto_mode )
+	{
+		case AUTO_PATROL:
+    {
+			gimbal_patrol_handle();      //1.  Ã»ÓÐÊ¶±ðµ½Ä¿±ê  ÔÆÌ¨Ñ²Âß
+    }
+    break;
+    case AUTO_FOLLOW:
+    {
+      gimbal_follow_handle();      //2.  Ê¶±ðµ½Ä¿±ê ¸ú×ÙÄ¿±ê
+    }
+    break;
+    default:
+    break;
+	}
+	auto_shoot_task();										//×Ô¶¯Éä»÷ÈÎÎñ
+}
+void gimbal_patrol_handle(void)					//Ñ²ÂßÄ£Ê½
+{
+	  gim.pid.yaw_angle_fdb =  yaw_Angle;    //ÓÉÍÓÂÝÒÇ¶Áµ½
+    gim.pid.pit_angle_fdb =  pitch_Angle;  
+		if ( new_location.flag == 1 )                //Ò»µ©¼ì²âµ½Ä¿±ê¾ÍÍ£ÏÂ
+    {
+        auto_mode = AUTO_FOLLOW;
+        gim.pid.pit_angle_ref =  pitch_Angle;
+        gim.pid.yaw_angle_ref =  yaw_Angle;
+			  flag_lost = 0;
+        pid_clr ( &pid_yaw );
+        pid_clr ( &pid_pit );
+        pid_clr ( &pid_yaw_speed );
+        pid_clr ( &pid_pit_speed );
+    }
+    else
+    {
+        if ( auto_lost )//yaw¶ªÊ§ºó±£³ÖÒ»¶ÎÊ±¼äÔÚË³Ê±ÕëÔË¶¯
+        {
+            auto_lost_timer ++ ;
+            if ( auto_lost_timer >= 300 )
+            {
+                auto_lost = 0;
+                auto_lost_timer = 0;
+                pitch_timer = ( int16_t ) ( pitch_Angle / ( ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD ) );
+                yaw_timer = ( int16_t ) ( ( yaw_Angle - Init_Yaw_Angle ) / ( ( YAW_MAX - YAW_MIN ) / YAW_PERIOD ) );
+            }
+            gim.pid.pit_angle_ref = pitch_Angle;
+            gim.pid.yaw_angle_ref = yaw_Angle;
+        }
+        else
+        {
+
+						if ( yaw_dir == 1 )
+						{
+								if ( yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD >= YAW_MAX )
+										yaw_dir = -1;
+								yaw_timer ++ ;
+						}
+						else
+						{
+								if ( yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD <= YAW_MIN )
+										yaw_dir = 1;
+								yaw_timer -- ;
+						}
+						gim.pid.yaw_angle_ref = ( float ) ( Init_Yaw_Angle + (yaw_timer/2) * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD )  ; //*(2*(YAW_MAX-YAW_MIN))/YAW_PERIOD
+
+						if ( pitch_dir == 1 )
+						{
+								if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD >= PITCH_MAX )
+										pitch_dir = -1;
+								pitch_timer ++ ;
+						}
+						else
+						{
+								if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD <= PITCH_MIN )
+										pitch_dir = 1;
+								pitch_timer -- ;
+						}
+						gim.pid.pit_angle_ref = ( float ) ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD );
+
+        }
+    }
+
+}
+Gimbal_Auto_Shoot_t Gimbal_Auto_Shoot;
+Speed_Prediction_t Speed_Prediction;
+
+void gimbal_follow_handle(void)		//Ê¶±ðµ½Ä¿±ê¸úËæÄ£Ê½
+{
+	    if ( new_location.flag )
+    {
+        Gimbal_Auto_Shoot.Recognized_Flag = 1;
+        Gimbal_Auto_Shoot.Recognized_Timer = 0;
+        Gimbal_Auto_Shoot.Err_Pixels_Yaw	= new_location.x;
+        Gimbal_Auto_Shoot.Err_Pixels_Pit	= new_location.y;
+        Gimbal_Auto_Shoot.Distance = new_location.dis;
+    }
+    else
+    {
+        Gimbal_Auto_Shoot.Recognized_Timer++;
+        if ( Gimbal_Auto_Shoot.Recognized_Timer == 100 ) //200ms£¬Ê±¼äÌ«³¤£¬ÔÆÌ¨±£³ÖÔ­ÓÐ¸ø¶¨µ¼ÖÂÂÒ¶¯×÷
+        {
+            Gimbal_Auto_Shoot.Recognized_Flag 	= 0;
+            Gimbal_Auto_Shoot.Recognized_Timer 	= 0;
+            Gimbal_Auto_Shoot.Err_Pixels_Yaw	= 0;
+            Gimbal_Auto_Shoot.Err_Pixels_Pit	= 0;
+            Gimbal_Auto_Shoot.Distance = 0;
+        }
+    }
+
+    if ( Gimbal_Auto_Shoot.Recognized_Flag ) //(new_location.flag)
+    {
+        Gimbal_Auto_Shoot.Continue_Recognized_Cnt ++;
+        VAL_LIMIT ( Gimbal_Auto_Shoot.Continue_Recognized_Cnt, 0, 100 );
+        flag_lost = 0;
+        gim.pid.yaw_angle_fdb =  yaw_Angle ;
+        gim.pid.pit_angle_fdb =  pitch_Angle;
+
+       
+
+        Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample++;
+        //-/-------------------- ÊÕµ½Ò»Ö¡Í¼ÏñÊ¶±ðµÄÊý¾Ý£¬½øÐÐ´¦Àí ---------------------/-//
+        //Èç¹û´ËÊ±¶ªÖ¡£¬ÄÇÃ´new_location.xºÍnew_location.yÖµ½«±£³Ö²»±ä
+				
+        if ( new_location.receNewDataFlag )
+        {
+            new_location.receNewDataFlag = 0;
+
+					 Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw = RAD_TO_ANGLE * atan2 ( Gimbal_Auto_Shoot.Err_Pixels_Yaw * IMAGE_LENGTH, FOCAL_LENGTH );
+           Gimbal_Auto_Shoot.Delta_Dect_Angle_Pit = RAD_TO_ANGLE * atan2 ( Gimbal_Auto_Shoot.Err_Pixels_Pit * IMAGE_LENGTH, FOCAL_LENGTH );
+
+						Gimbal_Auto_Shoot.Armor_yaw = gim.pid.yaw_angle_fdb + Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw;
+						Gimbal_Auto_Shoot.Armor_pit = gim.pid.pit_angle_fdb + Gimbal_Auto_Shoot.Delta_Dect_Angle_Pit;
+
+					  shoot_angle_speed = 27.0;
+					
+						distance_s =   Gimbal_Auto_Shoot.Distance  / 1000;
+						distance_x = ( cos ( Gimbal_Auto_Shoot.Armor_pit * ANGLE_TO_RAD ) * distance_s );
+						distance_y = ( sin ( Gimbal_Auto_Shoot.Armor_pit * ANGLE_TO_RAD ) * distance_s );
+
+						x1 = shoot_angle_speed * shoot_angle_speed;
+						x2 = distance_x * distance_x;
+						x3 = sqrt ( x2 - ( 19.6f * x2 * ( ( 9.8f * x2 ) / ( 2.0f * x1 ) + distance_y ) ) / x1 );
+						x4 = 9.8f * x2;
+						angle_tan = ( x1 * ( distance_x - x3 ) ) / ( x4 );
+						shoot_radian = atan ( angle_tan );
+						Gimbal_Auto_Shoot.shoot_pitch_angle = shoot_radian * RAD_TO_ANGLE;
+				
+           
+//            Gimbal_Auto_Shoot.Speed_Prediction.time_delay = 0;//130e-3f;
+            //--/----------  ¼ÆËãÇ¹¹Ü¾àÀëÄ¿±êµãµÄÆ«²î½Ç ----------------------/--//
+            Gimbal_Auto_Shoot.Ballistic_Compensation = ANGLE_BETWEEN_GUN_CAMERA + (RAD_TO_ANGLE * atan2 ( HEIGHT_BETWEEN_GUN_CAMERA , Gimbal_Auto_Shoot.Distance ) );
+            Gimbal_Auto_Shoot.Horizontal_Compensation = YAW_ANGLE_BETWEEN_GUN_CAMERA ;
+            //Amror_pit ×°¼×°åµÄpitchÖá½Ç¶È  Amror_yaw ×°¼×°åµÄyawÖá½Ç¶È
+
+					  Gimbal_Auto_Shoot.Speed_Prediction.time_delay = distance_x / ( shoot_angle_speed * cos( shoot_radian ) );
+
+            //--/----------------------- ÔÆÌ¨½Ç¶È¸ø¶¨ ----------------------/--//
+            gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.Armor_yaw +  Gimbal_Auto_Shoot.Horizontal_Compensation;
+					  gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.shoot_pitch_angle + Gimbal_Auto_Shoot.Ballistic_Compensation;
+
+
+            //--/--------------ËÙ¶ÈÔ¤²â£¬¼ÆËãÄ¿±êÏà¶ÔÓÚ×Ô¼ºµÄÒÆ¶¯ËÙ¶È---------/--//
+#if ARMY_SPEED_PREDICTION == 1
+            if ( Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample % 5 == 0 )
+            {
+                Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Now;                    //ÉÏ´Î²É¼¯µÄ½Ç¶È
+                Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Now = ( Gimbal_Auto_Shoot.Armor_yaw );
+                Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Now;
+                Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Now = Gimbal_Auto_Shoot.Armor_pit;
+                Gimbal_Auto_Shoot.Speed_Prediction.time1 = Gimbal_Auto_Shoot.Speed_Prediction.time2;
+                Gimbal_Auto_Shoot.Speed_Prediction.time2 = time_tick_1ms;
+                Gimbal_Auto_Shoot.Speed_Prediction.time_error = Gimbal_Auto_Shoot.Speed_Prediction.time2 - Gimbal_Auto_Shoot.Speed_Prediction.time1;
+                Gimbal_Auto_Shoot.Speed_Prediction.yaw_angle_error = Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Now - Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Pre;
+                Gimbal_Auto_Shoot.Speed_Prediction.pit_angle_error = Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Now - Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Pre;
+                //½ÇËÙ¶È¼ÆËã
+                Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Yaw = ( ( Gimbal_Auto_Shoot.Speed_Prediction.yaw_angle_error )	//½ÇËÙ¶È¼ÆËã
+                        / ( Gimbal_Auto_Shoot.Speed_Prediction.time_error ) ) * 1000;
+                Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Pit = ( ( Gimbal_Auto_Shoot.Speed_Prediction.pit_angle_error )
+                        / ( Gimbal_Auto_Shoot.Speed_Prediction.time_error ) ) * 1000;
+
+
+
+                if ( fabs ( Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Yaw ) < 50 )
+                {
+                    Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed;
+                    Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed = Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Yaw;
+                    Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Acceleration = ( ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed
+                            - Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed_Pre )
+                            / Gimbal_Auto_Shoot.Speed_Prediction.time_error ) * 1000;
+                }
+                if ( fabs ( Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Pit ) < 50 )
+                {
+                    Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed;
+                    Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed = Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Pit;
+                    Gimbal_Auto_Shoot.Speed_Prediction.Pit_Acceleration = ( ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed
+                            - Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed_Pre )
+                            / Gimbal_Auto_Shoot.Speed_Prediction.time_error ) * 1000;
+                }
+            }
+
+
+
+            Gimbal_Auto_Shoot.Image_Gimbal_Delay_Compensation_Flag = 1;
+//            Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample = 0;
+#endif
+            Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed = AvgFilter ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed );
+//            OutData[1] =  ( int ) ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * 100 );
+            Gimbal_Auto_Shoot.Speed_Prediction.Continuity_timer = Speed_Continuity_Timmer ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed );
+//            OutData[0] = ( int ) ( Gimbal_Auto_Shoot.Armor_yaw * 100 );
+//					OutData[3] =  (int)(Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * 100);
+        }
+
+
+        //-/---------------- ¿¨¶ûÂüÂË²¨²¢¸üÐÂÔÆÌ¨¸ø¶¨½Ç¶È ----------------------------/-//
+#if ENABLE_KALMAN_FILTER == 1
+        kalman_filter_calc ( &kalman_filter_F,
+                             gim.pid.yaw_angle_ref,
+                             gim.pid.pit_angle_ref,
+                             Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed,
+                             Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed
+                           );
+        Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed = kalman_filter_F.filtered_value[2];
+        Gimbal_Auto_Shoot.Filtered_Angular_Pit_Speed = kalman_filter_F.filtered_value[3];
+//        OutData[1] =  (int)(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * 100;
+        //Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed = AvgFilter(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed );
+        //OutData[3] =  (int)(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * 100);
+
+//        gim.pid.yaw_angle_ref =  kalman_filter_F.filtered_value[0];
+//        gim.pid.pit_angle_ref =  kalman_filter_F.filtered_value[1];
+
+#endif
+
+        //-/-------------------- ¼ÆËãÍ¼Ïñ´¦ÀíºÍÔÆÌ¨¶¯×÷ÑÓ³ÙÁ¿£¬×÷ÎªÔ¤²âµÄ²¹³¥ ----------------------/-//
+#if ARMY_SPEED_PREDICTION == 1
+        if ( Gimbal_Auto_Shoot.Image_Gimbal_Delay_Compensation_Flag == 1 )
+        {
+            Gimbal_Auto_Shoot.Image_Gimbal_Delay_Compensation_Flag = 0;
+#if ENABLE_KALMAN_FILTER == 1	           //Ê¹ÓÃ¿¨¶ûÂüÂË²¨Ö®ºóµÄËÙ¶È½øÐÐ²¹³¥£¬²¹³¥Í¼Ïñ´¦ÀíÑÓ³ÙºÍµ¯µÀÑÓ³Ù
+//							Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
+            Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
+            Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation  = ( ( float ) ( ( int ) ( ( Gimbal_Auto_Shoot.Filtered_Angular_Pit_Speed * ( PIT_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay ) + 0.005 ) ) * 100 ) )  / 100  ;
+
+//					    Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay )
+//                                                          					+ Gimbal_Auto_Shoot.Filtered_Yaw_Acceleration
+//					                                                          * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay )
+//					                                                          * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay ) / 2;
+//					    Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay )
+//                                                          					+ Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Acceleration
+//					                                                          * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay )
+//					                                                          * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay ) / 2;
+
+
+
+#else							                       //Ê¹ÓÃÖ±½ÓÇóµÃµÄËÙ¶È½øÐÐ²¹³¥	
+            Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
+            Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed * ( PIT_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
+#endif
+
+        }
+
+        //-/------------------------ ¼ÓÈë²¹³¥£¬¸üÐÂÔÆÌ¨¸ø¶¨½Ç¶È ----------------------/-//
+
+#if ENABLE_KALMAN_FILTER == 1
+
+        if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 2.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
+				{
+        if(Gimbal_Auto_Shoot.Speed_Prediction.Continuity_timer > 20)
+        {
+            Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
+            gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
+            gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
+//            sp_flag = 10;
+
+        }
+			}
+			
+//				else
+//				{
+//					  sp_flag = 0;
+//				}
+//        OutData[3] = ( int ) ( sp_flag * 100 );
+        //Æ«²î½Ç´óÓÚ2¡ã£¬·ÖÎªÁíÖÖÇé¿ö¡£
+        //1¡¢¸ÕÊ¶±ðµ½£¬Æ«²î½Ï´ó£¬Èç¹ûÖ±½Ó²¹³¥»áµ¼ÖÂÔÆÌ¨¶¶¶¯Õðµ´£»
+        //2¡¢Ê¶±ðµ½Ò»¶¨Ê±¼ä£¬µ«ÊÇÓÉÓÚÎÞ²¹³¥µ¼ÖÂ¸ú×ÙÖÍºó
+        //3¡¢ÔÆÌ¨ÔÚ¶¶¶¯£¬µ¼ÖÂyaw·´À¡ÔÚÖÐ¼äÌøÔ¾
+        else
+        {
+            Gimbal_Auto_Shoot.Continue_Large_Err_Cnt++;
+            if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >= 150 )  //300ms£¬³ÖÐø300msµÄÆ«²î£¬±íÃ÷´ËÊ±Îª¸ú×ÙÖÍºó£¬Ðè¼ÓÈë²¹³¥
+            {
+                Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 150;
+                gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
+                gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
+            }
+        }
+
+
+#else
+        if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 2.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
+        {
+            Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
+            gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
+            gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
+        }
+        //Æ«²î½Ç´óÓÚ2¡ã£¬·ÖÎªÁíÖÖÇé¿ö¡£
+        //1¡¢¸ÕÊ¶±ðµ½£¬Æ«²î½Ï´ó£¬Èç¹ûÖ±½Ó²¹³¥»áµ¼ÖÂÔÆÌ¨¶¶¶¯Õðµ´£»
+        //2¡¢Ê¶±ðµ½Ò»¶¨Ê±¼ä£¬µ«ÊÇÓÉÓÚÎÞ²¹³¥µ¼ÖÂ¸ú×ÙÖÍºó
+        //3¡¢ÔÆÌ¨ÔÚ¶¶¶¯£¬µ¼ÖÂyaw·´À¡ÔÚÖÐ¼äÌøÔ¾
+        else
+        {
+            Gimbal_Auto_Shoot.Continue_Large_Err_Cnt++;
+            if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >= 150 )  //300ms£¬³ÖÐø300msµÄÆ«²î£¬±íÃ÷´ËÊ±Îª¸ú×ÙÖÍºó£¬Ðè¼ÓÈë²¹³¥
+            {
+                Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 150;
+                gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
+                gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
+            }
+        }
+
+#endif
+        Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation = 0;         //²¹³¥Ò»´ÎºóÇåÁã
+        Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = 0;
+#endif
+     
+    }
+    else
+    {
+
+        if ( flag_lost == 0 )
+        {
+            auto_lost = 1;
+            auto_lost_timer = 0;
+            auto_mode = AUTO_PATROL;
+            flag_lost = 1;
+            gim.pid.yaw_angle_ref = yaw_Angle;//GMYawEncoder.ecd_angle ;
+            gim.pid.pit_angle_ref = pitch_Angle;//GMPitchEncoder.ecd_angle;
+
+//            pid_clr ( &pid_pit_speed_follow );
+//            pid_clr ( &pid_yaw_speed_follow );
+//            pid_clr ( &pid_yaw_follow );
+//            pid_clr ( &pid_pit_follow );
+
+            pid_clr ( &pid_yaw_speed );
+            pid_clr ( &pid_pit_speed );
+            pid_clr ( &pid_yaw );
+            pid_clr ( &pid_pit );
+#if ENABLE_KALMAN_FILTER == 1
+            kalman_filter_reset ( &kalman_filter_F, &kalman_filter_I );
+#endif
+        }
+//        gim.pid.yaw_angle_fdb =  yaw_Angle;//-GMYawEncoder.ecd_angle;//×îÖÕ×ª»»³É½Ç¶È  ÏµÊýÐèÒªµ÷Õû
+//        gim.pid.pit_angle_fdb =  pitch_Angle;//GMPitchEncoder.ecd_angle;//×îÖÕ×ª»»³É½Ç¶È  ÏµÊýÐèÒªµ÷Õû
+
+        Gimbal_Auto_Shoot.Continue_Recognized_Cnt = 0;
+#if ARMY_SPEED_PREDICTION == 1
+        Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample = 0;
+        Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed = 0;
+        Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed = 0;
+        Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation = 0;
+        Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = 0;
+        Gimbal_Auto_Shoot.Image_Gimbal_Delay_Compensation_Flag = 0;
+        Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
+#endif
+
+	}
+}
+uint32_t losttimer = 0;
+uint8_t lostflag = 0;
+uint8_t start_preloaded = 0;
+uint32_t preloaded_timer = 0;
+void auto_shoot_task(void)
+{
+    if ( !Gimbal_Auto_Shoot.Recognized_Flag )
+    {
+        losttimer ++ ;
+        if ( losttimer >= 500 )
+        {
+            lostflag = 1;
+        }
+    }
+    else
+    {
+        losttimer = 0 ;
+        lostflag = 0 ;
+    }
+
+
+    if ( gim.pid.yaw_angle_fdb < 2.5f + gim.pid.yaw_angle_ref	\
+            && gim.pid.yaw_angle_fdb > -2.5f + gim.pid.yaw_angle_ref )
+        dir_yaw = 1;
+    else
+        dir_yaw = 0;
+
+    if (  gim.pid.pit_angle_fdb < 2.5f + Gimbal_Auto_Shoot.shoot_pitch_angle + Gimbal_Auto_Shoot.Ballistic_Compensation	\
+			&& gim.pid.pit_angle_fdb > -2.5f + Gimbal_Auto_Shoot.shoot_pitch_angle + Gimbal_Auto_Shoot.Ballistic_Compensation )
+    {
+			dir_pitch = 1;
 		}
-		else
+    else
 		{
-				if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD <= PITCH_MIN )
-						pitch_dir = 1;
-				pitch_timer -- ;
+			dir_pitch = 0;
 		}
-		gim.pid.pit_angle_ref = ( float ) ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD );
+
+    /*×Ô¶¯´ò»÷·¢Éä¿ØÖÆÂß¼­
+    	1.ÓÉÓÚÎÞ·¨×°ÏÞÎ»¿ª¹Ø£¬ÐèÏÈ´ò¿ªÄ¦²ÁÂÖÔÙ´ò¿ª²¦ÅÌ£¬²»¿É±ÜÃâ»áÔì³ÉÒ»¶¨³Ì¶ÈÉÏµÄÑÓÊ±£¬³õ²½Îª100ms
+    	2.¹Ø±Õ·¢ÉäÊ±Ó¦Í¬Ê±¹Ø±Õ²¦ÅÌºÍÄ¦²ÁÂÖ
+    	3.×°¼×½øÈëÒ»¶¨ÇøÓòÊ±´¥·¢·¢Éä×´Ì¬AAA
+    	4.ÐèÒªºÍÒ£¿ØÆ÷×´Ì¬ÎÞ·ìÏÎ½Ó±ãÓÚ¿ØÖÆ
+    	5.Ðè²¦ÖÁÌØ¶¨µµÎ»²Å¿ªÆôÉä»÷¹¦ÄÜ
+      6.¹Ø±ÕÖ®ºóÉÏµ¯ÖÁ¶Â×ª
+
+
+    */
+    switch ( friction_wheel_state )
+    {
+        case FRICTION_WHEEL_OFF:
+        {
+            frictionRamp.ResetCounter ( &frictionRamp );
+            if ( RC_CtrlData.rc.s1 != 3  &&  ( new_location.flag == 1 ) ) //´Ó¹Ø±Õµ½start turning
+            {
+                SetShootState ( NOSHOOTING );
+                friction_rotor = 0;
+                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_TICK_COUNT );
+                frictionRamp.ResetCounter ( &frictionRamp );
+                friction_wheel_state = FRICTION_WHEEL_START_TURNNING;
+            }
+        }
+        break;
+        case FRICTION_WHEEL_START_TURNNING:
+        {
+            if ( auto_mode == AUTO_PATROL || lostflag == 1 ) //¸ÕÆô¶¯¾Í±»¹Ø±Õ
+            {
+                LASER_OFF();
+                SetShootState ( NOSHOOTING );
+                friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
+                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
+                frictionRamp.ResetCounter ( &frictionRamp );
+                friction_rotor = 2;
+            }
+            else
+            {
+                friction_rotor = 1;
+                if ( frictionRamp.IsOverflow ( &frictionRamp ) )
+                {
+                    friction_wheel_state = FRICTION_WHEEL_ON;
+                }
+
+            }
+        }
+        break;
+        case FRICTION_WHEEL_ON:
+        {
+
+            if (  lostflag  || RC_CtrlData.rc.s1 == 3  )
+            {
+                friction_rotor = 2;
+                friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
+                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
+                frictionRamp.ResetCounter ( &frictionRamp );
+                SetShootState ( NOSHOOTING );
+            }
+            else if (  ( dir_pitch == 1 ) &&  ( dir_yaw == 1 ) && ( new_location.flag == 1 ) ) //&& (judge_rece_mesg.game_state.game_progress == 4) && ( USARTShootFlag == 1)
+            {
+                SetShootState ( SHOOTING );
+                USARTShootFlag = 0;
+            }
+            else
+            {
+                SetShootState ( NOSHOOTING );
+            }
+        }
+        break;
+
+        case FRICTION_WHEEL_STOP_TURNNING:
+        {
+            friction_rotor = 2;
+            if ( frictionRamp.IsOverflow ( &frictionRamp ) )
+            {
+                friction_rotor = 0;
+                friction_wheel_state = FRICTION_WHEEL_OFF;
+                /*Ô¤°¸£¬ÏÞÎ»¿ª¹Ø²»ºÃÊ¹¾ÍÓÃÕâ¸ö*/
+
+#if  PRELOADED == 1
+                SetShootState ( SHOOTING );
+                start_preloaded = 1;
+                preloaded_timer = 0;
+#endif
+
+            }
+        }
+        break;
+    }
 
 }
 
-void gimbal_param_init ( void )		//ÔÆÌ¨ÈÎÎñ³õÊ¼»¯
+/******************************************
+* input:speed
+*	return : Speed_Continuity_Timmer
+******************************************/
+int Speed_Continuity_Timmer ( float speed )
 {
-		memset(&gim, 0, sizeof(gimbal_t));
-		gim.ctrl_mode      = GIMBAL_NO_ARTI_INPUT;  
-		gim.last_ctrl_mode = GIMBAL_RELAX;
-		gim.input.ac_mode        = NO_ACTION;
-		gim.input.action_angle   = 5.0f;
-		Init_Pitch_Angle = 0;
-		Init_Yaw_Angle = 80;
-		PID_struct_init ( &pid_pit, POSITION_PID , 200, 20,
-                      10, 0.05, 0 );
-		PID_struct_init ( &pid_pit_speed, POSITION_PID , 29000, 29000,
-                      300, 0, 10 );
-
-
-		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 80,
-                      12, 0.05, 0 );
-		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 29000, 29000,
-                      200.0f, 0, 0 );
-	//Ð±ÆÂ³õÊ¼»¯
-    GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
-    GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
-    GMPitchRamp.ResetCounter ( &GMPitchRamp );
-    GMYawRamp.ResetCounter ( &GMYawRamp );
+    static int continuity_timer = 0;
+    static float last_speed = 0.0;
+    if ( ( last_speed > 0 && speed > 0 ) || ( last_speed < 0 && speed < 0 ) )
+    {
+        continuity_timer ++;
+    }
+    else
+    {
+        continuity_timer = 0;
+    }
+    last_speed = speed;
+    return continuity_timer;
 }
+

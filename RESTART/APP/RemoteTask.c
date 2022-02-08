@@ -9,7 +9,6 @@ FrictionWheelState_e friction_wheel_state = FRICTION_WHEEL_OFF;
 
  InputMode_e inputmode = STOP;															//输入模式设定
 static volatile Shoot_State_e shootState = NOSHOOTING;						//射击模式
-static volatile Shooting_State_e Shooting_State = NORMAL_SHOOTING;//正常射击模式
 
 //遥控器数据初始化，斜坡函数等的初始化
 RampGen_t frictionRamp = RAMP_GEN_DAFAULT;  //摩擦轮斜坡
@@ -91,6 +90,10 @@ InputMode_e GetInputMode()									//获取控制模式
 Shoot_State_e GetShootState()     					//获得拨盘状态     和摩擦轮状态设置
 {
     return shootState;
+}
+void SetShootState ( Shoot_State_e state ) //设置拨盘转态     在
+{
+    shootState = state;
 }
 
 
@@ -177,7 +180,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器控制发射
             frictionRamp.ResetCounter ( &frictionRamp );
             if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1  ) //从关闭到start turning
             {
-                shootState = NOSHOOTING ; //拨盘选择是否开启
+                SetShootState ( NOSHOOTING );  //拨盘选择是否开启
                 friction_rotor = 0;
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
@@ -189,7 +192,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器控制发射
         {
             if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1 ) //刚启动就被关闭
             {
-                shootState = NOSHOOTING ; //拨盘选择是否开启
+                SetShootState ( NOSHOOTING );  //拨盘选择是否开启
                 friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
@@ -208,21 +211,23 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器控制发射
         break;
         case FRICTION_WHEEL_ON:								//摩擦轮运行
         {
+						LASER_ON();
             if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1 ) //关闭摩擦轮
             {
                 friction_rotor = 2;
                 friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
-                shootState = NOSHOOTING ; //拨盘选择是否开启
+                SetShootState ( NOSHOOTING );  //拨盘选择是否开启
+								LASER_OFF();
             }
             else if ( sw->switch_value_raw == 2 )
             {
-                shootState = SHOOTING ;  		//拨盘开启
+                SetShootState ( SHOOTING );   		//拨盘开启
             }
             else
             {
-                shootState = NOSHOOTING ;   //拨盘关闭
+                SetShootState ( NOSHOOTING );    //拨盘关闭
             }
         }
         break;

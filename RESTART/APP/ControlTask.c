@@ -22,7 +22,7 @@ void Control_Task(void)
 
 	if(time_tick_1ms%10 == 0)
   {
-//			chassis_task();
+			chassis_task();
 	}		
 
 	

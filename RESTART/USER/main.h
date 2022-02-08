@@ -53,6 +53,8 @@
 #include "Attack.pb-c.h"
 #include "Signal.pb-c.h"
 #include "TurretCommand.pb-c.h"
+#include "filter.h"
+#include "kalman_filter.h"
 
 extern int testflag;		
 

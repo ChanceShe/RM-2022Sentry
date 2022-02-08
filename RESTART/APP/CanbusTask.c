@@ -82,42 +82,8 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
        ( can1_count <= 50 ) ? GetEncoderBias ( &PokeEncoder , msg ) : EncoderProcess ( &PokeEncoder , msg );
     }
     break;
-	
-		case CAN_BUS1_BOSS_FEEDBACK_MSG_ID:                  //上下云台通信
-	{
-
-			LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_ZGYRO ) );
-			revice_main_information ( &main_info, msg );
-			#if Share_remotecontrols
-			set_imput_mode ( &main_info );
-			switch ( GetInputMode() )
-			{
-					case REMOTE_INPUT:
-					{
-							mainBoard_control ( &main_info ); ////遥控器拨杆不同模式  给定量处理
-					}
-					break;
-					case KEY_MOUSE_INPUT:
-					{
-							RandomControl();     //底盘模式和云台模式选择
-					}
-					break;
-					case STOP:
-					{
-							//紧急停车
-					}
-					break;
-					default :
-					{
-//						mainBoard_control ( &main_info );
-							RandomControl();
-					}
-					break;
-			}
-			#endif
-        }
-        break;
-
+		default:
+		break;
 	}
 }
 void Can2ReceiveMsgProcess(CanRxMsg * msg)

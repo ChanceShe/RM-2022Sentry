@@ -63,8 +63,8 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 	if(Uart4_Protobuf_Receive_Gimbal_Angle->command == 1)
 	{	
 		  LASER_ON();
-			new_location.x	=  Uart4_Protobuf_Receive_Gimbal_Angle->yaw;
-			new_location.y	=  Uart4_Protobuf_Receive_Gimbal_Angle->pitch;
+			new_location.x	=  -Uart4_Protobuf_Receive_Gimbal_Angle->yaw;
+			new_location.y	=  -Uart4_Protobuf_Receive_Gimbal_Angle->pitch;
 		  new_location.dis = Uart4_Protobuf_Receive_Gimbal_Angle->diatance;
 			new_location.flag = 1;	
 	}

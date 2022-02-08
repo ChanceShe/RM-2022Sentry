@@ -6,6 +6,7 @@ void BSP_Init(void)			//外设初始化
 	IWDG_Configuration();
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	Led_Configuration();
+	Laser_Configuration();
 	TIM6_Configuration();
 	PWM_Configuration();
 	

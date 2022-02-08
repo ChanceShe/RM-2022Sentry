@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\RESTART;.\CORE;.\RmLib;.\STLIB;.\USER;.\APP;.\BSP;.\Hi220;.\Protocol</IncludePath>
+              <IncludePath>..\RESTART;.\CORE;.\RmLib;.\STLIB;.\USER;.\APP;.\BSP;.\Hi220;.\Protocol;.\AutoShoot</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -479,26 +479,6 @@
               <FileName>Judge.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\Judge.c</FilePath>
-            </File>
-            <File>
-              <FileName>TurretCommand.pb-c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\TurretCommand.pb-c.c</FilePath>
-            </File>
-            <File>
-              <FileName>protobuf-c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\protobuf-c.c</FilePath>
-            </File>
-            <File>
-              <FileName>Signal.pb-c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\Signal.pb-c.c</FilePath>
-            </File>
-            <File>
-              <FileName>Attack.pb-c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\Attack.pb-c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -729,6 +709,41 @@
               <FileName>Protocol.lib</FileName>
               <FileType>4</FileType>
               <FilePath>.\Protocol\Protocol.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>AutoShoot</GroupName>
+          <Files>
+            <File>
+              <FileName>Attack.pb-c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\AutoShoot\Attack.pb-c.c</FilePath>
+            </File>
+            <File>
+              <FileName>protobuf-c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\AutoShoot\protobuf-c.c</FilePath>
+            </File>
+            <File>
+              <FileName>Signal.pb-c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\AutoShoot\Signal.pb-c.c</FilePath>
+            </File>
+            <File>
+              <FileName>TurretCommand.pb-c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\AutoShoot\TurretCommand.pb-c.c</FilePath>
+            </File>
+            <File>
+              <FileName>kalman_filter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\AutoShoot\kalman_filter.c</FilePath>
+            </File>
+            <File>
+              <FileName>filter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\AutoShoot\filter.c</FilePath>
             </File>
           </Files>
         </Group>

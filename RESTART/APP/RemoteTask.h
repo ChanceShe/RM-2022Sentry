@@ -28,10 +28,10 @@
 
 #define REMOTE_SWITCH_VALUE_BUF_DEEP   16u
 
-#define PITCH_MAX 35.0f
-#define PITCH_MIN -30.0f
-#define YAW_MAX 100				//云台角度的范围
-#define YAW_MIN -70
+#define PITCH_MAX 5.0f
+#define PITCH_MIN -35.0f
+#define YAW_MAX 80				//云台角度的范围
+#define YAW_MIN -80
 
 //遥控器
 typedef __packed struct
@@ -103,12 +103,6 @@ typedef enum
     NOSHOOTING = 0,
     SHOOTING = 1,
 } Shoot_State_e;
-typedef enum
-{
-    NORMAL_SHOOTING = 0,//正常射击模式，鼠标按住一直转
-    ONE_SHOOTING = 1,//鼠标单击一次只发一颗弹丸
-    THREE_SHOOTING = 2,//单击一次三连发
-} Shooting_State_e; //弹丸射击模式
 
 //remote data process底盘前后/左右/旋转速度给定
 typedef __packed struct
@@ -152,6 +146,7 @@ void RemoteTaskInit(void);								//斜坡初始化
 extern RampGen_t frictionRamp;  					//摩擦轮斜坡
 #define FRICTION_RAMP_TICK_COUNT			100 //起转斜坡斜率
 #define FRICTION_RAMP_OFF_TICK_COUNT	30	//停转斜坡斜率
+extern FrictionWheelState_e friction_wheel_state ;
 
 
 void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val);		//遥控器读值
@@ -161,7 +156,7 @@ void SetInputMode(Remote *rc);
 uint8_t IsRemoteBeingAction ( void );
 InputMode_e GetInputMode();
 Shoot_State_e GetShootState ( void );
-Shooting_State_e GetShootingState ( void );
+void SetShootState ( Shoot_State_e v );
 void RemoteShootControl(RemoteSwitch_t *sw, uint8_t val);		//遥控左拨杆模式射击
 void Remote_Rotate_Reverse_Control(RemoteSwitch_t *sw, uint8_t val);		//遥控左拨杆模式小陀螺
 

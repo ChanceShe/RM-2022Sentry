@@ -62,7 +62,23 @@ void gimbal_mode_handle ( void )    //云台模式切换
     switch ( gim.ctrl_mode )
     {
         case GIMBAL_RELAX:    //(0)
-
+						if ( GetInputMode() == REMOTE_INPUT )
+            {
+                gim.ctrl_mode = GIMBAL_INIT;
+                GMPitchRamp.ResetCounter ( &GMPitchRamp );
+                if ( gim.last_ctrl_mode != GIMBAL_REMOTE_MODE )
+                {
+                    GimbalRef.yaw_angle_dynamic_ref = yaw_Angle;//-GMYawEncoder.ecd_angle;
+                }
+            }
+            else if ( GetInputMode() == KEY_MOUSE_INPUT )
+            {
+                gim.ctrl_mode = GIMBAL_AUTO_MODE;
+            }
+						else
+						{
+								gim.ctrl_mode = GIMBAL_RELAX;
+						}
         break;
 				
         case GIMBAL_INIT:    //(1)
@@ -83,6 +99,10 @@ void gimbal_mode_handle ( void )    //云台模式切换
             {
                 gim.ctrl_mode = GIMBAL_INIT;
             }
+						else
+						{
+								gim.ctrl_mode = GIMBAL_RELAX;
+						}
         break;
 
         case GIMBAL_REMOTE_MODE:     //(3)
@@ -92,11 +112,15 @@ void gimbal_mode_handle ( void )    //云台模式切换
             }
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
             {
-                gim.ctrl_mode = GIMBAL_PATROL_MODE;
+                gim.ctrl_mode = GIMBAL_AUTO_MODE;
             }
+						else
+						{
+								gim.ctrl_mode = GIMBAL_RELAX;
+						}
         break;
 
-        case GIMBAL_PATROL_MODE:    //(5)
+        case GIMBAL_AUTO_MODE:    //(5)
             if ( GetInputMode() == REMOTE_INPUT )
             {
                 gim.ctrl_mode = GIMBAL_INIT;
@@ -108,8 +132,12 @@ void gimbal_mode_handle ( void )    //云台模式切换
             }
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
             {
-                    gim.ctrl_mode = GIMBAL_PATROL_MODE;
+                    gim.ctrl_mode = GIMBAL_AUTO_MODE;
             }
+						else
+						{
+								gim.ctrl_mode = GIMBAL_RELAX;
+						}
         break;
         default:
         break;

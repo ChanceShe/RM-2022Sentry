@@ -2,18 +2,6 @@
 #define _AUTO_SHOOT_CONTROL_TASK_H_
 #include "main.h"
 
-/*   auto shoot   20190717   */
-#define   GIMBAL_YAW_MID   640 + IMAGE_X_OFFET//IMAGE_X_OFFET
-#define   GIMBAL_PIT_MID   512 + IMAGE_Y_OFFET
-
-
-/*   small buf   20190717   */
-//#define   GIMBAL_YAW_MID   640-30
-//#define   GIMBAL_PIT_MID   360
-
-
-
-
 typedef struct
 {
   float x;
