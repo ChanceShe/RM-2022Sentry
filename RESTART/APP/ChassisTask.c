@@ -42,7 +42,7 @@ void chassis_task(void)
     break;
     }
 
-		/*   检测两侧圆柱   放在最后 确保不撞柱子  */
+		/*   检测两侧圆柱  */
 		if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_0 ) == 0 )
     {
       sensor_l = sensor_on;
@@ -59,18 +59,28 @@ void chassis_task(void)
     {
       sensor_r = sensor_off;
     }
+		/* 放在最后 确保不撞柱子 */
     if (  sensor_r == sensor_on && chassis.vx > 0 )
-    {   //红外开关，
-        chassis.vx = 0;
+    {
+			if(crazyflag == 1)
+			{
+				crazyspeed = -crazyspeed;
+			}
+			else
+				chassis.vx = -chassis.vx;
     }
     if (  sensor_l == sensor_on && chassis.vx < 0 )
     {
-        chassis.vx = 0;
+       if(crazyflag == 1)
+			{
+				crazyspeed = -crazyspeed;
+			}
+			else
+				chassis.vx = -chassis.vx;
     }
-
+		
 		chassis.wheel_speed_ref = chassis.vx;						//vx>0向右,vx<0向左
 		chassis.wheel_speed_fdb=CM1Encoder.filter_rate;
-
 
 		chassis.current = pid_calc(&pid_spd, chassis.wheel_speed_fdb, chassis.wheel_speed_ref);
 
@@ -122,36 +132,24 @@ void chassis_patrol_handle(void)
         break;
     }
 
-//		if( 1 && (crazyflag == 0) )		//1可替换成血量小于600
-//		{
-//				crazyflag = 1;
-//				
-//		}
-//		if(1)
-//		{
-//			if(crazytime <= 0)
-//			{
-//				crazyspeeddir = rand()%2;
-//				if(crazyspeeddir)
-//				{
-//					crazyspeed = rand()%200 + 400;
-//				}
-//				else
-//				{
-//					crazyspeed = -(rand()%200 + 400);
-//				}
-//				crazytime  = rand()%300 + 300;
-//			}
-//			if(sensor_l == sensor_on || sensor_r == sensor_on)
-//			{
-//				crazytime +=200;
-//				crazyspeed = -crazyspeed;
-//			}
-//			chassis.vx = crazyspeed;
-//			crazytime--;
-//		}
-//		
-
+		if(crazyflag)
+		{
+			if(crazytime == 0)
+			{
+				crazyspeeddir = rand()%2;
+				if(crazyspeeddir == 1)
+				{
+					crazyspeed = rand()%150 + 500;
+				}
+				else if(crazyspeeddir == 0)
+				{
+					crazyspeed = -(rand()%150 + 500);
+				}
+				crazytime  = rand()%100 + 50;
+			}
+			chassis.vx = crazyspeed;
+			crazytime--;
+		}
 
 }
 
@@ -176,5 +174,4 @@ void chassis_param_init(void)//底盘参数初始化
 	
 	robot_direction = direction_right;
   PID_struct_init ( &pid_spd, POSITION_PID, 12000, 3000, 45.0f, 0, 0 );
-//  PID_struct_init(&pid_chassis_angle, POSITION_PID, MAX_CHASSIS_VR_SPEED, 70, 5.0f, 0.01,30.0f);//xisanhao
 }
