@@ -1,19 +1,33 @@
 #include "main.h"
 void modeswitch_task ( void )   //在controltask里
 {
-    get_gimbal_mode();
     get_chassis_mode();
+	  get_last_mode();
 }
-void get_gimbal_mode ( void )  // 从上往下数第一个获得模式，云台
+
+static void get_last_mode ( void ) //云台和底盘的上一个模式
 {
-	
+    chassis.last_ctrl_mode = chassis.ctrl_mode;
 }
 void get_chassis_mode ( void )
 {
-//	if ( GetInputMode() == KEY_MOUSE_INPUT )
+//		    if ( gim.ctrl_mode == GIMBAL_INIT )
 //    {
-//      //vehicle_control_chassis();//车间通讯控制哨兵
+//        chassis.ctrl_mode = CHASSIS_STOP;
 //    }
-//   else
-//     chassis.ctrl_mode  =  CHASSIS_PATROL;
+//    else
+//    {
+        chassis_mode_handle();
+//    }
+
+}
+void chassis_mode_handle(void)
+{
+		if ( GetInputMode() == KEY_MOUSE_INPUT )
+		{
+				chassis.ctrl_mode = CHASSIS_PATROL;
+		}
+		else
+				chassis.ctrl_mode  =  CHASSIS_REMOTE;
+
 }

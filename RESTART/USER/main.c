@@ -1,7 +1,5 @@
 #include "main.h"
 
-
-
 int main(void)
 {
 	BSP_Init();							//外设初始化
@@ -13,7 +11,6 @@ int main(void)
 		{
 			RED_LED_TOGGLE();
 		}
-		
 	}
 }
 

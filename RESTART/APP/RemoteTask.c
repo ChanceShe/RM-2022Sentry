@@ -7,9 +7,8 @@ Gimbal_Ref_t GimbalRef;
 FrictionWheelState_e friction_wheel_state = FRICTION_WHEEL_OFF;
 
 
-static InputMode_e inputmode = STOP;															//输入模式设定
+ InputMode_e inputmode = STOP;															//输入模式设定
 static volatile Shoot_State_e shootState = NOSHOOTING;						//射击模式
-static volatile Shooting_State_e Shooting_State = NORMAL_SHOOTING;//正常射击模式
 
 //遥控器数据初始化，斜坡函数等的初始化
 RampGen_t frictionRamp = RAMP_GEN_DAFAULT;  //摩擦轮斜坡
@@ -58,14 +57,12 @@ void RemoteDataPrcess(uint8_t *pData)
     case REMOTE_INPUT:
     {
       //遥控器控制模式
-			chassis.ctrl_mode = CHASSIS_CONTROL;
       RemoteControlProcess(&(RC_CtrlData.rc));
     }
     break;
     case KEY_MOUSE_INPUT:
     {
       //巡逻模式
-			chassis.ctrl_mode = CHASSIS_PATROL;
     }
     break;
     case STOP:
@@ -78,6 +75,13 @@ void RemoteDataPrcess(uint8_t *pData)
 }
 
 
+uint8_t IsRemoteBeingAction ( void )
+{
+
+    return ( fabs ( ChassisSpeedRef.forward_back_ref ) >= 10 || fabs ( ChassisSpeedRef.left_right_ref ) >= 10 \
+					|| fabs ( GimbalRef.yaw_speed_ref ) >= 10 || fabs ( GimbalRef.pitch_speed_ref ) >= 10 );
+
+}
 
 InputMode_e GetInputMode()									//获取控制模式
 {
@@ -86,6 +90,10 @@ InputMode_e GetInputMode()									//获取控制模式
 Shoot_State_e GetShootState()     					//获得拨盘状态     和摩擦轮状态设置
 {
     return shootState;
+}
+void SetShootState ( Shoot_State_e state ) //设置拨盘转态     在
+{
+    shootState = state;
 }
 
 
@@ -104,6 +112,7 @@ void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val)
   /* 最老的状态值的索引 */
   sw->buf_end_index = (sw->buf_index + 1)%REMOTE_SWITCH_VALUE_BUF_DEEP;
 
+	
   /* 合并三个值 */
   sw->switch_value2 = (sw->switch_value_buf[sw->buf_end_index]<<4)|sw->switch_value1;
   /* 长按判断 */
@@ -131,12 +140,12 @@ void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val)
 //输入模式设置
 void SetInputMode(Remote *rc)
 {
-  if(rc->s2 == 1)
+  if(rc->s2 == 3)
     {
       inputmode = REMOTE_INPUT;				//遥控器模式
 
     }
-  else if(rc->s2 == 3)
+  else if(rc->s2 == 1)
     {
       inputmode = KEY_MOUSE_INPUT;		//巡逻模式
 
@@ -147,86 +156,91 @@ void SetInputMode(Remote *rc)
     }
 
 }
+
 //遥控器控制模式处理
 RemoteSwitch_t switch1;   //遥控器左侧拨杆
 void RemoteControlProcess(Remote *rc)
 {
 	ChassisSpeedRef.forward_back_ref = (rc->ch1- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
   ChassisSpeedRef.left_right_ref   = (rc->ch0- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
+	GimbalRef.pitch_angle_dynamic_ref += ( rc->ch3 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_PITCH_ANGLE_INC_FACT;
+  GimbalRef.yaw_angle_dynamic_ref   += ( rc->ch2 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_YAW_ANGLE_INC_FACT  ;
 	RemoteShootControl ( &switch1, rc->s1 ); //s1   遥控器控制发射
 
 }
 
-void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器  -选择开启摩擦轮和激光
+void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器控制发射
 {
-    GetRemoteSwitchAction ( sw, val ); //   遥控器的复杂s1  ，模式切换的索引
+//    GetRemoteSwitchAction ( sw, val ); //   遥控器的复杂s1  ，模式切换的索引
 
-    switch ( friction_wheel_state )
-    {
-        case FRICTION_WHEEL_OFF:								//摩擦轮关闭
-        {
-            frictionRamp.ResetCounter ( &frictionRamp );
-            if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1  ) //从关闭到start turning
-            {
-                shootState = NOSHOOTING ; //拨盘选择是否开启
-                friction_rotor = 0;
-                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_TICK_COUNT );
-                frictionRamp.ResetCounter ( &frictionRamp );
-                friction_wheel_state = FRICTION_WHEEL_START_TURNNING;
-            }
-        }
-        break;
-        case FRICTION_WHEEL_START_TURNNING:			//摩擦轮斜坡启动
-        {
-            if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1 ) //刚启动就被关闭
-            {
-                shootState = NOSHOOTING ; //拨盘选择是否开启
-                friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
-                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
-                frictionRamp.ResetCounter ( &frictionRamp );
-                friction_rotor = 2;
-            }
-            else
-            {
-                friction_rotor = 1;
-                if ( frictionRamp.IsOverflow ( &frictionRamp ) )
-                {
-                    friction_wheel_state = FRICTION_WHEEL_ON;
-                }
+//    switch ( friction_wheel_state )
+//    {
+//        case FRICTION_WHEEL_OFF:								//摩擦轮关闭
+//        {
+//            frictionRamp.ResetCounter ( &frictionRamp );
+//            if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1  ) //从关闭到start turning
+//            {
+//                SetShootState ( NOSHOOTING );  //拨盘选择是否开启
+//                friction_rotor = 0;
+//                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_TICK_COUNT );
+//                frictionRamp.ResetCounter ( &frictionRamp );
+//                friction_wheel_state = FRICTION_WHEEL_START_TURNNING;
+//            }
+//        }
+//        break;
+//        case FRICTION_WHEEL_START_TURNNING:			//摩擦轮斜坡启动
+//        {
+//            if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1 ) //刚启动就被关闭
+//            {
+//                SetShootState ( NOSHOOTING );  //拨盘选择是否开启
+//                friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
+//                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
+//                frictionRamp.ResetCounter ( &frictionRamp );
+//                friction_rotor = 2;
+//            }
+//            else
+//            {
+//                friction_rotor = 1;
+//                if ( frictionRamp.IsOverflow ( &frictionRamp ) )
+//                {
+//                    friction_wheel_state = FRICTION_WHEEL_ON;
+//                }
 
-            }
-        }
-        break;
-        case FRICTION_WHEEL_ON:								//摩擦轮运行
-        {
-            if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1 ) //关闭摩擦轮
-            {
-                friction_rotor = 2;
-                friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
-                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
-                frictionRamp.ResetCounter ( &frictionRamp );
-                shootState = NOSHOOTING ; //拨盘选择是否开启
-            }
-            else if ( sw->switch_value_raw == 2 )
-            {
-                shootState = SHOOTING ;  		//拨盘开启
-            }
-            else
-            {
-                shootState = NOSHOOTING ;   //拨盘关闭
-            }
-        }
-        break;
+//            }
+//        }
+//        break;
+//        case FRICTION_WHEEL_ON:								//摩擦轮运行
+//        {
+//						LASER_ON();
+//            if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1 ) //关闭摩擦轮
+//            {
+//                friction_rotor = 2;
+//                friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
+//                frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
+//                frictionRamp.ResetCounter ( &frictionRamp );
+//                SetShootState ( NOSHOOTING );  //拨盘选择是否开启
+//								LASER_OFF();
+//            }
+//            else if ( sw->switch_value_raw == 2 )
+//            {
+//                SetShootState ( SHOOTING );   		//拨盘开启
+//            }
+//            else
+//            {
+//                SetShootState ( NOSHOOTING );    //拨盘关闭
+//            }
+//        }
+//        break;
 
-        case FRICTION_WHEEL_STOP_TURNNING:
-        {
-            friction_rotor = 2;
-            if ( frictionRamp.IsOverflow ( &frictionRamp ) )
-            {
-                friction_rotor = 0;
-                friction_wheel_state = FRICTION_WHEEL_OFF;
-            }
-        }
-        break;
-    }
+//        case FRICTION_WHEEL_STOP_TURNNING:			//摩擦轮停转
+//        {
+//            friction_rotor = 2;
+//            if ( frictionRamp.IsOverflow ( &frictionRamp ) )
+//            {
+//                friction_rotor = 0;
+//                friction_wheel_state = FRICTION_WHEEL_OFF;
+//            }
+//        }
+//        break;
+//    }
 }
