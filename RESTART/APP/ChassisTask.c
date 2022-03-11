@@ -59,26 +59,41 @@ void chassis_task(void)
     {
       sensor_r = sensor_off;
     }
-		/* 放在最后 确保不撞柱子 */
-    if (  sensor_r == sensor_on && chassis.vx > 0 )
-    {
-			if(crazyflag == 1)
-			{
-				crazyspeed = -crazyspeed;
-			}
-			else
-				chassis.vx = -chassis.vx;
-    }
-    if (  sensor_l == sensor_on && chassis.vx < 0 )
-    {
-       if(crazyflag == 1)
-			{
-				crazyspeed = -crazyspeed;
-			}
-			else
-				chassis.vx = -chassis.vx;
-    }
 		
+		/* 放在最后 确保不撞柱子 */
+		if(chassis.ctrl_mode == CHASSIS_PATROL)					//巡逻模式变向
+		{
+			if (  sensor_r == sensor_on && chassis.vx > 0 )
+			{
+				if(crazyflag == 1)
+				{
+					crazyspeed = -crazyspeed;
+				}
+				else
+					chassis.vx = -chassis.vx;
+			}
+			if (  sensor_l == sensor_on && chassis.vx < 0 )
+			{
+				 if(crazyflag == 1)
+				{
+					crazyspeed = -crazyspeed;
+				}
+				else
+					chassis.vx = -chassis.vx;
+			}
+		}
+		else if(chassis.ctrl_mode == CHASSIS_REMOTE)		//遥控器模式停车
+		{
+			if (  sensor_r == sensor_on && chassis.vx > 0 )
+			{
+				chassis.vx = 0;
+			}
+			if (  sensor_l == sensor_on && chassis.vx < 0 )
+			{
+				chassis.vx = 0;
+			}
+		}
+
 		chassis.wheel_speed_ref = chassis.vx;						//vx>0向右,vx<0向左
 		chassis.wheel_speed_fdb=CM1Encoder.filter_rate;
 
@@ -92,7 +107,6 @@ void chassis_task(void)
 
 void chassis_remote_handle(void)
 {
-//  chassis.vy = ChassisSpeedRef.left_right_ref;
   chassis.vx = ChassisSpeedRef.forward_back_ref;
 }
 
@@ -145,7 +159,7 @@ void chassis_patrol_handle(void)
 				{
 					crazyspeed = -(rand()%150 + 500);
 				}
-				crazytime  = rand()%100 + 50;
+				crazytime  = rand()%50 + 50;
 			}
 			chassis.vx = crazyspeed;
 			crazytime--;
