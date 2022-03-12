@@ -47,6 +47,8 @@ void CAN2_Send_Msg(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm
 void CAN2_Send_Msg1(CAN_TypeDef *CANx, int16_t cm5_iq, int16_t cm6_iq, int16_t cm7_iq, int16_t cm8_iq);
 void CAN1_Send_Msg(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3_iq, int16_t cm4_iq);
 void CAN1_Send_Msg1(CAN_TypeDef *CANx, int16_t cm5_iq, int16_t cm6_iq, int16_t cm7_iq, int16_t cm8_iq);
+void upperboard_send_to_mainboard ( CAN_TypeDef *CANx, uint16_t ch2, uint16_t ch3, uint8_t s1, uint8_t s2,	//上下通讯
+                                    uint8_t coler,uint16_t shoot_heart, uint8_t VehicleShootFlag, uint8_t JudgeShootFlag );
 
 
 #endif

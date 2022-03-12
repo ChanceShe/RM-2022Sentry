@@ -218,3 +218,25 @@ void CAN2_Send_Msg1(CAN_TypeDef *CANx, int16_t cm5_iq, int16_t cm6_iq, int16_t c
     CAN_Transmit(CANx,&tx_message);
 }
 
+void upperboard_send_to_mainboard ( CAN_TypeDef *CANx, uint16_t ch2, uint16_t ch3, uint8_t s1, uint8_t s2 , uint8_t coler,
+                                    uint16_t shoot_heart, uint8_t VehicleShootFlag, uint8_t JudgeShootFlag )							//上下板通讯
+{
+    CanTxMsg tx_message;
+
+    tx_message.StdId = 0x408;
+    tx_message.IDE = CAN_Id_Standard;
+    tx_message.RTR = CAN_RTR_Data;
+    tx_message.DLC = 0x08;
+
+    tx_message.Data[0] = ( uint8_t ) ( ch2 >> 8 );
+    tx_message.Data[1] = ( uint8_t ) ch2;
+    tx_message.Data[2] = ( uint8_t ) ( ch3 >> 8 );
+    tx_message.Data[3] = ( uint8_t ) ch3;
+    tx_message.Data[4] = ( uint8_t ) ( s1 << 4 ) | s2;
+    tx_message.Data[5] = ( uint8_t ) ( coler << 7 ) | ( VehicleShootFlag << 6 ) | JudgeShootFlag ;
+    tx_message.Data[6] = ( uint8_t ) ( shoot_heart >> 8 );
+    tx_message.Data[7] = ( uint8_t ) shoot_heart;
+
+    CAN_Transmit ( CANx, &tx_message );
+}
+

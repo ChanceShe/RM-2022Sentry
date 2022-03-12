@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\RESTART;.\CORE;.\RmLib;.\STLIB;.\USER;.\APP;.\BSP</IncludePath>
+              <IncludePath>..\RESTART;.\CORE;.\RmLib;.\STLIB;.\USER;.\APP;.\BSP;.\Protocol</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -464,6 +464,11 @@
               <FileType>1</FileType>
               <FilePath>.\BSP\can2.c</FilePath>
             </File>
+            <File>
+              <FileName>Judge.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\Judge.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -503,6 +508,11 @@
               <FileName>ModeswitchTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\ModeswitchTask.c</FilePath>
+            </File>
+            <File>
+              <FileName>Vehicle_Com_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\APP\Vehicle_Com_Task.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -7,12 +7,15 @@
 #include "stdarg.h"
 #include "config.h"
 
+
 #include "delay.h"
 #include "iwdg.h"
 #include "common.h"
 #include "pid.h"
 #include "ramp.h"
+#include "protocol.h"
 #include "Fifo.h"
+#include "Judge.h"
 #include "LostCounter.h"
 #include "init.h"
 
@@ -38,5 +41,6 @@
 #include "ShootTask.h"
 #include "ModeswitchTask.h"
 #include "SuperviseTask.h"
+#include "Vehicle_Com_Task.h"
 
 #endif 

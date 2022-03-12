@@ -1,4 +1,4 @@
-#ifndef __SYS_H_¡¢_
+#ifndef __SYS_H__
 #define __SYS_H__
 
 //==========================================================
@@ -9,8 +9,6 @@
 
 #define GMPitchEncoder_Offset  	4444
 #define GMYawEncoder_Offset   	6435
-
-
 //==========================================================
 
 #endif
