@@ -99,7 +99,7 @@ void chassis_task(void)
 
 		chassis.current = pid_calc(&pid_spd, chassis.wheel_speed_fdb, chassis.wheel_speed_ref);
 
-		CAN2_Send_Msg1(CAN2,chassis.current,0,0,0);
+		CAN1_Send_Msg1(CAN1,chassis.current,0,0,0);
 
     
 

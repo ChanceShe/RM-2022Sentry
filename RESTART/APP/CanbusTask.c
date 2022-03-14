@@ -67,12 +67,12 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
 	can1_count++;
 	switch(msg->StdId)
   {
-		case CAN_BUS1_POKE_FEEDBACK_MSG_ID :   //拨弹电机
-    {
-       //LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR4));
-       ( can1_count <= 50 ) ? GetEncoderBias ( &PokeEncoder , msg ) : EncoderProcess ( &PokeEncoder , msg );
-    }
-    break;
+		case CAN_BUS1_CHASSIS_MOTOR_FEEDBACK_MSG_ID:		//底盘主动轮
+		{
+			LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR1 ) );
+			( can2_count <= 50 ) ? GetEncoderBias ( &CM1Encoder , msg ) : EncoderProcess ( &CM1Encoder , msg ); //获取到编码器的初始偏差值
+		}
+		break;
 	}
 }
 
@@ -81,13 +81,7 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
     can2_count++;
 		switch(msg->StdId)
 		{
-			case CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID:		//底盘主动轮
-      {
-        LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR1 ) );
-        ( can2_count <= 50 ) ? GetEncoderBias ( &CM1Encoder , msg ) : EncoderProcess ( &CM1Encoder , msg ); //获取到编码器的初始偏差值
 
-      }
-      break;
 			case CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID:    //云台电机处理
       {
          LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR6 ) );
@@ -126,6 +120,13 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
           }
 			}
 			break;
+			case CAN_BUS2_POKE_FEEDBACK_MSG_ID :   //拨弹电机
+			{
+				 //LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR4));
+				 ( can1_count <= 50 ) ? GetEncoderBias ( &PokeEncoder , msg ) : EncoderProcess ( &PokeEncoder , msg );
+			}
+			break;
+
 		  case CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID:
       {
           LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );

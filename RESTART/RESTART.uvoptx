@@ -118,7 +118,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>割?</Name>
+          <Name>d</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -187,6 +187,11 @@
           <count>6</count>
           <WinNumber>1</WinNumber>
           <ItemText>crazytime</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>CM1Encoder,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

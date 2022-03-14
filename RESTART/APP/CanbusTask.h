@@ -3,14 +3,15 @@
 #include "main.h"
 
 /* CAN Bus 1 */  
-#define CAN_BUS1_POKE_FEEDBACK_MSG_ID            			 0x205    		//拨盘
+#define CAN_BUS1_CHASSIS_MOTOR_FEEDBACK_MSG_ID         0x205    		//   底盘主动轮
 
 
 /* CAN Bus 2 */ 
 #define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    		// 6  yaw       can2        0x206上云台yaw
-#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   			//  7   pitch    can2       0x207上云台pitch
+#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   			// 7  pitch     can2        0x207上云台pitch
 
-#define CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID         0x205    		//   底盘主动轮
+#define CAN_BUS2_POKE_FEEDBACK_MSG_ID            			 0x205    		//拨盘
+
 #define CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID       0x201    		//   上云台摩擦轮  
 #define CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID       0x202    		//   上云台摩擦轮   
 
