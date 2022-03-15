@@ -4,14 +4,9 @@ static uint32_t can1_count = 0;
 static uint32_t can2_count = 0;
 
 //CAN1电机编码器
-volatile Encoder PokeEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0};								//底盘主动轮
 
 //CAN2电机编码器
-volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0};								//底盘主动轮
-volatile Encoder GMYawEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};			//上云台Yaw
-volatile Encoder GMPitchEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
-volatile Encoder Friction1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
-volatile Encoder Friction2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
 
 
 
@@ -81,65 +76,6 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
     can2_count++;
 		switch(msg->StdId)
 		{
-
-			case CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID:    //云台电机处理
-      {
-         LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR6 ) );
-         //GMPitchEncoder.ecd_bias = pitch_ecd_bias;
-         EncoderProcess ( &GMPitchEncoder , msg );
-         //码盘中间值设定也需要修改
-         if ( can2_count >= 90 && can2_count <= 100 )
-         {
-            if ( ( GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value ) < -4096 )
-            {
-                GMPitchEncoder.ecd_bias = GMPitchEncoder_Offset + 8192;
-            }
-            else if ( ( GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value ) > 4096 )
-            {
-                GMPitchEncoder.ecd_bias = GMPitchEncoder_Offset - 8192;
-            }
-         }
-			}
-			break;
-			case CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID ://云台电机处理
-			{
-					EncoderProcess ( &GMYawEncoder , msg );
-					LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR5 ) );
-					//GMYawEncoder.ecd_bias = yaw_ecd_bias;
-					// 比较保存编码器的值和偏差值，如果编码器的值和初始偏差之间差距超过阈值，将偏差值做处理，防止出现云台反方向运动
-					if ( can2_count >= 90 && can2_count <= 100 )
-					{
-             if ( ( GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value ) < -4096 )
-             {
-                 GMYawEncoder.ecd_bias = GMYawEncoder_Offset + 8192;
-             }
-             else if ( ( GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value ) > 4096 )
-             {
-                 GMYawEncoder.ecd_bias = GMYawEncoder_Offset - 8192;
-             }
-          }
-			}
-			break;
-			case CAN_BUS2_POKE_FEEDBACK_MSG_ID :   //拨弹电机
-			{
-				 //LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR4));
-				 ( can1_count <= 50 ) ? GetEncoderBias ( &PokeEncoder , msg ) : EncoderProcess ( &PokeEncoder , msg );
-			}
-			break;
-
-		  case CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID:
-      {
-          LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
-          ( can2_count <= 50 ) ? GetEncoderBias ( &Friction1Encoder , msg ) : EncoderProcess ( &Friction1Encoder , msg );
-      }
-      break;
-      case CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID:
-      {
-          LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
-          ( can2_count <= 50 ) ? GetEncoderBias ( &Friction2Encoder , msg ) : EncoderProcess ( &Friction2Encoder , msg );
-      }
-      break;
-
 			default:
 			{
 			}

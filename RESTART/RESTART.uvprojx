@@ -500,11 +500,6 @@
               <FilePath>.\APP\SuperviseTask.c</FilePath>
             </File>
             <File>
-              <FileName>ShootTask.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\APP\ShootTask.c</FilePath>
-            </File>
-            <File>
               <FileName>ModeswitchTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\ModeswitchTask.c</FilePath>

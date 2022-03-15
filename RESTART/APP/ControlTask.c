@@ -17,11 +17,6 @@ void Control_Task(void)
 		modeswitch_task();	
 	}	
 	
-	if(time_tick_1ms%5 == 0)
-  {
-		shot_task();
-	}
-
 	if(time_tick_1ms%10 == 0)
   {
 			chassis_task();
