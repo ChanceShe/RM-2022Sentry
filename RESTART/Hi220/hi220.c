@@ -3,9 +3,9 @@
 
 HI220_Stucture HI220_Data_From_Usart;
 Hi220_Flags_t Hi220_Flags = {0};
+
 float yaw_Angle,pitch_Angle,roll_Angle; 
 float pitch_Gyro,yaw_Gyro;
-float yaw_Speed,pitch_Speed;
 
 static void crc16_update(uint16_t *currectCrc, const uint8_t *src, uint32_t lengthInBytes)
 {
@@ -254,6 +254,7 @@ void USART6_IRQHandler(void)                	//串口1中断服务程序
 //	}
 //}
 
+float yaw_Speed,pitch_Speed;
 
 void Hi220_getYawPitchRoll() 
 {  
@@ -261,11 +262,11 @@ void Hi220_getYawPitchRoll()
 	volatile static int Yaw_count,Pitch_count;
 
 
-  yaw_Gyro = -HI220_Data_From_Usart.Ang_Velocity_Z * 0.1f;
+  yaw_Gyro = HI220_Data_From_Usart.Ang_Velocity_Z * 0.1f;
 	pitch_Gyro = -HI220_Data_From_Usart.Ang_Velocity_X * 0.1f;
 	
 	Last_yaw_temp = Yaw_temp;
-	Yaw_temp = -HI220_Data_From_Usart.Euler_Angle_Yaw_s16_2_f; 
+	Yaw_temp = HI220_Data_From_Usart.Euler_Angle_Yaw_s16_2_f;; 
 	if(Yaw_temp-Last_yaw_temp>=330)  
 	{
 		Yaw_count--;
@@ -274,7 +275,7 @@ void Hi220_getYawPitchRoll()
 	{
 		Yaw_count++;
 	}
-	yaw_Angle = (Yaw_temp + Yaw_count*360); 
+	yaw_Angle = Yaw_temp + Yaw_count*360; 
 
 	pitch_Angle = -HI220_Data_From_Usart.Euler_Angle_Roll_s16_2_f;   
 	

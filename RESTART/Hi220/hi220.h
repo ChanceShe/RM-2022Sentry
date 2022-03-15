@@ -108,10 +108,12 @@ typedef struct
 	}Hi220_Flag_Reconfig;
 }Hi220_Flags_t;
 
-extern float yaw_Angle,pitch_Angle,roll_Angle; 
-extern float pitch_Gyro,yaw_Gyro;
 extern HI220_Stucture HI220_Data_From_Usart;
 extern float yaw_Speed,pitch_Speed;
+
+extern float yaw_Angle,pitch_Angle,roll_Angle; 
+extern float pitch_Gyro,yaw_Gyro;
+
 void Hi220_Init(void);
 void Hi220_Reset(void);
 void USART6_Configuration_For_Hi220(void);

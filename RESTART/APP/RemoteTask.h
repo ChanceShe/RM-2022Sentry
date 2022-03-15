@@ -28,8 +28,8 @@
 
 #define REMOTE_SWITCH_VALUE_BUF_DEEP   16u
 
-#define PITCH_MAX 5.0f
-#define PITCH_MIN -35.0f
+#define PITCH_MAX 30.0f
+#define PITCH_MIN -8.0f
 #define YAW_MAX 80				//ÔÆÌ¨½Ç¶ÈµÄ·¶Î§
 #define YAW_MIN -80
 

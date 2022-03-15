@@ -23,7 +23,13 @@ void get_gimbal_mode ( void )  // 从上往下数第一个获得模式，云台
     {
         gimbal_mode_handle();    //进入云台模式
     }
-
+		else
+		{
+			if ( GetInputMode() == STOP )
+			{
+				gim.ctrl_mode = GIMBAL_RELAX;
+			}
+		}
 //  /* gimbal back to center */
     if ( gim.last_ctrl_mode == GIMBAL_RELAX && gim.ctrl_mode != GIMBAL_RELAX )
     {
@@ -71,7 +77,7 @@ void gimbal_mode_handle ( void )    //云台模式切换
 				
         case GIMBAL_INIT:    //(1)
 
-        break;
+				break;
 
         case GIMBAL_NO_ARTI_INPUT:   //(2)
             if ( GetInputMode() == REMOTE_INPUT )
@@ -97,7 +103,7 @@ void gimbal_mode_handle ( void )    //云台模式切换
             if ( GetInputMode() == REMOTE_INPUT )
             {
                 gim.ctrl_mode = GIMBAL_REMOTE_MODE;
-								if ( gim.last_ctrl_mode != REMOTE_INPUT )
+								if ( gim.last_ctrl_mode != GIMBAL_REMOTE_MODE )
 									{
 											Init_Yaw_Angle = yaw_Angle;//-GMYawEncoder.ecd_angle;
 									}
