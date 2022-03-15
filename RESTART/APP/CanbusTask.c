@@ -7,14 +7,16 @@ static uint32_t can2_count = 0;
 volatile Encoder PokeEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 //CAN2电机编码器
-volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0};								//底盘主动轮
-volatile Encoder GMYawEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};			//上云台Yaw
-volatile Encoder GMPitchEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
-volatile Encoder Friction1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
-volatile Encoder Friction2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//上云台Pitch
+volatile Encoder GMYawEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};				//云台Yaw
+volatile Encoder GMPitchEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};			//云台Pitch
+volatile Encoder Friction1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台Pitch
+volatile Encoder Friction2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台Pitch
 
-refrom_info_t  main_info = {0};
-
+//refrom_info_t  main_info = {0};
+refrom_mainboard_t refromData = {0, 0, 3, 3};
+static InputMode_e inputmode_h = REMOTE_INPUT;   //输入模式设定
+static volatile Shoot_State_e shootState_h = NOSHOOTING;
+uint8_t  ShootConFlag = 1;
 
 
 void GetEncoderBias(volatile Encoder *v, CanRxMsg * msg) 
@@ -63,12 +65,17 @@ void EncoderProcess(volatile Encoder *v, CanRxMsg * msg)
 	v->filter_rate = (int32_t)(temp_sum/RATE_BUF_SIZE);					
 }
 
-void revice_main_information ( refrom_info_t *data, CanRxMsg * msg )		//上下云台通讯
+void revice_main_information ( refrom_mainboard_t *data, CanRxMsg * msg )
 {
-    data->Communication_Flag = ( msg->Data[0] << 8 ) | msg->Data[1];
+    data->ch2 = ( msg->Data[0] << 8 ) | msg->Data[1];
     data->ch3 = ( msg->Data[2] << 8 ) | msg->Data[3];
-    data->location_Flag = msg->Data[3];
-    data->s2 = msg->Data[7];
+    data->s1 = msg->Data[4] >> 4;
+    data->s2 = msg->Data[4] & 0x0f;
+    data->color = msg->Data[5] >> 7 & 0x00000001;
+    data->VehicleShootFlag = ( msg->Data[5] >> 6 ) & 0x00000001;
+    data->JudgeShootFlag = msg->Data[5] & 0x03;
+    data->shoot_heart0 = ( msg->Data[6] << 8 ) | msg->Data[7];
+
 }
 
 void Can1ReceiveMsgProcess(CanRxMsg * msg)
@@ -76,12 +83,19 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
 	can1_count++;
 	switch(msg->StdId)
   {
-		case CAN_BUS1_POKE_FEEDBACK_MSG_ID :   //拨弹电机
-    {
-       //LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_MOTOR4));
-       ( can1_count <= 50 ) ? GetEncoderBias ( &PokeEncoder , msg ) : EncoderProcess ( &PokeEncoder , msg );
-    }
-    break;
+		
+		case CAN_BUS1_FRICTION_MOTOR1_FEEDBACK_MSG_ID:		//摩擦轮电机处理
+		{
+				LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
+				( can2_count <= 50 ) ? GetEncoderBias ( &Friction1Encoder , msg ) : EncoderProcess ( &Friction1Encoder , msg );
+		}
+		break;
+		case CAN_BUS1_FRICTION_MOTOR2_FEEDBACK_MSG_ID:		//摩擦轮电机处理
+		{
+				LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
+				( can2_count <= 50 ) ? GetEncoderBias ( &Friction2Encoder , msg ) : EncoderProcess ( &Friction2Encoder , msg );
+		}
+		break;
 		default:
 		break;
 	}
@@ -91,64 +105,65 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
     can2_count++;
 		switch(msg->StdId)
 		{
-			case CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID:		//底盘主动轮
-      {
-        LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR1 ) );
-        ( can2_count <= 50 ) ? GetEncoderBias ( &CM1Encoder , msg ) : EncoderProcess ( &CM1Encoder , msg ); //获取到编码器的初始偏差值
-
-      }
-      break;
 			case CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID:    //云台电机处理
-      {
-         LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR6 ) );
-         //GMPitchEncoder.ecd_bias = pitch_ecd_bias;
-         EncoderProcess ( &GMPitchEncoder , msg );
-         //码盘中间值设定也需要修改
-         if ( can2_count >= 90 && can2_count <= 100 )
-         {
-            if ( ( GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value ) < -4096 )
-            {
-                GMPitchEncoder.ecd_bias = GMPitchEncoder_Offset + 8192;
-            }
-            else if ( ( GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value ) > 4096 )
-            {
-                GMPitchEncoder.ecd_bias = GMPitchEncoder_Offset - 8192;
-            }
-         }
+			{
+				 LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR6 ) );
+				 //GMPitchEncoder.ecd_bias = pitch_ecd_bias;
+				 EncoderProcess ( &GMPitchEncoder , msg );
+				 //码盘中间值设定也需要修改
+				 if ( can2_count >= 90 && can2_count <= 100 )
+				 {
+						if ( ( GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value ) < -4096 )
+						{
+								GMPitchEncoder.ecd_bias = GMPitchEncoder_Offset + 8192;
+						}
+						else if ( ( GMPitchEncoder.ecd_bias - GMPitchEncoder.ecd_value ) > 4096 )
+						{
+								GMPitchEncoder.ecd_bias = GMPitchEncoder_Offset - 8192;
+						}
+				 }
 			}
 			break;
 			case CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID ://云台电机处理
 			{
 					EncoderProcess ( &GMYawEncoder , msg );
 					LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR5 ) );
-					//GMYawEncoder.ecd_bias = yaw_ecd_bias;
 					// 比较保存编码器的值和偏差值，如果编码器的值和初始偏差之间差距超过阈值，将偏差值做处理，防止出现云台反方向运动
 					if ( can2_count >= 90 && can2_count <= 100 )
 					{
-             if ( ( GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value ) < -4096 )
-             {
-                 GMYawEncoder.ecd_bias = GMYawEncoder_Offset + 8192;
-             }
-             else if ( ( GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value ) > 4096 )
-             {
-                 GMYawEncoder.ecd_bias = GMYawEncoder_Offset - 8192;
-             }
-          }
+						 if ( ( GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value ) < -4096 )
+						 {
+								 GMYawEncoder.ecd_bias = GMYawEncoder_Offset + 8192;
+						 }
+						 else if ( ( GMYawEncoder.ecd_bias - GMYawEncoder.ecd_value ) > 4096 )
+						 {
+								 GMYawEncoder.ecd_bias = GMYawEncoder_Offset - 8192;
+						 }
+					}
 			}
 			break;
-		  case CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID:		//摩擦轮电机处理
+				case CAN_BUS2_POKE_FEEDBACK_MSG_ID :   //拨弹电机
+			{
+				 ( can1_count <= 50 ) ? GetEncoderBias ( &PokeEncoder , msg ) : EncoderProcess ( &PokeEncoder , msg );
+			}
+			break;
+			case CAN_BUS2_SLAVE_FEEDBACK_MSG_ID:                  //上下云台通信
       {
-          LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
-          ( can2_count <= 50 ) ? GetEncoderBias ( &Friction1Encoder , msg ) : EncoderProcess ( &Friction1Encoder , msg );
-      }
+            LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_ZGYRO ) );
+            revice_main_information ( &refromData, msg );
+            if ( refromData.color == 0 )     //颜色切换
+            {
+                auto_shoot_mode_set = 7;
+							  command = "sc_r";
+            }
+            else if ( refromData.color == 1 )
+            {
+                auto_shoot_mode_set = 107;
+							  command = "sc_b";
+            }
+						RemoteDataPrcess(&refromData);
+			}
       break;
-      case CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID:		//摩擦轮电机处理
-      {
-          LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
-          ( can2_count <= 50 ) ? GetEncoderBias ( &Friction2Encoder , msg ) : EncoderProcess ( &Friction2Encoder , msg );
-      }
-      break;
-
 			default:
 			{
 			}
@@ -191,7 +206,6 @@ void CAN1_Send_Msg1(CAN_TypeDef *CANx, int16_t cm5_iq, int16_t cm6_iq, int16_t c
     tx_message.Data[7] = (uint8_t)cm8_iq;
     CAN_Transmit(CANx,&tx_message);
 }
-
 
 void CAN2_Send_Msg(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3_iq, int16_t cm4_iq) //CAN2发送函数 前四个ID
 {

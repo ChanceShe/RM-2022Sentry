@@ -41,7 +41,6 @@
 #include "CanbusTask.h"
 
 #include "RemoteTask.h"
-#include "ChassisTask.h"
 #include "GimbalTask.h"
 #include "ShootTask.h"
 #include "AutoshootTask.h"

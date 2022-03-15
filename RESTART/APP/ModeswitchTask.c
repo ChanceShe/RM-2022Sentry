@@ -2,7 +2,6 @@
 void modeswitch_task ( void )   //在controltask里
 {
     get_gimbal_mode();
-    get_chassis_mode();
 	  get_last_mode();
 }
 static action_mode_e remote_is_action ( void )
@@ -35,7 +34,7 @@ void get_gimbal_mode ( void )  // 从上往下数第一个获得模式，云台
         GMPitchRamp.ResetCounter ( &GMPitchRamp );
         GMYawRamp.ResetCounter ( &GMYawRamp );
         //云台给定角度初始化
-			  GimbalRef.pitch_angle_dynamic_ref = 0.0f;
+        GimbalRef.pitch_angle_dynamic_ref = 0.0f;
         GimbalRef.yaw_angle_dynamic_ref = 0.0f;
     }
 }
@@ -43,20 +42,8 @@ void get_gimbal_mode ( void )  // 从上往下数第一个获得模式，云台
 static void get_last_mode ( void ) //云台和底盘的上一个模式
 {
     gim.last_ctrl_mode = gim.ctrl_mode;
-    chassis.last_ctrl_mode = chassis.ctrl_mode;
 }
-void get_chassis_mode ( void )
-{
-		    if ( gim.ctrl_mode == GIMBAL_INIT )
-    {
-        chassis.ctrl_mode = CHASSIS_STOP;
-    }
-    else
-    {
-        chassis_mode_handle();
-    }
 
-}
 void gimbal_mode_handle ( void )    //云台模式切换
 {
     switch ( gim.ctrl_mode )
@@ -68,7 +55,8 @@ void gimbal_mode_handle ( void )    //云台模式切换
                 GMPitchRamp.ResetCounter ( &GMPitchRamp );
                 if ( gim.last_ctrl_mode != GIMBAL_REMOTE_MODE )
                 {
-                    GimbalRef.yaw_angle_dynamic_ref = yaw_Angle;//-GMYawEncoder.ecd_angle;
+                    gim.pid.pit_angle_ref = pitch_Angle;
+									  gim.pid.yaw_angle_ref = yaw_Angle;
                 }
             }
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
@@ -92,12 +80,12 @@ void gimbal_mode_handle ( void )    //云台模式切换
                 GMPitchRamp.ResetCounter ( &GMPitchRamp );
                 if ( gim.last_ctrl_mode != GIMBAL_REMOTE_MODE )
                 {
-                    GimbalRef.yaw_angle_dynamic_ref = yaw_Angle;//-GMYawEncoder.ecd_angle;
+                    Init_Yaw_Angle = yaw_Angle;//-GMYawEncoder.ecd_angle;
                 }
             }
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
             {
-                gim.ctrl_mode = GIMBAL_INIT;
+                gim.ctrl_mode = GIMBAL_AUTO_MODE;
             }
 						else
 						{
@@ -109,7 +97,11 @@ void gimbal_mode_handle ( void )    //云台模式切换
             if ( GetInputMode() == REMOTE_INPUT )
             {
                 gim.ctrl_mode = GIMBAL_REMOTE_MODE;
-            }
+								if ( gim.last_ctrl_mode != REMOTE_INPUT )
+									{
+											Init_Yaw_Angle = yaw_Angle;//-GMYawEncoder.ecd_angle;
+									}
+						}
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
             {
                 gim.ctrl_mode = GIMBAL_AUTO_MODE;
@@ -142,14 +134,4 @@ void gimbal_mode_handle ( void )    //云台模式切换
         default:
         break;
     }
-}
-void chassis_mode_handle(void)
-{
-		if ( GetInputMode() == KEY_MOUSE_INPUT )
-		{
-				chassis.ctrl_mode = CHASSIS_PATROL;
-		}
-		else
-				chassis.ctrl_mode  =  CHASSIS_REMOTE;
-
 }

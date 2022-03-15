@@ -501,11 +501,6 @@
               <FilePath>.\APP\RemoteTask.c</FilePath>
             </File>
             <File>
-              <FileName>ChassisTask.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\APP\ChassisTask.c</FilePath>
-            </File>
-            <File>
               <FileName>ShootTask.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\APP\ShootTask.c</FilePath>

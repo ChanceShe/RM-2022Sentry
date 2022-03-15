@@ -29,35 +29,15 @@ void RemoteTaskInit()
 }
 
 //遥控器数据处理		usart1中断执行
-void RemoteDataPrcess(uint8_t *pData)
+void RemoteDataPrcess(refrom_mainboard_t *rc)
 {
-  if(pData == NULL)
-    {
-      return;
-    }
-
-  RC_CtrlData.rc.ch0 = ((int16_t)pData[0] | ((int16_t)pData[1] << 8)) & 0x07FF;
-  RC_CtrlData.rc.ch1 = (((int16_t)pData[1] >> 3) | ((int16_t)pData[2] << 5)) & 0x07FF;
-  RC_CtrlData.rc.ch2 = (((int16_t)pData[2] >> 6) | ((int16_t)pData[3] << 2) |
-                        ((int16_t)pData[4] << 10)) & 0x07FF;
-  RC_CtrlData.rc.ch3 = (((int16_t)pData[4] >> 1) | ((int16_t)pData[5]<<7)) & 0x07FF;
-  RC_CtrlData.rc.s1 = ((pData[5] >> 4) & 0x000C) >> 2;
-  RC_CtrlData.rc.s2 = ((pData[5] >> 4) & 0x0003);//模式切换
-  RC_CtrlData.mouse.x = ((int16_t)pData[6]) | ((int16_t)pData[7] << 8);
-  RC_CtrlData.mouse.y = ((int16_t)pData[8]) | ((int16_t)pData[9] << 8);
-  RC_CtrlData.mouse.z = ((int16_t)pData[10]) | ((int16_t)pData[11] << 8);
-  RC_CtrlData.mouse.press_l = pData[12];
-  RC_CtrlData.mouse.press_r = pData[13];
-  RC_CtrlData.key.v = ((int16_t)pData[14]) | ((int16_t)pData[15] << 8);
-  SetInputMode(&RC_CtrlData.rc);
-
-
-  switch(GetInputMode( ))
+  SetInputMode ( &refromData );
+	 switch(GetInputMode( ))
     {
     case REMOTE_INPUT:
     {
       //遥控器控制模式
-      RemoteControlProcess(&(RC_CtrlData.rc));
+      RemoteControlProcess(&refromData);
     }
     break;
     case KEY_MOUSE_INPUT:
@@ -68,7 +48,6 @@ void RemoteDataPrcess(uint8_t *pData)
     case STOP:
     {
       //紧急停车
-			chassis.ctrl_mode = CHASSIS_STOP;
     }
     break;
     }
@@ -138,7 +117,7 @@ void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val)
     }
 }
 //输入模式设置
-void SetInputMode(Remote *rc)
+void SetInputMode(refrom_mainboard_t *rc)
 {
   if(rc->s2 == 3)
     {
@@ -159,12 +138,13 @@ void SetInputMode(Remote *rc)
 
 //遥控器控制模式处理
 RemoteSwitch_t switch1;   //遥控器左侧拨杆
-void RemoteControlProcess(Remote *rc)
-{
-	ChassisSpeedRef.forward_back_ref = (rc->ch1- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
-  ChassisSpeedRef.left_right_ref   = (rc->ch0- (int16_t)REMOTE_CONTROLLER_STICK_OFFSET) * STICK_TO_CHASSIS_SPEED_REF_FACT;
-	GimbalRef.pitch_angle_dynamic_ref += ( rc->ch3 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_PITCH_ANGLE_INC_FACT;
-  GimbalRef.yaw_angle_dynamic_ref   += ( rc->ch2 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_YAW_ANGLE_INC_FACT  ;
+void RemoteControlProcess(refrom_mainboard_t *rc)
+{    
+	if ( gim.ctrl_mode == GIMBAL_REMOTE_MODE )
+  {
+      GimbalRef.pitch_angle_dynamic_ref += ( rc->ch3 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_PITCH_ANGLE_INC_FACT;
+      GimbalRef.yaw_angle_dynamic_ref   += ( rc->ch2 - ( int16_t ) REMOTE_CONTROLLER_STICK_OFFSET ) * STICK_TO_YAW_ANGLE_INC_FACT  ;
+  }
 	RemoteShootControl ( &switch1, rc->s1 ); //s1   遥控器控制发射
 
 }

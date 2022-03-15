@@ -38,7 +38,7 @@ void parse_signal(unsigned char* content_address, unsigned int content_length)
   Uart4_Protobuf_Receive_Message=signal__unpack(NULL,content_length,content_address);
   if(strcmp(Uart4_Protobuf_Receive_Message->name,"t_c_d"))
     {
-      chassis.ctrl_mode=CHASSIS_REMOTE;
+//      chassis.ctrl_mode=CHASSIS_REMOTE;
     }
   else if(strcmp(Uart4_Protobuf_Receive_Message->name,"t_c_a"))
     {

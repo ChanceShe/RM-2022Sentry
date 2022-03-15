@@ -150,14 +150,14 @@ extern FrictionWheelState_e friction_wheel_state ;
 
 
 void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val);		//遥控器读值
-void RemoteControlProcess(Remote *rc);		//遥控器控制模式处理
-void RemoteDataPrcess(uint8_t *pData);		//遥控器数据处理
-void SetInputMode(Remote *rc);
+void RemoteControlProcess(refrom_mainboard_t *rc);
+void RemoteDataPrcess(refrom_mainboard_t *rc);		//遥控器数据处理，放CAN1中断中
 uint8_t IsRemoteBeingAction ( void );
 InputMode_e GetInputMode();
 Shoot_State_e GetShootState ( void );
 void SetShootState ( Shoot_State_e v );
 void RemoteShootControl(RemoteSwitch_t *sw, uint8_t val);		//遥控左拨杆模式射击
 void Remote_Rotate_Reverse_Control(RemoteSwitch_t *sw, uint8_t val);		//遥控左拨杆模式小陀螺
+void SetInputMode(refrom_mainboard_t *rc);					//输入模式设置
 
 #endif

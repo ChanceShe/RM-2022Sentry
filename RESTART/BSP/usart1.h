@@ -22,6 +22,5 @@ void USART1_IRQHandler(void);
 //static void USART1_FIFO_Init(void);
 void *USART1_GetRxBuf(void);
 void USART1_Configuration(uint32_t baud_rate);
-void RemoteDataPrcess(uint8_t *pData);
 
 #endif

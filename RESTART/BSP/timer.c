@@ -2,7 +2,6 @@
 
 //Timer 2 32-bit counter  
 //Timer Clock is 168MHz / 4 * 2 = 84M
-extern int16_t SYS_START;
 void TIM8_Configuration(void)
 {
 		 TIM_TimeBaseInitTypeDef tim;
@@ -104,7 +103,8 @@ void TIM6_DAC_IRQHandler(void)
       TIM_ClearFlag(TIM6, TIM_FLAG_Update);
 			GPIO_ToggleBits(GPIOC,GPIO_Pin_0);  //硬件喂狗
 
-			Control_Task();         //底盘、云台控制任务
+			if ( SYS_START )
+				Control_Task();         //底盘、云台控制任务
      }
  
 }

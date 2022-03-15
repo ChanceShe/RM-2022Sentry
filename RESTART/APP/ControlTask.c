@@ -20,11 +20,6 @@ void Control_Task(void)
 		shot_task();		
 	}		
 
-	if(time_tick_1ms%10 == 0)
-  {
-			chassis_task();
-	}		
-
 	
 	OutData[0] = 0;
 	OutData[1] = 0;

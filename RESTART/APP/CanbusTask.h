@@ -3,20 +3,32 @@
 #include "main.h"
 
 /* CAN Bus 1 */  
-#define CAN_BUS1_POKE_FEEDBACK_MSG_ID            			 0x205    		//拨盘
-#define CAN_BUS1_BOSS_FEEDBACK_MSG_ID   		      		 0x307      	//上下云台通讯
+
+
+#define CAN_BUS1_FRICTION_MOTOR1_FEEDBACK_MSG_ID       0x203    		//   云台摩擦轮  
+#define CAN_BUS1_FRICTION_MOTOR2_FEEDBACK_MSG_ID       0x204    		//   云台摩擦轮   
 
 /* CAN Bus 2 */ 
-#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    		// 6  yaw       can2        0x206上云台yaw
-#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   			//  7   pitch    can2       0x207上云台pitch
-
-#define CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID         0x205    		//   底盘主动轮
-#define CAN_BUS2_FRICTION_MOTOR1_FEEDBACK_MSG_ID       0x201    		//   上云台摩擦轮  
-#define CAN_BUS2_FRICTION_MOTOR2_FEEDBACK_MSG_ID       0x202    		//   上云台摩擦轮   
-
-
+#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    		// 	 云台yaw
+#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   			//   云台pitch
+#define CAN_BUS2_POKE_FEEDBACK_MSG_ID            			 0x201    		//拨盘
+#define CAN_BUS2_SLAVE_FEEDBACK_MSG_ID   		      		 0x408   			//上云台向下云台传输数据ID
 
 #define RATE_BUF_SIZE 6						//滤波数量
+
+typedef struct
+{
+    uint16_t ch2;
+    uint16_t ch3;
+    uint8_t s1;
+    uint8_t s2;
+    uint8_t color;
+    uint8_t VehicleShootFlag;
+    uint8_t JudgeShootFlag;
+    uint16_t shoot_heart0;
+} refrom_mainboard_t;  //   云台通信接收结构体
+extern refrom_mainboard_t refromData;
+
 typedef struct{
 	int32_t raw_value;   				    //编码器不经处理的原始值
 	int32_t last_raw_value;				  //上一次的编码器原始值
@@ -44,13 +56,13 @@ typedef struct
 } refrom_info_t;  //   云台通信接收结构体
 
 //CAN1
-extern volatile Encoder PokeEncoder;					//拨盘
-//CAN2
-extern volatile Encoder CM1Encoder;						//主动轮
 extern volatile Encoder GMYawEncoder ;				//上云台Yaw
 extern volatile Encoder GMPitchEncoder ;			//上云台Pitch
 extern volatile Encoder Friction1Encoder ;		//上云台Pitch
 extern volatile Encoder Friction2Encoder ;		//上云台Pitch
+
+//CAN2
+extern volatile Encoder PokeEncoder;					//拨盘
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg);
 void Can1ReceiveMsgProcess(CanRxMsg * msg);
@@ -59,6 +71,11 @@ void CAN2_Send_Msg1(CAN_TypeDef *CANx, int16_t cm5_iq, int16_t cm6_iq, int16_t c
 void CAN1_Send_Msg(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3_iq, int16_t cm4_iq);
 void CAN1_Send_Msg1(CAN_TypeDef *CANx, int16_t cm5_iq, int16_t cm6_iq, int16_t cm7_iq, int16_t cm8_iq);
 void CAN2_Gimbal_Msg ( int16_t gimbal_yaw_iq, int16_t gimbal_pitch_iq );
+
+extern refrom_mainboard_t refromData;
+void revice_main_information ( refrom_mainboard_t *data, CanRxMsg * msg );
+static void mainBoard_control ( refrom_mainboard_t *rcInfomation );
+static void set_imput_mode ( refrom_mainboard_t *rc );
 
 #endif
 

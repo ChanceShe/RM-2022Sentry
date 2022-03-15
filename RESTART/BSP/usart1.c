@@ -83,37 +83,6 @@ void USART1_IRQHandler(void)
 	static uint32_t this_time_rx_len = 0;
 	if(USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
 	{
-		(void)USART1->SR;
-		(void)USART1->DR;
-		if(DMA_GetCurrentMemoryTarget(DMA2_Stream2) == 0)
-		{
-			DMA_Cmd(DMA2_Stream2, DISABLE);
-			DMA_ClearFlag(DMA2_Stream2, DMA_FLAG_TCIF2 | DMA_FLAG_HTIF2);	
-			this_time_rx_len = BSP_USART1_DMA_RX_BUF_LEN - DMA_GetCurrDataCounter(DMA2_Stream2);
-			DMA2_Stream2->NDTR = (uint16_t)BSP_USART1_DMA_RX_BUF_LEN;     //relocate the dma memory pointer to the beginning position
-			DMA2_Stream2->CR |= (uint32_t)(DMA_SxCR_CT);                  //enable the current selected memory is Memory 1
-			DMA_Cmd(DMA2_Stream2, ENABLE);
-     if(this_time_rx_len == RC_FRAME_LENGTH)
-			{
-				RemoteDataPrcess(_USART1_DMA_RX_BUF[0]);
-//        LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_RC));
-			}
-		}
-		
-		else 
-		{
-			DMA_Cmd(DMA2_Stream2, DISABLE);
-			DMA_ClearFlag(DMA2_Stream2, DMA_FLAG_TCIF2 | DMA_FLAG_HTIF2);
-			this_time_rx_len = BSP_USART1_DMA_RX_BUF_LEN - DMA_GetCurrDataCounter(DMA2_Stream2);
-			DMA2_Stream2->NDTR = (uint16_t)BSP_USART1_DMA_RX_BUF_LEN;      //relocate the dma memory pointer to the beginning position
-			DMA2_Stream2->CR &= ~(uint32_t)(DMA_SxCR_CT);                  //enable the current selected memory is Memory 0
-			DMA_Cmd(DMA2_Stream2, ENABLE);
-       if(this_time_rx_len == RC_FRAME_LENGTH)
-			{
-				RemoteDataPrcess(_USART1_DMA_RX_BUF[1]);
-//        LostCounterFeed(GetLostCounter(LOST_COUNTER_INDEX_RC));
-			}
-		}
 	}       
 }
 
