@@ -4,7 +4,12 @@
 
 #define CHASSIS_SPEED_ATTENUATION   (1.0f)
 #define MAX_WHEEL_RPM  7400		//轮最大转速
-#define MAX_CHASSIS_VR_SPEED 170		//底盘最大旋转角速度
+#define POWER_CONTROL_DEFAULT \
+{	0,\
+	0,\
+	0,\
+	0,\
+}\
 
 
 typedef enum
@@ -12,10 +17,7 @@ typedef enum
   CHASSIS_RELAX          = 0,
   CHASSIS_STOP           = 1,
   CHASSIS_REMOTE  			 = 2,		//遥控器控制底盘
-  CHASSIS_SEPARATE_GIMBAL= 3,
-  AUTO_SEPARATE_GIMBAL   = 4,
-  AUTO_FOLLOW_GIMBAL     = 5,
-  CHASSIS_PATROL		 		 = 6,		//巡逻模式
+  CHASSIS_PATROL		 		 = 3,		//巡逻模式
 } chassis_mode_e;
 
 typedef struct
@@ -63,12 +65,29 @@ typedef enum
 }	direction_e;					//自动模式下的运动方向
 extern direction_e robot_direction;
 
-void chassis_param_init(void);//底盘参数初始化
 
+void chassis_param_init(void);//底盘参数初始化
 void chassis_task(void);
 void chassis_remote_handle(void);
 void chassis_patrol_handle(void);
 static void chassis_stop_handle(void);
+
+
+typedef struct
+{
+    int32_t Cnt_Power_Judge_Recieved;
+    int32_t Time_10ms;
+    int32_t Cnt_Power_Judge_Recieved_Pre;
+    uint8_t Flag_Judge_Control;
+    float 	K_Output;
+} Power_Control_Struct;
+extern Power_Control_Struct Power_Control;
+#define WARNING_ENERGY 60
+extern float power_limit_rate;
+extern int32_t total_cur_limit;
+extern int32_t total_cur;
+extern float I_TIMES_V_TO_WATT;
+void power_limit_handle ( void );
 
 
 

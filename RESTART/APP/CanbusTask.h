@@ -3,10 +3,10 @@
 #include "main.h"
 
 /* CAN Bus 1 */  
-#define CAN_BUS1_CHASSIS_MOTOR_FEEDBACK_MSG_ID         0x205    		//   底盘主动轮
 
 
 /* CAN Bus 2 */ 
+#define CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID         0x203    		//   底盘主动轮
 
 
 

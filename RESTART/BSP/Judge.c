@@ -18,6 +18,7 @@ uint8_t  ddata[66];
 
 //*******自定义标志*******
 robot_color_e robot_color ;
+char* command = "sc_r";
 uint8_t   is_judge_on = 0;
 uint8_t   JudgeShoot = 0;
 //***********************
@@ -455,10 +456,12 @@ void judgement_data_handle ( uint8_t *p_frame, u16 rec_len ) //串口5中断中执行
                         if ( judge_rece_mesg.game_robot_state.robot_id >= 1 && judge_rece_mesg.game_robot_state.robot_id <= 9 )
                         {
                             robot_color = red;
+													  command = "sc_r";
                         }
                         else if ( judge_rece_mesg.game_robot_state.robot_id >= 100 && judge_rece_mesg.game_robot_state.robot_id <= 109 )
                         {
                             robot_color = blue;
+													  command = "sc_b";
                         }
                         if ( judge_rece_mesg.game_robot_state.mains_power_gimbal_output == 0 )
                         {
@@ -474,9 +477,9 @@ void judgement_data_handle ( uint8_t *p_frame, u16 rec_len ) //串口5中断中执行
                     {
                         memcpy ( &judge_rece_mesg.power_heat_data, data_addr, data_length );
 
-//                        Power_Control.Cnt_Power_Judge_Recieved ++;//收到裁判系统发回来的功率,计数值增加
-//                        if ( Power_Control.Cnt_Power_Judge_Recieved >= 65535 ) //防止溢出出现不可预知的情况
-//                            Power_Control.Cnt_Power_Judge_Recieved = 0;
+                        Power_Control.Cnt_Power_Judge_Recieved ++;//收到裁判系统发回来的功率,计数值增加
+                        if ( Power_Control.Cnt_Power_Judge_Recieved >= 65535 ) //防止溢出出现不可预知的情况
+                            Power_Control.Cnt_Power_Judge_Recieved = 0;
 //                        heat0_limit();
                     }
                 }

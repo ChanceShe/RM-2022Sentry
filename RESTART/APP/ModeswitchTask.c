@@ -5,21 +5,13 @@ void modeswitch_task ( void )   //在controltask里
 	  get_last_mode();
 }
 
-static void get_last_mode ( void ) //云台和底盘的上一个模式
+static void get_last_mode ( void ) //底盘的上一个模式
 {
     chassis.last_ctrl_mode = chassis.ctrl_mode;
 }
 void get_chassis_mode ( void )
 {
-//		    if ( gim.ctrl_mode == GIMBAL_INIT )
-//    {
-//        chassis.ctrl_mode = CHASSIS_STOP;
-//    }
-//    else
-//    {
-        chassis_mode_handle();
-//    }
-
+    chassis_mode_handle();
 }
 void chassis_mode_handle(void)
 {
@@ -27,7 +19,12 @@ void chassis_mode_handle(void)
 		{
 				chassis.ctrl_mode = CHASSIS_PATROL;
 		}
-		else
+		else if ( GetInputMode() == REMOTE_INPUT)
+		{
 				chassis.ctrl_mode  =  CHASSIS_REMOTE;
-
+		}
+		else
+		{
+				chassis.ctrl_mode  =  CHASSIS_RELAX;
+		}
 }

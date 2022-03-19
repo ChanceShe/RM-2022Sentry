@@ -44,6 +44,7 @@ typedef enum
   blue = 1,
   red  = 2,
 } robot_color_e;
+extern robot_color_e robot_color ;
 
 /**
  * @brief  judgement data command id
@@ -507,8 +508,6 @@ uint8_t  fifo_is_full ( fifo_s_t* pfifo );
 uint32_t fifo_used_count ( fifo_s_t* pfifo );
 uint32_t fifo_free_count ( fifo_s_t* pfifo );
 uint8_t  fifo_flush ( fifo_s_t* pfifo );
-
-extern robot_color_e robot_color ;
 //裁判系统数据缓存
 extern uint8_t JudgeDataBuffer[JudgeBufferLength];
 //实时电压
@@ -527,6 +526,7 @@ extern uint8_t  tx_buf[BSP_UART5_DMA_TX_BUF_LEN];   //裁判系统学生通讯发送数据
 
 extern uint32_t receive_buf1;
 extern uint8_t JudgeShoot;
+extern char* command;
 
 extern uint8_t  pdata[32];
 extern uint8_t  ddata[66];
