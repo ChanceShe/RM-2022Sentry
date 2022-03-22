@@ -26,15 +26,15 @@ void Led_Configuration(void)
 	
 	
 	
-	GREEN_LED_OFF();
-	RED_LED_OFF();
-	gpio.GPIO_Pin = GPIO_Pin_4;
-	gpio.GPIO_Speed = GPIO_Speed_100MHz;
-	gpio.GPIO_Mode = GPIO_Mode_AF;
-	gpio.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_Init(GPIOB,&gpio);
-	
-	GPIO_PinAFConfig(GPIOB,GPIO_PinSource4,GPIO_AF_SPI3);
+	GREEN_LED_ON();
+	RED_LED_ON();
+//	gpio.GPIO_Pin = GPIO_Pin_4;
+//	gpio.GPIO_Speed = GPIO_Speed_100MHz;
+//	gpio.GPIO_Mode = GPIO_Mode_AF;
+//	gpio.GPIO_PuPd = GPIO_PuPd_UP;
+//	GPIO_Init(GPIOB,&gpio);
+//	
+//	GPIO_PinAFConfig(GPIOB,GPIO_PinSource4,GPIO_AF_SPI3);
 }
 
 void Laser_Configuration()

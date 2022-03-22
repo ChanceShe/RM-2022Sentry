@@ -66,13 +66,13 @@ void gimbal_param_init ( void )		//云台任务初始化
 		PID_struct_init ( &pid_pit, POSITION_PID , 200, 20,
                       10, 0.05, 0 );
 		PID_struct_init ( &pid_pit_speed, POSITION_PID , 29000, 29000,
-                      300, 0, 10 );
+                      200.0f, 0, 10 );
 
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 80,
                       12, 0.05, 0 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 29000, 29000,
-                      200.0f, 0, 0 );
+                      150.0f, 0, 20 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -198,20 +198,20 @@ void gimbal_patrol_handle(void)					//巡逻模式
         }
         else
         {
-
-						if ( yaw_dir == 1 )
-						{
-								if ( yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD >= YAW_MAX )
-										yaw_dir = -1;
-								yaw_timer ++ ;
-						}
-						else
-						{
-								if ( yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD <= YAW_MIN )
-										yaw_dir = 1;
-								yaw_timer -- ;
-						}
-						gim.pid.yaw_angle_ref = ( float ) ( Init_Yaw_Angle + (yaw_timer/2) * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD )  ; //*(2*(YAW_MAX-YAW_MIN))/YAW_PERIOD
+					gim.pid.yaw_angle_ref = yaw_Angle + 5;
+//						if ( yaw_dir == 1 )
+//						{
+//								if ( yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD >= YAW_MAX )
+//										yaw_dir = -1;
+//								yaw_timer ++ ;
+//						}
+//						else
+//						{
+//								if ( yaw_timer * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD <= YAW_MIN )
+//										yaw_dir = 1;
+//								yaw_timer -- ;
+//						}
+//						gim.pid.yaw_angle_ref = ( float ) ( Init_Yaw_Angle + (yaw_timer/2) * ( YAW_MAX - YAW_MIN ) / YAW_PERIOD )  ; //*(2*(YAW_MAX-YAW_MIN))/YAW_PERIOD
 
 						if ( pitch_dir == 1 )
 						{
