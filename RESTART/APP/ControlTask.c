@@ -8,16 +8,17 @@ void Control_Task(void)
 	
   time_tick_1ms++;
 	IWDG_ReloadCounter();
-	upperboard_send_to_mainboard ( CAN2, RC_CtrlData.rc.ch2, RC_CtrlData.rc.ch3, RC_CtrlData.rc.s1, RC_CtrlData.rc.s2,\
-															robot_color, judge_rece_mesg.power_heat_data.shooter_id1_17mm_cooling_heat,\
-															 VehicleShootFlagLow, JudgeShoot );
+	
 
 	if(time_tick_1ms%2 == 0)
   {
+		upperboard_send_to_mainboard ( CAN2, RC_CtrlData.rc.ch2, RC_CtrlData.rc.ch3, RC_CtrlData.rc.s1, RC_CtrlData.rc.s2,\
+															robot_color, judge_rece_mesg.power_heat_data.shooter_id1_17mm_cooling_heat,\
+															 VehicleShootFlagLow, JudgeShoot );
 		modeswitch_task();	
 	}	
 	
-	if(time_tick_1ms%10 == 0)
+	if(time_tick_1ms%10 == 1)
   {
 			chassis_task();
 	}		
