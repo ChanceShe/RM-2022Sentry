@@ -41,9 +41,7 @@ void gimbal_task(void)
 	 
 	 if(gim.ctrl_mode != GIMBAL_RELAX)
 	 {
-		 VAL_LIMIT ( gim.pid.pit_angle_ref, PITCH_MIN, PITCH_MAX ); //pitch÷·‘∆Ã®∏©—ˆœﬁ÷∆
-//		 VAL_LIMIT ( gim.pid.yaw_angle_ref, Init_Yaw_Angle + YAW_MIN, Init_Yaw_Angle + YAW_MAX ); //yaw÷·‘∆Ã®Ω«∂»œﬁ÷∆
-
+		 VAL_LIMIT ( GimbalRef.pitch_angle_dynamic_ref, PITCH_MIN, PITCH_MAX ); //pitch÷·‘∆Ã®∏©—ˆœﬁ÷∆
 		 pid_calc ( &pid_yaw, gim.pid.yaw_angle_fdb, gim.pid.yaw_angle_ref );
      pid_calc ( &pid_pit, gim.pid.pit_angle_fdb, gim.pid.pit_angle_ref );
      cascade_pid_ctrl();   			//º0j∂¡™pid∫Ø ˝
@@ -95,8 +93,9 @@ void gimbal_init_handle( void )		//‘∆Ã®ªÿ≥ı ºŒª÷√
     auto_mode = AUTO_PATROL ; //—≤¬ﬂ£¨√ª”– ∂±µΩƒø±Í
     int32_t init_rotate_num = 0;
     gim.pid.pit_angle_fdb =  GMPitchEncoder.ecd_angle;    //pitch_Angle;
-    gim.pid.pit_angle_ref = 0 * ( 1 - GMPitchRamp.Calc ( &GMPitchRamp ) ); //GMPitchEncoder.ecd_angle * (1 - GMPitchRamp.Calc(&GMPitchRamp));
-    //gim.pid.pit_angle_ref = Init_Pitch_Angle  -
+//    gim.pid.pit_angle_ref = 0 * ( 1 - GMPitchRamp.Calc ( &GMPitchRamp ) ); //GMPitchEncoder.ecd_angle * (1 - GMPitchRamp.Calc(&GMPitchRamp));
+    gim.pid.pit_angle_ref = 0;
+	//gim.pid.pit_angle_ref = Init_Pitch_Angle  -
     //s												((GMPitchEncoder.ecd_angle - Init_Pitch_Angle)/fabs(GMPitchEncoder.ecd_angle - Init_Pitch_Angle))	* (1 - GMPitchRamp.Calc(&GMPitchRamp));
     gim.pid.yaw_angle_fdb = GMYawEncoder.ecd_angle;
     init_rotate_num = GMYawEncoder.ecd_angle / 360;
@@ -123,7 +122,7 @@ void gimbal_init_handle( void )		//‘∆Ã®ªÿ≥ı ºŒª÷√
 
 void no_action_handle ( void )
 {
-    gim.pid.pit_angle_fdb = -GMPitchEncoder.ecd_angle;
+    gim.pid.pit_angle_fdb = GMPitchEncoder.ecd_angle;
     gim.pid.yaw_angle_fdb = 0;
     gim.pid.pit_angle_ref = Init_Pitch_Angle;
     GimbalRef.yaw_angle_dynamic_ref = 0;
@@ -131,8 +130,6 @@ void no_action_handle ( void )
 
 void gimbal_remote_handle(void)
 {
-		VAL_LIMIT ( GimbalRef.pitch_angle_dynamic_ref, PITCH_MIN, PITCH_MAX ); //pitch÷·‘∆Ã®∏©—ˆœﬁ÷∆
-//    VAL_LIMIT ( GimbalRef.yaw_angle_dynamic_ref, Init_Yaw_Angle + YAW_MIN, Init_Yaw_Angle + YAW_MAX ); //yaw÷·‘∆Ã®Ω«∂»œﬁ÷∆
 	  gim.pid.yaw_angle_ref = GimbalRef.yaw_angle_dynamic_ref;
     gim.pid.pit_angle_ref = GimbalRef.pitch_angle_dynamic_ref;
     gim.pid.pit_angle_fdb = pitch_Angle;	//GMPitchEncoder.ecd_angle;    //œÚ…œŒ™’˝
