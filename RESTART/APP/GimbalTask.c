@@ -25,18 +25,22 @@ void gimbal_task(void)
    {
     case GIMBAL_INIT:							//ÔÆÌ¨»Ø³õÊ¼Î»ÖÃ
       gimbal_init_handle();
-      break;
-    case GIMBAL_REMOTE_MODE:			//Ò£¿ØÆ÷¿ØÖÆÄ£Ê½
+    break;
+    
+		case GIMBAL_REMOTE_MODE:			//Ò£¿ØÆ÷¿ØÖÆÄ£Ê½
       gimbal_remote_handle();
-      break;
-    case GIMBAL_AUTO_MODE:				//×Ô¶¯Ä£Ê½
+    break;
+    
+		case GIMBAL_AUTO_MODE:				//×Ô¶¯Ä£Ê½
       gimbal_auto_handle();
-      break;
+    break;
+		
 		case GIMBAL_NO_ARTI_INPUT:		//²ÎÊý³õÊ¼»¯
 			no_action_handle();
-			break;
-    default:
-      break;
+		break;
+    
+		default:
+    break;
    }
 	 
 	 if(gim.ctrl_mode != GIMBAL_RELAX)
@@ -47,8 +51,8 @@ void gimbal_task(void)
      cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-		 CAN2_Gimbal_Msg (  ( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
-//		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg (  ( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+		 CAN2_Gimbal_Msg(0,0);
 	 }
 	 else
 	 {

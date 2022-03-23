@@ -21,7 +21,7 @@ int wExpected = 0;
 Signal *Uart4_Protobuf_Receive_Message;
 int16_t Uart4_Content_Size;
 u8 *CRC_Content_buf;
-TurretCommand *Uart4_Protobuf_Receive_Gimbal_Angle;
+Protocol__Frame *Uart4_Protobuf_Receive_Gimbal_Angle;
 //extern unsigned char get_crc8(unsigned char* data, unsigned int length);
 float flagg_pitch;
 float flagg_yaw;
@@ -52,32 +52,32 @@ float yaw_buff=0;
 void parse_turret_command(unsigned char* content_address, unsigned int content_length)
 {
 	// Protobuf 正确用法是新建一个对象去存数据，就算不新建对象好歹初始化一下啊傻X刘恒
-	Uart4_Protobuf_Receive_Gimbal_Angle->pitch = 0.0f;
-	Uart4_Protobuf_Receive_Gimbal_Angle->yaw = 0.0f;
-	Uart4_Protobuf_Receive_Gimbal_Angle->command = 0;
-  Uart4_Protobuf_Receive_Gimbal_Angle=turret_command__unpack(NULL,content_length,content_address);
-  flagg_pitch=Uart4_Protobuf_Receive_Gimbal_Angle->pitch;
-  flagg_yaw=Uart4_Protobuf_Receive_Gimbal_Angle->yaw;
+	Uart4_Protobuf_Receive_Gimbal_Angle->y = 0.0f;
+	Uart4_Protobuf_Receive_Gimbal_Angle->x = 0.0f;
+	Uart4_Protobuf_Receive_Gimbal_Angle->id = 0;
+  Uart4_Protobuf_Receive_Gimbal_Angle=protocol__frame__unpack(NULL,content_length,content_address);
+  flagg_pitch=Uart4_Protobuf_Receive_Gimbal_Angle->y;
+  flagg_yaw=Uart4_Protobuf_Receive_Gimbal_Angle->x;
       /*这里有问题，数据是反的*/
 	new_location.receNewDataFlag  =  1;
-	if(Uart4_Protobuf_Receive_Gimbal_Angle->command == 1)
+	if(Uart4_Protobuf_Receive_Gimbal_Angle->id > 0)
 	{	
 		  LASER_ON();
-			new_location.x	=  -Uart4_Protobuf_Receive_Gimbal_Angle->yaw;
-			new_location.y	=  -Uart4_Protobuf_Receive_Gimbal_Angle->pitch;
-		  new_location.dis = Uart4_Protobuf_Receive_Gimbal_Angle->diatance;
+			new_location.x	=  -Uart4_Protobuf_Receive_Gimbal_Angle->x;
+			new_location.y	=  -Uart4_Protobuf_Receive_Gimbal_Angle->y;
+		  new_location.dis = Uart4_Protobuf_Receive_Gimbal_Angle->distance;
 			new_location.flag = 1;	
 	}
 	else
 	{
 		  LASER_OFF();
-			new_location.x=  Uart4_Protobuf_Receive_Gimbal_Angle->yaw;
-			new_location.y=  Uart4_Protobuf_Receive_Gimbal_Angle->pitch;
+			new_location.x=  -Uart4_Protobuf_Receive_Gimbal_Angle->x;
+			new_location.y=  -Uart4_Protobuf_Receive_Gimbal_Angle->y;
 			new_location.flag = 0;	
 			num_command++;		
 	}
 
-  turret_command__free_unpacked(Uart4_Protobuf_Receive_Gimbal_Angle,NULL);
+  protocol__frame__free_unpacked(Uart4_Protobuf_Receive_Gimbal_Angle,NULL);
 }
 
 typedef void(*Parser)(unsigned char* content_address, unsigned int content_length);
