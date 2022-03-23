@@ -62,7 +62,12 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
 	can1_count++;
 	switch(msg->StdId)
   {
-		
+		case CAN_BUS1_CHASSIS_MOTOR_FEEDBACK_MSG_ID:		//底盘主动轮
+		{
+			LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR1 ) );
+			( can1_count <= 50 ) ? GetEncoderBias ( &CM1Encoder , msg ) : EncoderProcess ( &CM1Encoder , msg ); //获取到编码器的初始偏差值
+		}
+		break;
 	}
 }
 
@@ -71,12 +76,6 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
     can2_count++;
 		switch(msg->StdId)
 		{
-			case CAN_BUS2_CHASSIS_MOTOR_FEEDBACK_MSG_ID:		//底盘主动轮
-			{
-				LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR1 ) );
-				( can2_count <= 50 ) ? GetEncoderBias ( &CM1Encoder , msg ) : EncoderProcess ( &CM1Encoder , msg ); //获取到编码器的初始偏差值
-			}
-			break;
 			default:
 			{
 			}

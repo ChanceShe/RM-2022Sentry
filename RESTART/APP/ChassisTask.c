@@ -114,11 +114,11 @@ void chassis_task(void)
 		power_limit_handle();
 		if(chassis.ctrl_mode != CHASSIS_RELAX)
 		{
-			CAN2_Send_Msg(CAN2,0,0,chassis.current,0);
+			CAN1_Send_Msg(CAN1,0,0,chassis.current,0);
 		}
 		else
 		{
-			CAN2_Send_Msg(CAN2,0,0,0,0);
+			CAN1_Send_Msg(CAN1,0,0,0,0);
 		}
     
 
@@ -172,13 +172,13 @@ void chassis_patrol_handle(void)
 				crazyspeeddir = rand()%2;
 				if(crazyspeeddir == 1)
 				{
-					crazyspeed = rand()%150 + 500;
+					crazyspeed = rand()%150 + 400;
 				}
 				else if(crazyspeeddir == 0)
 				{
-					crazyspeed = -(rand()%150 +500);
+					crazyspeed = -(rand()%150 +400);
 				}
-				crazytime  = rand()%100 + 50;
+				crazytime  = rand()%150 + 50;
 			}
 			chassis.vx = crazyspeed;
 			crazytime--;
