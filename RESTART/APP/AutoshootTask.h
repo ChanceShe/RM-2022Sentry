@@ -9,7 +9,7 @@ typedef struct
   int16_t x1;
   int16_t y1;
   int16_t dis;
-  uint8_t flag;
+  uint8_t id;
   uint8_t color;
   int16_t receNewDataFlag;
   uint8_t crc;
@@ -27,8 +27,6 @@ typedef enum
 extern robot_color_e robot_color ;
 extern location new_location;
 //extern uint8_t color_set_flag;
-extern uint8_t dataFromMF[7];		        //数据缓存
-extern uint8_t dataFromMFReadyFlag; 		//妙算数据接收完成标志位
 extern uint8_t auto_shoot_mode_set;
 extern float yaw_buff;
 void targetOffsetDataDeal(uint8_t  len, u8 *buf);

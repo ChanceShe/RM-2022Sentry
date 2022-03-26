@@ -23,7 +23,7 @@ void UART4_Configuration(void)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4,ENABLE);
     GPIO_PinAFConfig(GPIOC,GPIO_PinSource10,GPIO_AF_UART4);
     GPIO_PinAFConfig(GPIOC,GPIO_PinSource11,GPIO_AF_UART4); 
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
+		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
 	
     gpio.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11;
     gpio.GPIO_Mode = GPIO_Mode_AF;
@@ -44,7 +44,7 @@ void UART4_Configuration(void)
 		
 		
     DMA_InitTypeDef dma;
-	DMA_DeInit(DMA1_Stream2);
+		DMA_DeInit(DMA1_Stream2);
     DMA_StructInit(&dma);
     dma.DMA_Channel = DMA_Channel_4;
     dma.DMA_PeripheralBaseAddr		= (uint32_t)(&UART4->DR);

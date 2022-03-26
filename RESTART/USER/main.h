@@ -56,5 +56,6 @@
 #include "kalman_filter.h"
 
 extern int testflag;		
+extern int testnum;
 
 #endif 

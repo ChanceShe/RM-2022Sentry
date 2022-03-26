@@ -2,15 +2,9 @@
 #define DEBUG_MODE 1
 
 /* *** *** 自动打击相关定义 开始 *** *** */
-uint8_t dataFromMF[7];		        //数据缓存
-uint8_t dataFromMFReadyFlag = 0; 		//妙算数据接收完成标志位
-
 location new_location;            //传回来的坐标值
-
-int sucflag = 0;    //成功接收到一组数据
-int recflag = 0;    //接受到的数据识别到装甲
 int receive = 0;    //接收到数据个数
-/* *** *** ********************** *** *** */
+/* *** *** *******************************/
 int num_command=0;
 uint8_t auto_shoot_mode_set;
 robot_color_e robot_color = 1 ;   //0-9以下标识自己都是红方，其它都是蓝方
@@ -38,7 +32,6 @@ void parse_signal(unsigned char* content_address, unsigned int content_length)
   Uart4_Protobuf_Receive_Message=signal__unpack(NULL,content_length,content_address);
   if(strcmp(Uart4_Protobuf_Receive_Message->name,"t_c_d"))
     {
-//      chassis.ctrl_mode=CHASSIS_REMOTE;
     }
   else if(strcmp(Uart4_Protobuf_Receive_Message->name,"t_c_a"))
     {
@@ -53,7 +46,7 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 {
 	// Protobuf 正确用法是新建一个对象去存数据，就算不新建对象好歹初始化一下啊傻X刘恒
 	Uart4_Protobuf_Receive_Gimbal_Angle->y = 0.0f;
-	Uart4_Protobuf_Receive_Gimbal_Angle->x = 0.0f;
+	Uart4_Protobuf_Receive_Gimbal_Angle->x = 1.0f;
 	Uart4_Protobuf_Receive_Gimbal_Angle->id = 0;
   Uart4_Protobuf_Receive_Gimbal_Angle=protocol__frame__unpack(NULL,content_length,content_address);
   flagg_pitch=Uart4_Protobuf_Receive_Gimbal_Angle->y;
@@ -66,14 +59,12 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 			new_location.x	=  -Uart4_Protobuf_Receive_Gimbal_Angle->x;
 			new_location.y	=  -Uart4_Protobuf_Receive_Gimbal_Angle->y;
 		  new_location.dis = Uart4_Protobuf_Receive_Gimbal_Angle->distance;
-			new_location.flag = 1;	
 	}
 	else
 	{
 		  LASER_OFF();
 			new_location.x=  -Uart4_Protobuf_Receive_Gimbal_Angle->x;
 			new_location.y=  -Uart4_Protobuf_Receive_Gimbal_Angle->y;
-			new_location.flag = 0;	
 			num_command++;		
 	}
 
@@ -89,11 +80,7 @@ Parser parsers[] =
   NULL,
   &parse_turret_command
 };
-unsigned int parsers_count = sizeof(parsers) / sizeof(Parser);
 
-#ifndef DEBUG_MODE
-#define DEBUG_MODE
-#endif
 
 #ifdef DEBUG_MODE
   // Counter for received packages.
@@ -115,19 +102,24 @@ void process_general_message(unsigned char* address, unsigned int length)
   // Package head check.
   if (address[0] != 0xBE) return;		//帧头0XBE
 
-  unsigned short package_id = *(unsigned short*)(&address[1]);
-  unsigned short content_size = *(unsigned short*)(&address[3]);
-
-  // Package tail check. 5 is the size of the head part.
-  if (address[5 + content_size + 1] != 0xED) return;	//帧尾0XED
+  unsigned short content_size = 0;	//数据段长度
+	//unsigned short package_id = *(unsigned short*)(&address[1]);		//自瞄模式: 1打符 3自瞄
+  // Package tail check. 2 is the size of the head part.
+	for(content_size = 0; 2+content_size  < length; content_size++)
+	{
+		if(address[2+content_size] == 0xED && address[2+content_size+1] == 0X0D && address[2+content_size+2] == 0X0A) //帧尾0XED 0X0D 0X0A
+			break;
+		else if(2+content_size+1 > length) 
+			return;
+	}
 
 #ifdef DEBUG_MODE
   ++counter_complete;
 #endif
+  // CRC check.
+  unsigned char* content_address = &address[1];
 
-  unsigned char* content_address = &address[5];
-
-  unsigned char crc8 = address[5 + content_size];
+  unsigned char crc8 = address[1 + content_size];
 
   if (crc8 != get_crc8(content_address, content_size)) 
 		return;
@@ -135,33 +127,7 @@ void process_general_message(unsigned char* address, unsigned int length)
 #ifdef DEBUG_MODE
   ++counter_crc_passed;
 #endif
-
-  // Check id in order to prevent array out of range access.
-  if (package_id < parsers_count)
-    {
-      (*parsers[package_id])(content_address,content_size);
-    }
+	(*parsers[3])(content_address,content_size);
 }
 
 
-
-//void send_signal(char* name)
-//{
-//	/* example of using protobuf message */
-
-//	Signal msg;
-//	signal__init(&msg);
-//	msg.name="612";
-//	signal__pack(&msg,UART4_DMA_TX_BUF+5);
-//
-//	UART4_DMA_TX_BUF[0]=0xBE;
-//	UART4_DMA_TX_BUF[1]=1;
-//	UART4_DMA_TX_BUF[2]=0;
-//	UART4_DMA_TX_BUF[3]=2;
-//	UART4_DMA_TX_BUF[4]=0;
-//
-//	Append_CRC8_Check_Sum(&UART4_DMA_TX_BUF[5],4);
-//	UART4_DMA_TX_BUF[9]=0xFE;
-//
-//}
-// send_signal("atk_e");

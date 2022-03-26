@@ -174,7 +174,7 @@ void gimbal_patrol_handle(void)					//巡逻模式
 {
 	  gim.pid.yaw_angle_fdb =  yaw_Angle;    //由陀螺仪读到
     gim.pid.pit_angle_fdb =  pitch_Angle;  
-		if ( new_location.flag == 1 )                //一旦检测到目标就停下
+		if ( new_location.id != 0 )                //一旦检测到目标就停下
     {
         auto_mode = AUTO_FOLLOW;
         gim.pid.pit_angle_ref =  pitch_Angle;
@@ -240,7 +240,7 @@ Speed_Prediction_t Speed_Prediction;
 
 void gimbal_follow_handle(void)		//识别到目标跟随模式
 {
-	    if ( new_location.flag )
+	    if ( new_location.id )
     {
         Gimbal_Auto_Shoot.Recognized_Flag = 1;
         Gimbal_Auto_Shoot.Recognized_Timer = 0;
@@ -570,7 +570,7 @@ void auto_shoot_task(void)
         case FRICTION_WHEEL_OFF:
         {
             frictionRamp.ResetCounter ( &frictionRamp );
-            if ( RC_CtrlData.rc.s1 != 3  &&  ( new_location.flag == 1 ) ) //从关闭到start turning
+            if ( RC_CtrlData.rc.s1 != 3  &&  ( new_location.id != 0 ) ) //从关闭到start turning
             {
                 SetShootState ( NOSHOOTING );
                 friction_rotor = 0;
@@ -613,7 +613,7 @@ void auto_shoot_task(void)
                 frictionRamp.ResetCounter ( &frictionRamp );
                 SetShootState ( NOSHOOTING );
             }
-            else if (  ( dir_pitch == 1 ) &&  ( dir_yaw == 1 ) && ( new_location.flag == 1 ) ) //&& (judge_rece_mesg.game_state.game_progress == 4) && ( USARTShootFlag == 1)
+            else if (  ( dir_pitch == 1 ) &&  ( dir_yaw == 1 ) && ( new_location.id != 0 ) ) //&& (judge_rece_mesg.game_state.game_progress == 4) && ( USARTShootFlag == 1)
             {
                 SetShootState ( SHOOTING );
                 USARTShootFlag = 0;
