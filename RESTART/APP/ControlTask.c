@@ -2,7 +2,12 @@
 
 uint32_t time_tick_1ms = 0;
 int dir=1;
-
+//****裁判系统相关标志****
+robot_color_e robot_color ;
+char* command = "sc_r";
+uint8_t   is_judge_on = 0;
+uint8_t   JudgeShoot = 0;
+//***********************
 void Control_Task(void)
 {
 	

@@ -37,15 +37,6 @@
 #else
 #define __DRIVER_EXT extern
 #endif
-
-typedef enum
-{
-  unkown = 0,
-  blue = 1,
-  red  = 2,
-} robot_color_e;
-extern robot_color_e robot_color ;
-
 /**
  * @brief  judgement data command id
  */

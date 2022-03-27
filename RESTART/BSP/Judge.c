@@ -16,13 +16,6 @@ receive_judge_t judge_rece_mesg;
 uint8_t  pdata[32];
 uint8_t  ddata[66];
 
-//*******自定义标志*******
-robot_color_e robot_color ;
-char* command = "sc_r";
-uint8_t   is_judge_on = 0;
-uint8_t   JudgeShoot = 0;
-//***********************
-
 #if SECOND_FIFO == 1
 uint8_t _UART5_DMA_RX_BUF[2][BSP_UART5_DMA_RX_BUF_LEN];
 #else

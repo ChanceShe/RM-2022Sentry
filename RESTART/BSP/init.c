@@ -12,7 +12,8 @@ void BSP_Init(void)			//外设初始化
 	USART1_Configuration(100000);
 	USART3_Configuration_Send();
 	UART4_Configuration();
-	
+	BSP_UART5_InitConfig();//接裁判系统
+
 	CAN1_Init();
 	CAN2_Init();
 	

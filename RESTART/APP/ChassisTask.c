@@ -172,11 +172,11 @@ void chassis_patrol_handle(void)
 				crazyspeeddir = rand()%2;
 				if(crazyspeeddir == 1)
 				{
-					crazyspeed = rand()%150 + 400;
+					crazyspeed = rand()%150 + 300;
 				}
 				else if(crazyspeeddir == 0)
 				{
-					crazyspeed = -(rand()%150 +400);
+					crazyspeed = -(rand()%150 +300);
 				}
 				crazytime  = rand()%150 + 50;
 			}
@@ -221,6 +221,7 @@ float power_limit_rate = 1;
 void power_limit_handle ( void )
 {
 #if POWER_LIMIT_MODE==0
+	
     if ( Power_Control.Flag_Judge_Control == 0 )
     {
         //judge system offline, mandatory limit current
@@ -233,7 +234,7 @@ void power_limit_handle ( void )
                                   ( float ) judge_rece_mesg.power_heat_data.chassis_power_buffer ) / \
                                 ( WARNING_ENERGY * WARNING_ENERGY ) ) * 24000;
         else
-            total_cur_limit = 24000;
+            total_cur_limit = 20000;
     }
 
     total_cur =  abs ( chassis.current ) ;
@@ -242,6 +243,11 @@ void power_limit_handle ( void )
     {
         chassis.current = ( float ) chassis.current / ( float ) total_cur * ( float ) total_cur_limit;
     }
+		//testnum1 = total_cur;
+		//testnum2 = total_cur_limit;
+		testnum3 = judge_rece_mesg.power_heat_data.chassis_power_buffer;
+		testnum4 = WARNING_ENERGY;
+		
 #elif POWER_LIMIT_MODE==1
     if ( judge_rece_mesg.power_heat_data.chassis_power_buffer < WARNING_ENERGY )
         total_cur_limit = ( ( float ) judge_rece_mesg.power_heat_data.chassis_power_buffer / WARNING_ENERGY );

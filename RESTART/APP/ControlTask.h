@@ -2,7 +2,16 @@
 #define _CONTROL_TASK_H_
 #include "main.h"
 
+typedef enum
+{
+  unkown = 0,
+  blue = 1,
+  red  = 2,
+} robot_color_e;
+extern robot_color_e robot_color ;
+
 extern uint32_t time_tick_1ms;
+extern uint8_t   is_judge_on;
 
 void Control_Task(void);
 
