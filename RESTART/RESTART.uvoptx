@@ -118,7 +118,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>d</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -156,52 +155,47 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>RC_CtrlData,0x0A</ItemText>
+          <ItemText>judge_rece_mesg,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>chassis,0x0A</ItemText>
+          <ItemText>judge_rece_mesg.power_heat_data.chassis_power_buffer,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>CM1Encoder,0x0A</ItemText>
+          <ItemText>chassis.current,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>judge_rece_mesg,0x0A</ItemText>
+          <ItemText>judge_rece_mesg.power_heat_data.chassis_power</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>_UART5_DMA_RX_BUF</ItemText>
+          <ItemText>power_limit_rate,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>total_cur_limit,0x0A</ItemText>
+          <ItemText>testnum1,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>total_cur,0x0A</ItemText>
+          <ItemText>testnum2,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>judge_rece_mesg.power_heat_data.chassis_power_buffer,0x0A</ItemText>
+          <ItemText>testnum3,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>chassis.current,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>9</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>judge_rece_mesg.power_heat_data.chassis_power</ItemText>
+          <ItemText>testnum4,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

@@ -6,7 +6,7 @@
 #include "string.h"
 #include "stdarg.h"
 #include "config.h"
-
+#include "math.h"
 
 #include "delay.h"
 #include "iwdg.h"
@@ -43,9 +43,9 @@
 #include "Vehicle_Com_Task.h"
 
 
-extern int testnum1;
-extern int testnum2;
-extern int testnum3;
-extern int testnum4;
+extern float testnum1;
+extern float testnum2;
+extern float testnum3;
+extern float testnum4;
 
 #endif 
