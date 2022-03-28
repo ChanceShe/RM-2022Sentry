@@ -4,6 +4,17 @@
 
 #define CHASSIS_SPEED_ATTENUATION   (1.0f)
 #define MAX_WHEEL_RPM  7400		//轮最大转速
+
+//功率限制方案
+#define POWER_LIMIT_MODE   0   //1上交 0
+
+//电机输出功率计算 p=i*v*I_TIMES_V_TO_WATT;i是直接发给电调的数 v是电机转速
+#define  I_TIMES_V_TO_WATT    0.0000231f    //I -16384~+16384 V .filter_rate
+//电机发热计算 p=i^2*FACTOR_2+i*FACTOR_1+FACTOR0; i是直接发给电调的数-16384~16384 使用虚拟示波器读值后matlab拟合
+#define FACTOR_2	0.000000161f
+#define FACTOR_1	-0.0000229f
+#define FACTOR_0  0.458f
+
 #define POWER_CONTROL_DEFAULT \
 {	0,\
 	0,\
@@ -86,7 +97,6 @@ extern Power_Control_Struct Power_Control;
 extern float power_limit_rate;
 extern int32_t total_cur_limit;
 extern int32_t total_cur;
-extern float I_TIMES_V_TO_WATT;
 void power_limit_handle ( void );
 
 

@@ -108,10 +108,17 @@ void chassis_task(void)
 
 		chassis.wheel_speed_ref = chassis.vx;						//vx>0向右,vx<0向左
 		chassis.wheel_speed_fdb=CM1Encoder.filter_rate;
-
-		chassis.current = pid_calc(&pid_spd, chassis.wheel_speed_fdb, chassis.wheel_speed_ref);
 		
-		power_limit_handle();
+#if POWER_LIMIT_MODE == 1
+		power_limit_handle();		//超前预测功率限制
+#endif		
+		
+		chassis.current = pid_calc(&pid_spd, chassis.wheel_speed_fdb, chassis.wheel_speed_ref*power_limit_rate);
+
+#if POWER_LIMIT_MODE == 0
+  power_limit_handle();			//暴力截电流功率限制
+#endif
+
 		if(chassis.ctrl_mode != CHASSIS_RELAX)
 		{
 			CAN1_Send_Msg(CAN1,0,0,chassis.current,0);
@@ -124,14 +131,12 @@ void chassis_task(void)
 
 }
 
-void chassis_remote_handle(void)
+void chassis_remote_handle(void)		//遥控器控制
 {
   chassis.vx = ChassisSpeedRef.forward_back_ref;
 }
 
-
-
-void chassis_patrol_handle(void)
+void chassis_patrol_handle(void)		//巡逻
 {
     switch ( robot_direction )
     {
@@ -186,7 +191,7 @@ void chassis_patrol_handle(void)
 
 }
 
-void chassis_stop_handle(void)
+void chassis_stop_handle(void)			//停车
 {
   chassis.vy =0;
   chassis.vx =0;
@@ -213,10 +218,17 @@ void chassis_param_init(void)//底盘参数初始化
   * @brief  chassis power limit
   * @usage  set Max_Power
 **/
+static float i_torque(float factor)		//转矩电流
+{
+  float i_torque= pid_spd.p * (factor*(float)chassis.wheel_speed_ref - chassis.wheel_speed_fdb)+ \
+               pid_spd.iout+ \
+               pid_spd.d * ((factor*(float)chassis.wheel_speed_ref-chassis.wheel_speed_fdb) - pid_spd.err[LAST]);
+  return i_torque;
+}
+
 int32_t total_cur_limit;
 int32_t total_cur;
-u8  Max_Power     = 30;
-float I_TIMES_V_TO_WATT =   0.0000189f ;
+u8  Max_Power     = 20;
 float power_limit_rate = 1;
 void power_limit_handle ( void )
 {
@@ -255,17 +267,13 @@ void power_limit_handle ( void )
         total_cur_limit = 1;
 
 
-    float drive_power = ( i_predict ( 0, 1.0f ) * ( float ) chassis.wheel_speed_fdb  ) * I_TIMES_V_TO_WATT;
-
-    float heat_power = heat_power_calc ( i_predict ( 0, 1.0f ) );
-
-
+    float drive_power = ( i_torque ( 1.0f ) * ( float ) chassis.wheel_speed_fdb  ) * I_TIMES_V_TO_WATT;
+    float heat_power = heat_power_calc ( i_torque ( 1.0f ) );
     float PowerSum = drive_power + heat_power;
 
     VAL_LIMIT ( PowerSum, 0, 1000 );
     if ( PowerSum > ( float ) Max_Power )
     {
-
 
         //设中间变量i_n=a[n]*k+b[n]
         float a;
@@ -291,21 +299,21 @@ void power_limit_handle ( void )
         //一元二次求根公式
         power_limit_rate = ( -n + ( float ) sqrt ( ( double ) ( n * n - 4 * m * l ) ) ) / ( 2 * m ) * total_cur_limit;
 
-        //没有考虑热功率
-//							 power_limit_rate=1.0f -
-//														  (float)(PowerSum - Max_Power) /
-//															(pid_spd[0].p* ((float)chassis.wheel_speed_ref[0]*(float)chassis.wheel_speed_fdb[0] + \
-//																						  (float)chassis.wheel_speed_ref[1]*(float)chassis.wheel_speed_fdb[1] + \
-//																						  (float)chassis.wheel_speed_ref[2]*(float)chassis.wheel_speed_fdb[2] + \
-//																						  (float)chassis.wheel_speed_ref[3]*(float)chassis.wheel_speed_fdb[3])) \
-//														/I_TIMES_V_TO_WATT;
-
         VAL_LIMIT ( power_limit_rate, 0, 1 );
     }
     else
     {
         power_limit_rate = 1;
     }
+
+#elif POWER_LIMIT_MODE==2
+		if(judge_rece_mesg.power_heat_data.chassis_power_buffer< WARNING_ENERGY)
+        total_cur_limit =(judge_rece_mesg.power_heat_data.chassis_power_buffer/WARNING_ENERGY);
+		else
+        total_cur_limit =1;
+
+      chassis.current = chassis.current * total_cur_limit;
+
 #endif
 }
 
