@@ -82,7 +82,7 @@ typedef struct
     float 	K_Output;
 } Power_Control_Struct;
 extern Power_Control_Struct Power_Control;
-#define WARNING_ENERGY 60
+#define WARNING_ENERGY 180
 extern float power_limit_rate;
 extern int32_t total_cur_limit;
 extern int32_t total_cur;

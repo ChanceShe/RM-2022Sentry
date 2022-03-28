@@ -172,13 +172,13 @@ void chassis_patrol_handle(void)
 				crazyspeeddir = rand()%2;
 				if(crazyspeeddir == 1)
 				{
-					crazyspeed = rand()%150 + 300;
+					crazyspeed = rand()%150 + 500;
 				}
 				else if(crazyspeeddir == 0)
 				{
-					crazyspeed = -(rand()%150 +300);
+					crazyspeed = -(rand()%150 +500);
 				}
-				crazytime  = rand()%150 + 50;
+				crazytime  = rand()%50 + 50;
 			}
 			chassis.vx = crazyspeed;
 			crazytime--;
@@ -234,7 +234,7 @@ void power_limit_handle ( void )
                                   ( float ) judge_rece_mesg.power_heat_data.chassis_power_buffer ) / \
                                 ( WARNING_ENERGY * WARNING_ENERGY ) ) * 24000;
         else
-            total_cur_limit = 20000;
+            total_cur_limit = 24000;
     }
 
     total_cur =  abs ( chassis.current ) ;
