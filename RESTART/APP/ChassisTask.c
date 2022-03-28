@@ -218,12 +218,16 @@ void chassis_param_init(void)//底盘参数初始化
   * @brief  chassis power limit
   * @usage  set Max_Power
 **/
-static float i_torque(float factor)		//转矩电流
+static float i_torque(float factor)		//转矩电流计算
 {
   float i_torque= pid_spd.p * (factor*(float)chassis.wheel_speed_ref - chassis.wheel_speed_fdb)+ \
                pid_spd.iout+ \
                pid_spd.d * ((factor*(float)chassis.wheel_speed_ref-chassis.wheel_speed_fdb) - pid_spd.err[LAST]);
   return i_torque;
+}
+static float heat_power_calc(int i)		//电机热功率
+{
+  return  FACTOR_2*(float)(i*i)+FACTOR_1*(float)(i)+FACTOR_0;
 }
 
 int32_t total_cur_limit;

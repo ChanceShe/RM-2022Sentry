@@ -6,7 +6,7 @@
 #define MAX_WHEEL_RPM  7400		//轮最大转速
 
 //功率限制方案
-#define POWER_LIMIT_MODE   0   //1上交 0
+#define POWER_LIMIT_MODE   1   //1上交 0
 
 //电机输出功率计算 p=i*v*I_TIMES_V_TO_WATT;i是直接发给电调的数 v是电机转速
 #define  I_TIMES_V_TO_WATT    0.0000231f    //I -16384~+16384 V .filter_rate
