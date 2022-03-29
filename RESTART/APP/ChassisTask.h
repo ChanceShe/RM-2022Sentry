@@ -8,6 +8,9 @@
 //功率限制方案
 #define POWER_LIMIT_MODE   1   //1上交 0
 
+//缓冲能量警告下限
+#define WARNING_ENERGY 	80
+
 //电机输出功率计算 p=i*v*I_TIMES_V_TO_WATT;i是直接发给电调的数 v是电机转速
 #define  I_TIMES_V_TO_WATT    0.0000231f    //I -16384~+16384 V .filter_rate
 //电机发热计算 p=i^2*FACTOR_2+i*FACTOR_1+FACTOR0; i是直接发给电调的数-16384~16384 使用虚拟示波器读值后matlab拟合
@@ -31,28 +34,6 @@ typedef enum
   CHASSIS_PATROL		 		 = 3,		//巡逻模式
 } chassis_mode_e;
 
-typedef struct
-{
-  double           vx; // forward/back
-  double           vy; // left/right
-  double           vw; // 
-  
-  chassis_mode_e  ctrl_mode;
-  chassis_mode_e  last_ctrl_mode;
-
-  float           gyro_angle;
-  float           gyro_palstance;
-
-  int16_t         wheel_speed_fdb;
-  int16_t         wheel_speed_ref;
-  int16_t         current;
-  
-  uint8_t         follow_gimbal;
-} chassis_t;
-
-
-extern chassis_t chassis;
-
 typedef enum
 {
     sensor_off 	    = 0,
@@ -65,7 +46,7 @@ typedef enum
     position_left           = 1,
     position_right          = 2,
 } position_e;    			//   自动模式下的位置状态
-extern position_e robot_position;
+
 typedef enum
 {
 	direction_left						= 0,
@@ -74,13 +55,53 @@ typedef enum
 	direction_stopleft				= 3,
 	direction_stopright				= 4,
 }	direction_e;					//自动模式下的运动方向
-extern direction_e robot_direction;
+
+typedef struct
+{
+	uint8_t 				crazyflag;
+	uint8_t 			 	crazytime;
+	uint8_t 			 	crazychangetime;
+	uint8_t		 			crazyspeeddir;
+	int 			 			crazyspeed;
+}	crazydata_t;					//暴走模式参数
+
+typedef enum
+{
+  limit_strict         	= 0,
+  limit_buffer          = 1,
+	limit_current					= 2,
+} powerlimit_e;    			//功率限制模式
+
+
+typedef struct
+{
+  double           vx; // forward/back
+  
+  chassis_mode_e  ctrl_mode;
+  chassis_mode_e  last_ctrl_mode;
+	
+  int16_t         wheel_speed_fdb;
+  int16_t         wheel_speed_ref;
+  int16_t         current;
+  powerlimit_e		powerlimit;
+	
+	crazydata_t			crazydata;
+	
+	position_e 			position;
+	direction_e 		direction;
+
+} chassis_t;
+
+extern chassis_t chassis;
+
+
+
 
 
 void chassis_param_init(void);//底盘参数初始化
 void chassis_task(void);
-void chassis_remote_handle(void);
-void chassis_patrol_handle(void);
+static void chassis_remote_handle(void);
+static void chassis_patrol_handle(void);
 static void chassis_stop_handle(void);
 
 
@@ -93,7 +114,6 @@ typedef struct
     float 	K_Output;
 } Power_Control_Struct;
 extern Power_Control_Struct Power_Control;
-#define WARNING_ENERGY 180
 extern float power_limit_rate;
 extern int32_t total_cur_limit;
 extern int32_t total_cur;

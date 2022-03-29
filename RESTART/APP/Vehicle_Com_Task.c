@@ -78,7 +78,7 @@ void Vehicle_Send_Sentinel ( void ) //�ڱ�ͨѶΪ0x201
     }
 
     Test_Info ++ ;
-    ddata[6] = robot_position;
+    ddata[6] = chassis.position;
     ddata[7] = ( judge_rece_mesg.bullet_remaining.bullet_remaining_num_17mm & 0x00FF );
     ddata[8] = ( judge_rece_mesg.bullet_remaining.bullet_remaining_num_17mm & 0xFF00 ) >> 8;
 //    ddata[9] = Test_Info;
