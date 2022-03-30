@@ -122,12 +122,18 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 			{
 				chassis.crazydata.crazyspeed			= rand()%150 + 500;
 				chassis.crazydata.crazychangetime		  	= rand()%70 + 70;
+
+#if			CRAZY_DIR_CHANGE_MODE == 0
 				chassis.direction = !chassis.direction;
-//				chassis.crazydata.crazyspeeddir 	= rand()%2;
-//				if(chassis.crazydata.crazyspeeddir == 0)
-//						chassis.direction = direction_right;
-//				else if(chassis.crazydata.crazyspeeddir == 1)
-//						chassis.direction = direction_left;
+				
+#elif			CRAZY_DIR_CHANGE_MODE == 1
+				chassis.crazydata.crazyspeeddir 	= rand()%2;
+				if(chassis.crazydata.crazyspeeddir == 0)
+						chassis.direction = direction_right;
+				else if(chassis.crazydata.crazyspeeddir == 1)
+						chassis.direction = direction_left;
+#endif
+
 			}
 			chassis.crazydata.crazychangetime--;
 			chassis.crazydata.crazytime--;
