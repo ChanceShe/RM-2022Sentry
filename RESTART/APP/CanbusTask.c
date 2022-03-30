@@ -4,13 +4,13 @@ static uint32_t can1_count = 0;
 static uint32_t can2_count = 0;
 
 //CAN1电机编码器
-volatile Encoder PokeEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+volatile Encoder Friction1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台摩擦轮
+volatile Encoder Friction2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台摩擦轮
 
 //CAN2电机编码器
 volatile Encoder GMYawEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};				//云台Yaw
 volatile Encoder GMPitchEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};			//云台Pitch
-volatile Encoder Friction1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台Pitch
-volatile Encoder Friction2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台Pitch
+volatile Encoder PokeEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//拨盘
 
 //refrom_info_t  main_info = {0};
 refrom_mainboard_t refromData = {0, 0, 3, 3};

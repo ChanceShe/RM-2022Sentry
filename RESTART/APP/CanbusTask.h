@@ -56,12 +56,12 @@ typedef struct
 } refrom_info_t;  //   云台通信接收结构体
 
 //CAN1
-extern volatile Encoder GMYawEncoder ;				//上云台Yaw
-extern volatile Encoder GMPitchEncoder ;			//上云台Pitch
-extern volatile Encoder Friction1Encoder ;		//上云台Pitch
-extern volatile Encoder Friction2Encoder ;		//上云台Pitch
+extern volatile Encoder Friction1Encoder ;		//云台摩擦轮
+extern volatile Encoder Friction2Encoder ;		//云台摩擦轮
 
 //CAN2
+extern volatile Encoder GMYawEncoder ;				//云台Yaw
+extern volatile Encoder GMPitchEncoder ;			//云台Pitch
 extern volatile Encoder PokeEncoder;					//拨盘
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg);
