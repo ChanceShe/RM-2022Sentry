@@ -54,10 +54,11 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
 				if ( shot.limit_heart0 < 50 )
 				{
 						pid_trigger_speed.set = 0;//PID_SHOOT_MOTOR_SPEED * ( float ) ( shot.limit_heart0 / shot.max_heart0 );
+						SetShootState ( NOSHOOTING );
 				}
 				else
 				{
-						pid_trigger_speed.set = PID_SHOOT_MOTOR_SPEED;
+						pid_trigger_speed.set = -PID_SHOOT_MOTOR_SPEED;
 				}
 
         if ( start_shooting_count > 100 && abs ( PokeEncoder.filter_rate ) < 10  ) //开始了一段时间并且转速低于一定的值  说明堵转
@@ -77,11 +78,12 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
         else  if ( lock_rotor == 1 ) //堵转
         {
             start_shooting_count = 0;//清零正转计时
-            pid_trigger_speed.set = -PID_SHOOT_MOTOR_SPEED ;
+            pid_trigger_speed.set = PID_SHOOT_MOTOR_SPEED ;
             start_reversal_count++;
-            if ( start_reversal_count > 10 ) //反转一段时间
+            if ( start_reversal_count > 2 ) //反转一段时间
             {
-                lock_rotor = 0;
+                lock_rotor = 0;\
+								start_reversal_count = 0;//清零反转计时
 
             }
         }
@@ -90,12 +92,12 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
 
     if ( ( GetShootState() == NOSHOOTING ) )
     {
-        
         CAN2_Send_Msg ( CAN2, 0, 0, 0, 0 );
+				CloseLimit;
     }
     else
     {
-        
+				OpenLimit;
         pid_trigger_speed.get = PokeEncoder.filter_rate;
         pid_calc ( &pid_trigger_speed, pid_trigger_speed.get, pid_trigger_speed.set );
         CAN2_Send_Msg ( CAN2, pid_trigger_speed.out, 0, 0, 0 );
@@ -136,5 +138,54 @@ void shot_param_init(void)
   friction_rotor = 0;
   shot.ctrl_mode=REMOTE_CTRL_SHOT;
   shot.limit_heart0=120;
+	gun_limit_init();
 }
 
+void gun_limit_init(void)
+{
+	  GPIO_InitTypeDef          gpio;
+    TIM_TimeBaseInitTypeDef   tim;
+    TIM_OCInitTypeDef         oc;
+    
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC ,ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);  
+
+	  GPIO_PinAFConfig(GPIOC,GPIO_PinSource8, GPIO_AF_TIM3);
+		GPIO_PinAFConfig(GPIOC,GPIO_PinSource9, GPIO_AF_TIM3);
+	                        
+	  gpio.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;       
+    gpio.GPIO_Mode = GPIO_Mode_AF;
+    gpio.GPIO_Speed = GPIO_Speed_100MHz;
+	  gpio.GPIO_OType = GPIO_OType_PP;
+	  gpio.GPIO_PuPd = GPIO_PuPd_UP ;
+    GPIO_Init(GPIOC,&gpio);
+	
+	  GPIO_PinAFConfig(GPIOC,GPIO_PinSource8, GPIO_AF_TIM3);  //TIM3->CCR1 ????PWM4
+	  GPIO_PinAFConfig(GPIOC,GPIO_PinSource9, GPIO_AF_TIM3);  //TIM3->CCR2 ????PWM5
+	
+	  /* ??????TIM3 */
+	  tim.TIM_Prescaler = 999;    //???
+    tim.TIM_CounterMode = TIM_CounterMode_Up;
+    tim.TIM_Period = 1679;   
+    tim.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInit(TIM3,&tim);
+
+	  oc.TIM_OCMode = TIM_OCMode_PWM2;
+    oc.TIM_OutputState = TIM_OutputState_Enable;
+    oc.TIM_OutputNState = TIM_OutputState_Disable;
+    oc.TIM_Pulse = 1000;
+    oc.TIM_OCPolarity = TIM_OCPolarity_Low;
+    oc.TIM_OCNPolarity = TIM_OCPolarity_High;
+    oc.TIM_OCIdleState = TIM_OCIdleState_Reset;
+    oc.TIM_OCNIdleState = TIM_OCIdleState_Set;
+		
+    TIM_OC3Init(TIM3,&oc);
+   	TIM_OC3PreloadConfig(TIM3,TIM_OCPreload_Enable);  
+	  TIM_OC4Init(TIM3,&oc);
+	  TIM_OC4PreloadConfig(TIM3,TIM_OCPreload_Enable);  
+		
+    TIM_ARRPreloadConfig(TIM3,ENABLE);
+    TIM_Cmd(TIM3,ENABLE);
+		
+		CloseLimit;
+}
