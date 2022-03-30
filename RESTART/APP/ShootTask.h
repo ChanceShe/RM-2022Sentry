@@ -6,10 +6,9 @@
 #define FRICTION_SPEED                  950
 
 //·¢ÉäÏÞÎ»
-#define PWM3  TIM3->CCR4
 #define PWM4  TIM3->CCR4//µ¯²Ö
-#define CloseLimit PWM4=87,PWM4=87;
-#define OpenLimit  PWM4=97,PWM4=97;
+#define CloseLimit PWM4=87;
+#define OpenLimit  PWM4=97;
 void gun_limit_init( void );
 
 

@@ -15,10 +15,10 @@ void Control_Task(void)
 		gimbal_task();
 	}		
 
-//	if(time_tick_1ms%5 == 0)
-//  {
-//		shot_task();		
-//	}		
+	if(time_tick_1ms%5 == 0)
+  {
+		shot_task();		
+	}		
 
 	
 	OutData[0] = 0;

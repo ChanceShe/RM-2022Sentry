@@ -51,7 +51,7 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
     {
         start_reversal_count = 0;//清零反转计时
         start_shooting_count++;
-				if ( shot.limit_heart0 < 50 )
+				if ( shot.limit_heart0 < 20 )
 				{
 						pid_trigger_speed.set = 0;//PID_SHOOT_MOTOR_SPEED * ( float ) ( shot.limit_heart0 / shot.max_heart0 );
 						SetShootState ( NOSHOOTING );
@@ -113,7 +113,7 @@ void heat0_limit ( void )
     shot.limit_heart0 = shot.max_heart0 - refromData.shoot_heart0 + 0.005 * shot.cooling_ratio;
     shot.total_speed = 0;
 
-    if ( shot.limit_heart0 < 30 )
+    if ( shot.limit_heart0 < 20 )
     {
 				CAN2_Send_Msg ( CAN2, 0, 0, 0, 0 );
         shot.ctrl_mode = 1;
@@ -123,6 +123,7 @@ void heat0_limit ( void )
 
 void shot_task ( void )
 {
+		heat0_limit ();
     shoot_friction_handle();
     shoot_bullet_handle();
 }
@@ -138,7 +139,6 @@ void shot_param_init(void)
   friction_rotor = 0;
   shot.ctrl_mode=REMOTE_CTRL_SHOT;
   shot.limit_heart0=120;
-	gun_limit_init();
 }
 
 void gun_limit_init(void)

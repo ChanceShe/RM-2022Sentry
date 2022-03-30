@@ -29,5 +29,6 @@ void ControtLoopTaskInit(void)
 	AppParamInit();    			//程序参数初始化
   shot_param_init();			//射击任务初始化
 	gimbal_param_init();		//云台任务初始化
+	gun_limit_init();
 }
 
