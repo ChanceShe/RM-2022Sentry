@@ -51,8 +51,8 @@ void gimbal_task(void)
      cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-//		 CAN2_Gimbal_Msg (  ( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
-		 CAN2_Gimbal_Msg(0,0);
+		 CAN2_Gimbal_Msg (  ( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg(0,0);
 	 }
 	 else
 	 {
@@ -570,7 +570,7 @@ void auto_shoot_task(void)
         case FRICTION_WHEEL_OFF:
         {
             frictionRamp.ResetCounter ( &frictionRamp );
-            if ( RC_CtrlData.rc.s1 != 3  &&  ( new_location.id != 0 ) ) //´Ó¹Ø±Õµ½start turning
+            if ( refromData.s1 != 3  &&  ( new_location.id != 0 ) ) //´Ó¹Ø±Õµ½start turning
             {
                 SetShootState ( NOSHOOTING );
                 friction_rotor = 0;
@@ -605,7 +605,7 @@ void auto_shoot_task(void)
         case FRICTION_WHEEL_ON:
         {
 
-            if (  lostflag  || RC_CtrlData.rc.s1 == 3  )
+            if (  lostflag  || refromData.s1 == 3  )
             {
                 friction_rotor = 2;
                 friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;

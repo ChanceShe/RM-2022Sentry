@@ -137,7 +137,6 @@ typedef struct RemoteSwitch_t
 	 uint8_t buf_end_index;
 }RemoteSwitch_t;
 
-extern RC_Ctl_t RC_CtrlData;
 extern ChassisSpeed_Ref_t ChassisSpeedRef;
 extern Gimbal_Ref_t GimbalRef;
 

@@ -1,7 +1,6 @@
 #include <stm32f4xx.h>
 #include "main.h"
 
-RC_Ctl_t RC_CtrlData;
 ChassisSpeed_Ref_t ChassisSpeedRef;
 Gimbal_Ref_t GimbalRef;
 FrictionWheelState_e friction_wheel_state = FRICTION_WHEEL_OFF;
@@ -12,13 +11,10 @@ static volatile Shoot_State_e shootState = NOSHOOTING;						//射击模式
 
 //遥控器数据初始化，斜坡函数等的初始化
 RampGen_t frictionRamp = RAMP_GEN_DAFAULT;  //摩擦轮斜坡
-RampGen_t LRSpeedRamp = RAMP_GEN_DAFAULT;   //mouse左右移动斜坡
-RampGen_t FBSpeedRamp = RAMP_GEN_DAFAULT;   //mouse前后移动斜坡
 void RemoteTaskInit()
 {
+	frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_TICK_COUNT );
   frictionRamp.ResetCounter(&frictionRamp);
-  LRSpeedRamp.ResetCounter(&LRSpeedRamp);
-  FBSpeedRamp.ResetCounter(&FBSpeedRamp);
   //底盘云台给定值初始化
   GimbalRef.pitch_angle_dynamic_ref = 0.0f;
   GimbalRef.yaw_angle_dynamic_ref = 0.0f;
