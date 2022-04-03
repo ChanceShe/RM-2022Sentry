@@ -118,6 +118,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
+          <Name>?</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -160,50 +161,15 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>USART6_DMA_RX_BUF</ItemText>
+          <ItemText>refromData,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>yaw_Gyro</ItemText>
-        </Ww>
-        <Ww>
-          <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>pitch_Gyro</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>yaw_Angle</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>pitch_Angle</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>shot,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>refromData,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>1</WinNumber>
           <ItemText>time_tick_1ms,0x0A</ItemText>
         </Ww>
         <Ww>
-          <count>8</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>SYS_START,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>9</count>
+          <count>2</count>
           <WinNumber>1</WinNumber>
           <ItemText>testnum1,0x0A</ItemText>
         </Ww>
@@ -243,6 +209,26 @@
           <count>6</count>
           <WinNumber>2</WinNumber>
           <ItemText>new_location,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>gim</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>Gimbal_Auto_Shoot</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>GimbalRef</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>testnum1,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>

@@ -53,19 +53,19 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
   flagg_yaw=Uart4_Protobuf_Receive_Gimbal_Angle->x;
       /*这里有问题，数据是反的*/
 	new_location.receNewDataFlag  =  1;
-	if(Uart4_Protobuf_Receive_Gimbal_Angle->id != 0)		//id颜色:0:不亮,1:蓝,2:红,3:紫.
+	if(Uart4_Protobuf_Receive_Gimbal_Angle->distance > 0)		//id颜色:0:篮,1:蓝,2:红,3:紫.
 	{	
 		  LASER_ON();
-			new_location.x		=  -Uart4_Protobuf_Receive_Gimbal_Angle->x;
-			new_location.y		=  -Uart4_Protobuf_Receive_Gimbal_Angle->y;
+			new_location.x		= Uart4_Protobuf_Receive_Gimbal_Angle->x;
+			new_location.y		= Uart4_Protobuf_Receive_Gimbal_Angle->y;
 		  new_location.dis	= Uart4_Protobuf_Receive_Gimbal_Angle->distance;
 			new_location.id		= Uart4_Protobuf_Receive_Gimbal_Angle->color;
 	}
 	else
 	{
 		  LASER_OFF();
-			new_location.x=  -Uart4_Protobuf_Receive_Gimbal_Angle->x;
-			new_location.y=  -Uart4_Protobuf_Receive_Gimbal_Angle->y;
+			new_location.x=  Uart4_Protobuf_Receive_Gimbal_Angle->x;
+			new_location.y=  Uart4_Protobuf_Receive_Gimbal_Angle->y;
 			num_command++;		
 	}
 

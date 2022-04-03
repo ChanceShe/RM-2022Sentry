@@ -131,7 +131,7 @@ typedef struct
 } gimbal_t;
 
 extern gimbal_t gim;
-extern float Init_Yaw_Angle  , Init_Pitch_Angle;
+extern float Init_Yaw_Angle;
 extern RampGen_t GMPitchRamp ;
 extern RampGen_t GMYawRamp ;
 extern auto_mode_e auto_mode;

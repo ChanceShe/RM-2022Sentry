@@ -15,7 +15,7 @@ void BSP_Init(void)			//外设初始化
 	UART4_Configuration();
   USART6_Configuration_For_Hi220();
 
-	delay_ms (10);
+	delay_ms (100);
 	
 	
 	CAN1_Init();
