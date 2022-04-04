@@ -5,7 +5,6 @@
 location new_location;            //传回来的坐标值
 int receive = 0;    //接收到数据个数
 /* *** *** *******************************/
-int num_command=0;
 uint8_t auto_shoot_mode_set;
 robot_color_e robot_color = 1 ;   //0-9以下标识自己都是红方，其它都是蓝方
 char* command = "sc_r";
@@ -46,7 +45,7 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 {
 	// Protobuf 正确用法是新建一个对象去存数据，就算不新建对象好歹初始化一下啊傻X刘恒
 	Uart4_Protobuf_Receive_Gimbal_Angle->y = 0.0f;
-	Uart4_Protobuf_Receive_Gimbal_Angle->x = 1.0f;
+	Uart4_Protobuf_Receive_Gimbal_Angle->x = 0.0f;
 	Uart4_Protobuf_Receive_Gimbal_Angle->id = 0;
   Uart4_Protobuf_Receive_Gimbal_Angle=protocol__frame__unpack(NULL,content_length,content_address);
   flagg_pitch=Uart4_Protobuf_Receive_Gimbal_Angle->y;
@@ -64,9 +63,10 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 	else
 	{
 		  LASER_OFF();
-			new_location.x=  Uart4_Protobuf_Receive_Gimbal_Angle->x;
-			new_location.y=  Uart4_Protobuf_Receive_Gimbal_Angle->y;
-			num_command++;		
+			new_location.x		= 0;
+			new_location.y		= 0;
+			new_location.dis	= 0;
+			new_location.id		= 0;
 	}
 
   protocol__frame__free_unpacked(Uart4_Protobuf_Receive_Gimbal_Angle,NULL);

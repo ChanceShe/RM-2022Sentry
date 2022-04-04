@@ -205,7 +205,7 @@ void gimbal_patrol_handle(void)					//巡逻模式
         else
         {
 					rotate_num = ( yaw_Angle - Init_Yaw_Angle ) / 360;
-//					gim.pid.yaw_angle_ref = yaw_Angle + 5;
+					gim.pid.yaw_angle_ref = yaw_Angle + 3;
 
 					if ( pitch_dir == 1 )
 					{
@@ -237,11 +237,12 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         Gimbal_Auto_Shoot.Err_Pixels_Yaw	= new_location.x;
         Gimbal_Auto_Shoot.Err_Pixels_Pit	= new_location.y;
         Gimbal_Auto_Shoot.Distance = new_location.dis;
+			testnum1++;
     }
     else
     {
         Gimbal_Auto_Shoot.Recognized_Timer++;
-        if ( Gimbal_Auto_Shoot.Recognized_Timer == 100 ) //200ms，时间太长，云台保持原有给定导致乱动作
+        if ( Gimbal_Auto_Shoot.Recognized_Timer == 20 ) //200ms，时间太长，云台保持原有给定导致乱动作
         {
             Gimbal_Auto_Shoot.Recognized_Flag 	= 0;
             Gimbal_Auto_Shoot.Recognized_Timer 	= 0;

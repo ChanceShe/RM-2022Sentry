@@ -6,8 +6,8 @@ typedef struct
 {
   float x;
   float y;
-  int16_t x1;
-  int16_t y1;
+//  int16_t x1;
+//  int16_t y1;
   int16_t dis;
   uint8_t id;
   uint8_t color;
