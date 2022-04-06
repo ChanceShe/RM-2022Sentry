@@ -44,6 +44,7 @@ void gimbal_task(void)
    }
 	 
 	 if(gim.ctrl_mode == GIMBAL_RELAX)
+//	 if(gim.ctrl_mode == GIMBAL_RELAX||gim.ctrl_mode == GIMBAL_AUTO_MODE)
 	 {
 		 CAN2_Gimbal_Msg(0,0); 
 	 }
@@ -58,6 +59,7 @@ void gimbal_task(void)
 		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg(( int16_t ) pid_yaw_speed.out,0);
 //		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg(0,0); 
 	 }
 }
 void gimbal_param_init ( void )		//云台任务初始化
@@ -76,8 +78,8 @@ void gimbal_param_init ( void )		//云台任务初始化
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 80,
                       12, 0.05, 0 );
-		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 29000, 29000,
-                      150.0f, 0, 20 );
+		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 20000, 20000,
+                      100.0f, 0, 20 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -293,8 +295,8 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
            
 //            Gimbal_Auto_Shoot.Speed_Prediction.time_delay = 0;//130e-3f;
             //--/----------  计算枪管距离目标点的偏差角 ----------------------/--//
-            Gimbal_Auto_Shoot.Ballistic_Compensation = ANGLE_BETWEEN_GUN_CAMERA - (RAD_TO_ANGLE * atan2 ( HEIGHT_BETWEEN_GUN_CAMERA , Gimbal_Auto_Shoot.Distance ) );
             Gimbal_Auto_Shoot.Horizontal_Compensation = YAW_ANGLE_BETWEEN_GUN_CAMERA ;
+						Gimbal_Auto_Shoot.Ballistic_Compensation = ANGLE_BETWEEN_GUN_CAMERA - RAD_TO_ANGLE * atan2 ( HEIGHT_BETWEEN_GUN_CAMERA , Gimbal_Auto_Shoot.Distance*10 );
             //Amror_pit 装甲板的pitch轴角度  Amror_yaw 装甲板的yaw轴角度
 
 					  Gimbal_Auto_Shoot.Speed_Prediction.time_delay = distance_x / ( shoot_angle_speed * cos( shoot_radian ) );

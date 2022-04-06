@@ -178,67 +178,72 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>receive,0x0A</ItemText>
+          <ItemText>UART4_DMA_RX_BUF,0x10</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>UART4_DMA_RX_BUF,0x10</ItemText>
+          <ItemText>Uart4_Protobuf_Receive_Gimbal_Angle,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Uart4_Protobuf_Receive_Gimbal_Angle,0x0A</ItemText>
+          <ItemText>new_location,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>counter_receive,0x0A</ItemText>
+          <ItemText>gim</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>counter_complete,0x0A</ItemText>
+          <ItemText>Gimbal_Auto_Shoot</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>counter_crc_passed,0x0A</ItemText>
+          <ItemText>auto_lost,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>2</WinNumber>
-          <ItemText>new_location,0x0A</ItemText>
+          <ItemText>auto_lost_timer,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>2</WinNumber>
-          <ItemText>gim</ItemText>
+          <ItemText>testnum1,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Gimbal_Auto_Shoot</ItemText>
+          <ItemText>yaw_Angle</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>2</WinNumber>
-          <ItemText>GimbalRef</ItemText>
+          <ItemText>pitch_Angle</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>2</WinNumber>
-          <ItemText>auto_lost,0x0A</ItemText>
+          <ItemText>counter_receive,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>2</WinNumber>
-          <ItemText>auto_lost_timer,0x0A</ItemText>
+          <ItemText>counter_complete,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>2</WinNumber>
-          <ItemText>testnum1,0x0A</ItemText>
+          <ItemText>length,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>counter_crc_passed,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>

@@ -3,7 +3,7 @@
 #include "main.h"
 void UART4_Configuration(void);
 
-#define UART4_RX_BUF_LENGTH   32
+#define UART4_RX_BUF_LENGTH   64
 #define UART4_TX_BUF_LENGTH   32
 
 extern uint8_t UART4_DMA_RX_BUF[UART4_RX_BUF_LENGTH];
