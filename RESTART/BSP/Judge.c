@@ -130,7 +130,6 @@ const uint16_t wCRC_Table[256] =
 
 unsigned char get_crc8(unsigned char* data, unsigned int length)
 {
-	unsigned char ucExpected = 0;
   if ((data == 0) || (length <= 2))
     return 0xFF;
   return Get_CRC8_Check_Sum (data, length, CRC8_INIT);

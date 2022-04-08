@@ -116,7 +116,7 @@ void heat0_limit ( void )
     if ( shot.limit_heart0 < 20 )
     {
 				CAN2_Send_Msg ( CAN2, 0, 0, 0, 0 );
-        shot.ctrl_mode = 1;
+        shot.ctrl_mode = REMOTE_CTRL_SHOT;
         SetShootState ( NOSHOOTING );
     }
 }

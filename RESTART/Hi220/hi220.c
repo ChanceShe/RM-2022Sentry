@@ -117,7 +117,6 @@ void USART6_IRQHandler(void)                	//串口1中断服务程序
 	uint16_t CRCReceived = 0;            /* CRC value received from a frame */
 	uint16_t CRCCalculated = 0;          /* CRC value caluated from a frame */
 	uint8_t length=0;
-	uint8_t Length_Data=0;
 	uint8_t Length_Deal = 6;
 	uint8_t *p;
 	

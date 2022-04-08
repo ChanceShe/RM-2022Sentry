@@ -2,6 +2,8 @@
 #define _AUTO_SHOOT_CONTROL_TASK_H_
 #include "main.h"
 
+#define DEBUG_MODE 1
+
 typedef struct
 {
   float x;
@@ -24,7 +26,7 @@ typedef enum
 } robot_color_e;
 
 //extern Speed_Prediction_t Speed_Prediction;
-extern robot_color_e robot_color ;
+extern robot_color_e robot_color;
 extern location new_location;
 //extern uint8_t color_set_flag;
 extern uint8_t auto_shoot_mode_set;

@@ -1,12 +1,14 @@
 #include "main.h"
-#define DEBUG_MODE 1
+
 
 /* *** *** 自动打击相关定义 开始 *** *** */
 location new_location;            //传回来的坐标值
-int receive = 0;    //接收到数据个数
+int receive_time = 0;
+int last_receive_time = 0;
+
 /* *** *** *******************************/
 uint8_t auto_shoot_mode_set;
-robot_color_e robot_color = 1 ;   //0-9以下标识自己都是红方，其它都是蓝方
+robot_color_e robot_color = unkown ;   //0-9以下标识自己都是红方，其它都是蓝方
 char* command = "sc_r";
 /********* 自动打击相关定义 结束 *********/
 int wExpected = 0;
@@ -20,7 +22,6 @@ float flagg_pitch;
 float flagg_yaw;
 void targetOffsetDataDeal ( uint8_t len, u8 *buf )
 {
-  receive++;
   process_general_message(buf,len);
 }
 
@@ -62,7 +63,7 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 	}
 	else
 	{
-//		  LASER_OFF();
+		  LASER_OFF();
 			new_location.x		= 0;
 			new_location.y		= 0;
 			new_location.dis	= 0;
@@ -82,7 +83,6 @@ Parser parsers[] =
   &parse_turret_command
 };
 
-
 #ifdef DEBUG_MODE
   // Counter for received packages.
   int counter_receive = 0;
@@ -91,7 +91,6 @@ Parser parsers[] =
   // Contuner for pacakages that passed the CRC8 check.
   int counter_crc_passed = 0;
 #endif
-
 
 void process_general_message(unsigned char* address, unsigned int length)
 {
@@ -126,7 +125,7 @@ void process_general_message(unsigned char* address, unsigned int length)
 		return;
 
 #ifdef DEBUG_MODE
-  ++counter_crc_passed;
+  ++counter_crc_passed;	
 #endif
 	(*parsers[3])(content_address,content_size);
 }

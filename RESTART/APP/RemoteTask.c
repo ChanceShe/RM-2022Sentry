@@ -58,7 +58,7 @@ uint8_t IsRemoteBeingAction ( void )
 
 }
 
-InputMode_e GetInputMode()									//获取控制模式
+InputMode_e GetInputMode( void )									//获取控制模式
 {
   return inputmode;
 }
@@ -195,7 +195,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器控制发射
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
                 SetShootState ( NOSHOOTING );  //拨盘选择是否开启
-//								LASER_OFF();
+								LASER_OFF();
             }
             else if ( sw->switch_value_raw == 2 )
             {

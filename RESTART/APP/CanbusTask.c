@@ -14,7 +14,6 @@ volatile Encoder PokeEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//拨盘
 
 //refrom_info_t  main_info = {0};
 refrom_mainboard_t refromData = {0, 0, 3, 3};
-static InputMode_e inputmode_h = REMOTE_INPUT;   //输入模式设定
 static volatile Shoot_State_e shootState_h = NOSHOOTING;
 uint8_t  ShootConFlag = 1;
 
@@ -258,5 +257,4 @@ void CAN2_Gimbal_Msg ( int16_t gimbal_yaw_iq, int16_t gimbal_pitch_iq )
     tx_message.Data[6] = 0x00;
     tx_message.Data[7] = 0x00;
     CAN_Transmit ( CAN2, &tx_message );
-
 }

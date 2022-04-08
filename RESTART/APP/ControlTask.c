@@ -11,7 +11,7 @@ void Control_Task(void)
 	IWDG_ReloadCounter();
 	if(time_tick_1ms%2 == 0)
   {
-		modeswitch_task();	
+		modeswitch_task();
 		gimbal_task();
 	}		
 

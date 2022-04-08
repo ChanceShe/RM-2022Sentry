@@ -153,7 +153,7 @@ void GetRemoteSwitchAction(RemoteSwitch_t *sw, uint8_t val);		//遥控器读值
 void RemoteControlProcess(refrom_mainboard_t *rc);
 void RemoteDataPrcess(refrom_mainboard_t *rc);		//遥控器数据处理，放CAN1中断中
 uint8_t IsRemoteBeingAction ( void );
-InputMode_e GetInputMode();
+InputMode_e GetInputMode( void );
 Shoot_State_e GetShootState ( void );
 void SetShootState ( Shoot_State_e v );
 void RemoteShootControl(RemoteSwitch_t *sw, uint8_t val);		//遥控左拨杆模式射击

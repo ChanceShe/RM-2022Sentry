@@ -1,7 +1,5 @@
 #include "filter.h"
 
-
-
 #define FILTER_NUM 5
 
 float AvgFilter(float new_value)//均值滤波，用于自瞄
@@ -18,4 +16,5 @@ float AvgFilter(float new_value)//均值滤波，用于自瞄
 	sum += value[FILTER_NUM - 1];
 	avg_value = sum / FILTER_NUM;
 	return avg_value;
+
 }
