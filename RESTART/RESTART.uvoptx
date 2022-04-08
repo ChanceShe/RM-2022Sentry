@@ -173,6 +173,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>testnum1,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Friction1Encoder</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Friction2Encoder</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -213,37 +223,32 @@
         <Ww>
           <count>7</count>
           <WinNumber>2</WinNumber>
-          <ItemText>testnum1,0x0A</ItemText>
+          <ItemText>yaw_Angle</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>2</WinNumber>
-          <ItemText>yaw_Angle</ItemText>
+          <ItemText>pitch_Angle</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>2</WinNumber>
-          <ItemText>pitch_Angle</ItemText>
+          <ItemText>counter_receive,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>2</WinNumber>
-          <ItemText>counter_receive,0x0A</ItemText>
+          <ItemText>counter_complete,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>2</WinNumber>
-          <ItemText>counter_complete,0x0A</ItemText>
+          <ItemText>pid_yaw_speed,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>2</WinNumber>
-          <ItemText>length,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>13</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>counter_crc_passed,0x0A</ItemText>
+          <ItemText>pid_yaw</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>

@@ -195,7 +195,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //Ò£¿ØÆ÷¿ØÖÆ·¢Éä
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
                 SetShootState ( NOSHOOTING );  //²¦ÅÌÑ¡ÔñÊÇ·ñ¿ªÆô
-								LASER_OFF();
+//								LASER_OFF();
             }
             else if ( sw->switch_value_raw == 2 )
             {

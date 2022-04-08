@@ -76,10 +76,10 @@ void gimbal_param_init ( void )		//云台任务初始化
                       200.0f, 0, 10 );
 
 
-		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 80,
-                      12, 0.05, 0 );
-		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 20000, 20000,
-                      100.0f, 0, 20 );
+		PID_struct_init ( &pid_yaw, POSITION_PID , 250, 50,
+                      10, 0.01, 0.0005 );
+		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 18000, 20000,
+                      100.0f, 0, 500 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -172,7 +172,7 @@ void gimbal_auto_handle(void)
     default:
     break;
 	}
-//	auto_shoot_task();										//自动射击任务
+	auto_shoot_task();										//自动射击任务
 }
 void gimbal_patrol_handle(void)					//巡逻模式
 {
@@ -577,8 +577,8 @@ void auto_shoot_task(void)
         {
             if ( auto_mode == AUTO_PATROL || lostflag == 1 ) //刚启动就被关闭
             {
-                LASER_OFF();
-                SetShootState ( NOSHOOTING );
+//
+							SetShootState ( NOSHOOTING );
                 friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );

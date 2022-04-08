@@ -62,7 +62,7 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 	}
 	else
 	{
-		  LASER_OFF();
+//		  LASER_OFF();
 			new_location.x		= 0;
 			new_location.y		= 0;
 			new_location.dis	= 0;
