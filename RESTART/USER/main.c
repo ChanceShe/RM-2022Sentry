@@ -1,10 +1,10 @@
 #include "main.h"
 
 u8 SYS_START = 0;
-int testnum1 = 0;		
-int testnum2 = 0;
-int testnum3 = 0;
-int testnum4 = 0;
+float testnum1 = 0;		
+float testnum2 = 0;
+float testnum3 = 0;
+float testnum4 = 0;
 
 int main(void)
 {

@@ -14,7 +14,7 @@
 #define GYRO_REAL_Z_OFFSET 			-0.0091483118
 
 
-#define ARMY_SPEED_PREDICTION   0
+#define ARMY_SPEED_PREDICTION   1
 #define ENABLE_KALMAN_FILTER    0
 
 #define IMAGE_X_OFFET 0.0f
@@ -40,7 +40,7 @@
 //‘∂æ‡¿Î ±«ππ‹Ω«∂»≤π≥•
 #define ANGLE_COMPENSATION_LONG_DISTANCE 	1.6f
 //ÕºœÒ∫Õ‘∆Ã®øÿ÷∆—”≥Ÿ ±º‰ - √Î /
-#define YAW_IMAGE_GIMBAL_DELAY_TIME				40e-3f//s
+#define YAW_IMAGE_GIMBAL_DELAY_TIME				25e-3f//s
 #define PIT_IMAGE_GIMBAL_DELAY_TIME				20e-3f//s
 
 #endif
