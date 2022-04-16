@@ -56,8 +56,8 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 	if(Uart4_Protobuf_Receive_Gimbal_Angle->distance > 0)		//idÑÕÉ«:0:Àº,1:À¶,2:ºì,3:×Ï.
 	{	
 		  LASER_ON();
-			new_location.x		= Uart4_Protobuf_Receive_Gimbal_Angle->x;
-			new_location.y		= Uart4_Protobuf_Receive_Gimbal_Angle->y;
+			new_location.x		= -Uart4_Protobuf_Receive_Gimbal_Angle->x;
+			new_location.y		= -Uart4_Protobuf_Receive_Gimbal_Angle->y;
 		  new_location.dis	= Uart4_Protobuf_Receive_Gimbal_Angle->distance;
 			new_location.id		= Uart4_Protobuf_Receive_Gimbal_Angle->color;
 	}

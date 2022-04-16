@@ -76,9 +76,9 @@ void gimbal_param_init ( void )		//云台任务初始化
 
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 250, 50,
-                      10, 0.01, 0.0005 );
-		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 18000, 20000,
-                      100.0f, 0, 500 );
+                      10, 0.015, 0.0005 );
+		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 20000, 20000,
+                      180.0f, 0, 500 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -423,8 +423,8 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
             if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >= 150 )  //300ms，持续300ms的偏差，表明此时为跟踪滞后，需加入补偿
             {
                 Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 150;
-                gim.pid.yaw_angle_ref -= ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
-                gim.pid.pit_angle_ref -= ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
+                gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
+                gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
             }
         }
 
@@ -439,8 +439,8 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 2.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
         {
             Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
-            gim.pid.yaw_angle_ref += 2*( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
-//            gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
+            gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
+            gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
         }
         //偏差角大于2°，分为另种情况。
         //1、刚识别到，偏差较大，如果直接补偿会导致云台抖动震荡；
@@ -452,8 +452,8 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
             if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >= 150 )  //300ms，持续300ms的偏差，表明此时为跟踪滞后，需加入补偿
             {
                 Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 150;
-                gim.pid.yaw_angle_ref += 2*( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
-//                gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
+                gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
+                gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
             }
         }
 

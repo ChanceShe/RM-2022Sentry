@@ -22,7 +22,7 @@
 
 //==========================================================
 //摄像头和枪管中心的安装偏差角-Yaw方向
-#define YAW_ANGLE_BETWEEN_GUN_CAMERA 		  -2.8f  //-6.0
+#define YAW_ANGLE_BETWEEN_GUN_CAMERA 		  -1.0f  //-6.0
 //摄像头和枪管中心的安装偏差角-Pitch方向
 #define ANGLE_BETWEEN_GUN_CAMERA 					1.0f  //-3.4  
 //摄像头和枪管中心的垂直距离
