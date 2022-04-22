@@ -25,7 +25,6 @@ void targetOffsetDataDeal ( uint8_t len, u8 *buf )
   process_general_message(buf,len);
 }
 
-
 void parse_signal(unsigned char* content_address, unsigned int content_length)
 {
   //Todo: parse and process signal.
@@ -53,9 +52,9 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
   flagg_yaw=Uart4_Protobuf_Receive_Gimbal_Angle->x;
       /*这里有问题，数据是反的*/
 	new_location.receNewDataFlag  =  1;
-	if(Uart4_Protobuf_Receive_Gimbal_Angle->distance > 0)		//id颜色:0:篮,1:蓝,2:红,3:紫.
+	if(Uart4_Protobuf_Receive_Gimbal_Angle->id != 2)		//id颜色:0:篮,1:蓝,2:红,3:紫.
 	{	
-		  LASER_ON();
+//		  LASER_ON();
 			new_location.x		= -Uart4_Protobuf_Receive_Gimbal_Angle->x;
 			new_location.y		= -Uart4_Protobuf_Receive_Gimbal_Angle->y;
 		  new_location.dis	= Uart4_Protobuf_Receive_Gimbal_Angle->distance;
@@ -72,7 +71,7 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 
   protocol__frame__free_unpacked(Uart4_Protobuf_Receive_Gimbal_Angle,NULL);
 }
-
+\
 typedef void(*Parser)(unsigned char* content_address, unsigned int content_length);
 
 Parser parsers[] =

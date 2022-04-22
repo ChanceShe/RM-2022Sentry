@@ -9,10 +9,9 @@
 * History:
 *********************************************************************************************************
 */
-#ifndef __kalman_filter_H__
-#define __kalman_filter_H__
-#include "stm32f4xx.h"
-#include "arm_math.h"
+#ifndef __KALMAN_FILTER_H__
+#define __KALMAN_FILTER_H__
+#include "main.h"
 
 #define mat         arm_matrix_instance_f32
 #define mat_init    arm_mat_init_f32
@@ -48,16 +47,6 @@ typedef struct
     float R_data[16];					// ‰»Î¡ø
 } kalman_filter_init_t;
 
-
-
-float *kalman_filter_calc ( kalman_filter_t *F, float x_in, float y_in, float vx_in, float vy_in );
-void kalman_filter_init ( kalman_filter_t *F, kalman_filter_init_t *I );
-void kalman_filter_reset ( kalman_filter_t *F, kalman_filter_init_t *I );
-
-extern kalman_filter_t kalman_filter_F;
-extern kalman_filter_init_t kalman_filter_I;
-
-
 typedef struct
 {
     float raw_value;
@@ -65,6 +54,13 @@ typedef struct
     float xhat, xhatminus, z, A, H, AT, HT, Q, R, P, Pminus, K;
 } kalman_filter_1t;
 
+extern kalman_filter_t kalman_filter_F;
+extern kalman_filter_init_t kalman_filter_I;
+
+
+float *kalman_filter_calc ( kalman_filter_t *F, float x_in, float y_in, float vx_in, float vy_in );
+void kalman_filter_init ( kalman_filter_t *F, kalman_filter_init_t *I );
+void kalman_filter_reset ( kalman_filter_t *F, kalman_filter_init_t *I );
 float kalman_filter_calc_1 ( kalman_filter_1t *F, float signal1 );
 
 

@@ -44,6 +44,7 @@ void gimbal_task(void)
    }
 	 
 	 if(gim.ctrl_mode == GIMBAL_RELAX)
+//	 if(gim.ctrl_mode == GIMBAL_RELAX||gim.ctrl_mode == GIMBAL_AUTO_MODE)
 	 {
 		 CAN2_Gimbal_Msg(0,0); 
 	 }
@@ -76,9 +77,9 @@ void gimbal_param_init ( void )		//云台任务初始化
 
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 250, 50,
-                      10, 0.015, 0.0005 );
-		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 20000, 20000,
-                      180.0f, 0, 500 );
+                      8, 0.02, 0.003 );
+		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 23000, 20000,
+                      200.0f, 0, 400 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -270,8 +271,8 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         {
             new_location.receNewDataFlag = 0;
 
-					 Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw = RAD_TO_ANGLE * atan2 ( Gimbal_Auto_Shoot.Err_Pixels_Yaw * IMAGE_LENGTH, FOCAL_LENGTH );
-           Gimbal_Auto_Shoot.Delta_Dect_Angle_Pit = RAD_TO_ANGLE * atan2 ( Gimbal_Auto_Shoot.Err_Pixels_Pit * IMAGE_LENGTH, FOCAL_LENGTH );
+						Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw = RAD_TO_ANGLE * atan2 ( Gimbal_Auto_Shoot.Err_Pixels_Yaw * IMAGE_LENGTH, FOCAL_LENGTH );
+						Gimbal_Auto_Shoot.Delta_Dect_Angle_Pit = RAD_TO_ANGLE * atan2 ( Gimbal_Auto_Shoot.Err_Pixels_Pit * IMAGE_LENGTH, FOCAL_LENGTH );
 
 						Gimbal_Auto_Shoot.Armor_yaw = gim.pid.yaw_angle_fdb - Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw;
 						Gimbal_Auto_Shoot.Armor_pit = gim.pid.pit_angle_fdb - Gimbal_Auto_Shoot.Delta_Dect_Angle_Pit; 
@@ -306,7 +307,7 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
 
             //--/--------------速度预测，计算目标相对于自己的移动速度---------/--//
 #if ARMY_SPEED_PREDICTION == 1
-            if ( Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample % 5 == 0 )
+            if ( Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample % 1 == 0 )
             {
                 Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Now;                    //上次采集的角度
                 Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Now = ( Gimbal_Auto_Shoot.Armor_yaw );																			//本次采集的角度
@@ -355,7 +356,7 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         }
 
 
-        //-/---------------- 卡尔曼滤波并更新云台给定角度 ----------------------------/-//
+        //-/---------------- 卡尔曼滤波并更新云台给定角度----------------------------/-//
 #if ENABLE_KALMAN_FILTER == 1
         kalman_filter_calc ( &kalman_filter_F,
                              gim.pid.yaw_angle_ref,
@@ -366,8 +367,8 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed = kalman_filter_F.filtered_value[2];
         Gimbal_Auto_Shoot.Filtered_Angular_Pit_Speed = kalman_filter_F.filtered_value[3];
 //        OutData[1] =  (int)(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * 100;
-        //Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed = AvgFilter(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed );
-        //OutData[3] =  (int)(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * 100);
+//        Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed = AvgFilter(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed );
+//        OutData[3] =  (int)(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * 100);
 
 //        gim.pid.yaw_angle_ref =  kalman_filter_F.filtered_value[0];
 //        gim.pid.pit_angle_ref =  kalman_filter_F.filtered_value[1];
@@ -398,20 +399,22 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
 #else							                       //使用直接求得的速度进行补偿	
             Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
             Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed * ( PIT_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
+						testnum1 = Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
+						testnum2 = Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
 #endif
 
         }
 #if ENABLE_KALMAN_FILTER == 1
 				
-        if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 2.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
+        if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 3.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
 				{
-        if(Gimbal_Auto_Shoot.Speed_Prediction.Continuity_timer > 20)
-        {
-            Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
-            gim.pid.yaw_angle_ref -= ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
-            gim.pid.pit_angle_ref -= ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
-        }
-			}
+					if(Gimbal_Auto_Shoot.Speed_Prediction.Continuity_timer > 20)
+					{
+							Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
+							gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
+							gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
+					}
+				}
 			
         //偏差角大于2°，分为另种情况。
         //1、刚识别到，偏差较大，如果直接补偿会导致云台抖动震荡；
@@ -420,9 +423,9 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         else
         {
             Gimbal_Auto_Shoot.Continue_Large_Err_Cnt++;
-            if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >= 150 )  //300ms，持续300ms的偏差，表明此时为跟踪滞后，需加入补偿
+            if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >= 40 )  //300ms，持续300ms的偏差，表明此时为跟踪滞后，需加入补偿
             {
-                Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 150;
+                Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 40;
                 gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
                 gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
             }
@@ -436,7 +439,7 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
           //根据偏差角计算偏差距离，由于距离信息存在误差，不使用计算的temp = fabs(Gimbal_Auto_Shoot.Distance * 2.0f * arm_sin_f32(0.5f * fabs(Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw) * 0.01745329252f ));
           //偏差角度小于2度，说明此时基本瞄准装甲片，两个时间参数应该需要调整。
           //该处应该加上pitch轴的预测判定
-        if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 2.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
+        if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 3.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
         {
             Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
             gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
@@ -449,9 +452,9 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         else
         {
             Gimbal_Auto_Shoot.Continue_Large_Err_Cnt++;
-            if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >= 150 )  //300ms，持续300ms的偏差，表明此时为跟踪滞后，需加入补偿
+            if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >=100 )  //300ms，持续300ms的偏差，表明此时为跟踪滞后，需加入补偿
             {
-                Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 150;
+                Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 100;
                 gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
                 gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
             }

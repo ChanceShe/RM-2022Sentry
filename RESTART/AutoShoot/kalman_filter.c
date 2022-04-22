@@ -1,5 +1,5 @@
 /* second-order kalman filter on stm32 */
-#include "kalman_filter.h"
+#include "main.h"
 
 kalman_filter_init_t kalman_filter_I =
 {   .Q_data = {1, 0, 0, 0, 				0, 1, 0, 0, 				 0, 0, 1, 0, 		0, 0, 0, 1		}, 	//过程噪声激励协方差矩阵

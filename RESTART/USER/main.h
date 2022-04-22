@@ -3,6 +3,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_it.h"
 #include "stm32f4xx_spi.h"
+#include "arm_math.h"
 #include "string.h"
 #include "stdarg.h"
 #include "config.h"
