@@ -4,14 +4,16 @@
 
 /* CAN Bus 1 */  
 
-
-#define CAN_BUS1_FRICTION_MOTOR1_FEEDBACK_MSG_ID       0x203    		//   云台摩擦轮  
-#define CAN_BUS1_FRICTION_MOTOR2_FEEDBACK_MSG_ID       0x204    		//   云台摩擦轮   
+#define CAN_BUS1_FRICTION_MOTOR1_FEEDBACK_MSG_ID       0x201    		//   云台摩擦轮  
+#define CAN_BUS1_FRICTION_MOTOR2_FEEDBACK_MSG_ID       0x202    		//   云台摩擦轮   
+#define CAN_BUS1_FRICTION_MOTOR3_FEEDBACK_MSG_ID       0x203    		//   云台摩擦轮  
+#define CAN_BUS1_FRICTION_MOTOR4_FEEDBACK_MSG_ID       0x204    		//   云台摩擦轮   
 
 /* CAN Bus 2 */ 
 #define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    		// 	 云台yaw
 #define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   			//   云台pitch
-#define CAN_BUS2_POKE_FEEDBACK_MSG_ID            			 0x201    		//拨盘
+#define CAN_BUS2_POKE1_FEEDBACK_MSG_ID            		 0x201    		//拨盘
+#define CAN_BUS2_POKE2_FEEDBACK_MSG_ID            		 0x202    		//拨盘
 #define CAN_BUS2_SLAVE_FEEDBACK_MSG_ID   		      		 0x408   			//上云台向下云台传输数据ID
 
 #define RATE_BUF_SIZE 6						//滤波数量
@@ -58,11 +60,14 @@ typedef struct
 //CAN1
 extern volatile Encoder Friction1Encoder ;		//云台摩擦轮
 extern volatile Encoder Friction2Encoder ;		//云台摩擦轮
+extern volatile Encoder Friction3Encoder ;		//云台摩擦轮
+extern volatile Encoder Friction4Encoder ;		//云台摩擦轮
 
 //CAN2
 extern volatile Encoder GMYawEncoder ;				//云台Yaw
 extern volatile Encoder GMPitchEncoder ;			//云台Pitch
-extern volatile Encoder PokeEncoder;					//拨盘
+extern volatile Encoder Poke1Encoder;					//拨盘
+extern volatile Encoder Poke2Encoder;					//拨盘
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg);
 void Can1ReceiveMsgProcess(CanRxMsg * msg);

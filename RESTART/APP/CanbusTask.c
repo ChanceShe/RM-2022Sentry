@@ -6,11 +6,14 @@ static uint32_t can2_count = 0;
 //CAN1电机编码器
 volatile Encoder Friction1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台摩擦轮
 volatile Encoder Friction2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台摩擦轮
+volatile Encoder Friction3Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台摩擦轮
+volatile Encoder Friction4Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};		//云台摩擦轮
 
 //CAN2电机编码器
 volatile Encoder GMYawEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};				//云台Yaw
 volatile Encoder GMPitchEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};			//云台Pitch
-volatile Encoder PokeEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//拨盘
+volatile Encoder Poke1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//拨盘
+volatile Encoder Poke2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//拨盘
 
 //refrom_info_t  main_info = {0};
 refrom_mainboard_t refromData = {0, 0, 3, 3};
@@ -85,7 +88,7 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
 		
 		case CAN_BUS1_FRICTION_MOTOR1_FEEDBACK_MSG_ID:		//摩擦轮电机处理
 		{
-				LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
+				LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR1 ) );
 				( can2_count <= 50 ) ? GetEncoderBias ( &Friction1Encoder , msg ) : EncoderProcess ( &Friction1Encoder , msg );
 		}
 		break;
@@ -93,6 +96,18 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
 		{
 				LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR2 ) );
 				( can2_count <= 50 ) ? GetEncoderBias ( &Friction2Encoder , msg ) : EncoderProcess ( &Friction2Encoder , msg );
+		}
+		break;
+		case CAN_BUS1_FRICTION_MOTOR3_FEEDBACK_MSG_ID:		//摩擦轮电机处理
+		{
+				LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR3 ) );
+				( can2_count <= 50 ) ? GetEncoderBias ( &Friction3Encoder , msg ) : EncoderProcess ( &Friction3Encoder , msg );
+		}
+		break;
+		case CAN_BUS1_FRICTION_MOTOR4_FEEDBACK_MSG_ID:		//摩擦轮电机处理
+		{
+				LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR4 ) );
+				( can2_count <= 50 ) ? GetEncoderBias ( &Friction4Encoder , msg ) : EncoderProcess ( &Friction4Encoder , msg );
 		}
 		break;
 		default:
@@ -141,9 +156,14 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
 					}
 			}
 			break;
-				case CAN_BUS2_POKE_FEEDBACK_MSG_ID :   //拨弹电机
+			case CAN_BUS2_POKE1_FEEDBACK_MSG_ID :   //拨弹电机
 			{
-				 ( can1_count <= 50 ) ? GetEncoderBias ( &PokeEncoder , msg ) : EncoderProcess ( &PokeEncoder , msg );
+				 ( can1_count <= 50 ) ? GetEncoderBias ( &Poke1Encoder , msg ) : EncoderProcess ( &Poke1Encoder , msg );
+			}
+			break;
+			case CAN_BUS2_POKE2_FEEDBACK_MSG_ID :   //拨弹电机
+			{
+				 ( can1_count <= 50 ) ? GetEncoderBias ( &Poke2Encoder , msg ) : EncoderProcess ( &Poke2Encoder , msg );
 			}
 			break;
 			case CAN_BUS2_SLAVE_FEEDBACK_MSG_ID:                  //上下云台通信

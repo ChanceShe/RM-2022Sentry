@@ -166,8 +166,6 @@ pid_t pid_pit           = {0};
 pid_t pid_yaw_speed     = {0};
 pid_t pid_pit_speed     = {0};
 
-pid_t pid_spd      			= {0};		//底盘电机速度环
-pid_t pid_rotate[2]     = {0};		//摩擦轮
-pid_t pid_trigger 			= {0};		//拨盘角度环
-pid_t pid_trigger_speed = {0};		//拨盘速度环
+pid_t pid_rotate[4]     = {0};		//摩擦轮
+pid_t pid_trigger_speed[2] = {0};		//拨盘速度环
 
