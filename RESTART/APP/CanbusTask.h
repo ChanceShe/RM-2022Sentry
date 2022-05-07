@@ -10,7 +10,7 @@
 #define CAN_BUS1_FRICTION_MOTOR4_FEEDBACK_MSG_ID       0x204    		//   ÔÆÌ¨Ä¦²ÁÂÖ   
 
 /* CAN Bus 2 */ 
-#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x20A    		// 	 ÔÆÌ¨yaw
+#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x209    		// 	 ÔÆÌ¨yaw
 #define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   			//   ÔÆÌ¨pitch
 #define CAN_BUS2_POKE1_FEEDBACK_MSG_ID            		 0x201    		//²¦ÅÌ
 #define CAN_BUS2_POKE2_FEEDBACK_MSG_ID            		 0x202    		//²¦ÅÌ

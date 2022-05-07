@@ -28,9 +28,9 @@
 
 #define REMOTE_SWITCH_VALUE_BUF_DEEP   16u
 
-#define PITCH_MAX -40.0f
-#define PITCH_MIN -80.0f
-#define Init_Pitch_Angle -70.0f
+#define PITCH_MAX -140.0f
+#define PITCH_MIN -180.0f
+#define Init_Pitch_Angle -170.0f
 #define YAW_MAX 80				//ÔÆÌ¨½Ç¶ÈµÄ·¶Î§
 #define YAW_MIN -80
 

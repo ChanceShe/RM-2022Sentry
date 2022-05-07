@@ -157,46 +157,48 @@
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
+      <WatchWindow1>
+        <Ww>
+          <count>0</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>refromData,0x0A</ItemText>
+        </Ww>
+      </WatchWindow1>
       <WatchWindow2>
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Uart4_Protobuf_Receive_Gimbal_Angle,0x0A</ItemText>
+          <ItemText>Gimbal_Auto_Shoot,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Gimbal_Auto_Shoot,0x0A</ItemText>
+          <ItemText>gim,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>gim,0x0A</ItemText>
+          <ItemText>kalman_filter_F</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>kalman_filter_F</ItemText>
+          <ItemText>pid_yaw_speed</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>testnum1</ItemText>
+          <ItemText>pid_yaw</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>testnum2</ItemText>
+          <ItemText>pid_pit</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>2</WinNumber>
-          <ItemText>pid_yaw_speed</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>pid_yaw</ItemText>
+          <ItemText>pid_pit_speed</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>
@@ -447,8 +449,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\Hi220\hi220.c</PathWithFileName>
-      <FilenameWithoutPath>hi220.c</FilenameWithoutPath>
+      <PathWithFileName>.\CH100\ch100.c</PathWithFileName>
+      <FilenameWithoutPath>ch100.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -700,7 +702,7 @@
 
   <Group>
     <GroupName>STLIB</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

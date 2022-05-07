@@ -23,16 +23,16 @@ void shoot_friction_handle ( void ) //摩擦轮 根据   friction_rotor标志  来设置输
 
         pid_rotate[0].set = - ( FRICTION_SPEED_REF ) * frictionRamp.Calc ( &frictionRamp );
         pid_rotate[1].set = ( FRICTION_SPEED_REF ) * frictionRamp.Calc ( &frictionRamp );
-        pid_rotate[2].set = - ( FRICTION_SPEED_REF ) * frictionRamp.Calc ( &frictionRamp );
-        pid_rotate[3].set = ( FRICTION_SPEED_REF ) * frictionRamp.Calc ( &frictionRamp );
+        pid_rotate[2].set = ( FRICTION_SPEED_REF ) * frictionRamp.Calc ( &frictionRamp );
+        pid_rotate[3].set = - ( FRICTION_SPEED_REF ) * frictionRamp.Calc ( &frictionRamp );
 
     }
     else if ( friction_rotor == 2 )	//摩擦轮停转
     {
         pid_rotate[0].set = ( FRICTION_SPEED - ( FRICTION_SPEED_REF ) * frictionRamp.Calc ( &frictionRamp ) );
-        pid_rotate[1].set = - pid_rotate[0].set;
-			  pid_rotate[2].set = ( FRICTION_SPEED - ( FRICTION_SPEED_REF ) * frictionRamp.Calc ( &frictionRamp ) );
-        pid_rotate[3].set = - pid_rotate[0].set;
+        pid_rotate[1].set = -pid_rotate[0].set;
+			  pid_rotate[2].set = -pid_rotate[0].set;
+        pid_rotate[3].set = pid_rotate[0].set;
 
     }
     else
@@ -63,14 +63,14 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
         start_shooting_count++;
 				if ( shot.limit_heart0 < 20 )
 				{
-						pid_trigger_speed[0].set = 0;//PID_SHOOT_MOTOR_SPEED * ( float ) ( shot.limit_heart0 / shot.max_heart0 );
-						pid_trigger_speed[1].set = 0;//PID_SHOOT_MOTOR_SPEED * ( float ) ( shot.limit_heart0 / shot.max_heart0 );
+						pid_trigger[0].set = 0;//PID_SHOOT_MOTOR_SPEED * ( float ) ( shot.limit_heart0 / shot.max_heart0 );
+						pid_trigger[1].set = 0;//PID_SHOOT_MOTOR_SPEED * ( float ) ( shot.limit_heart0 / shot.max_heart0 );
 						SetShootState ( NOSHOOTING );
 				}
 				else
 				{
-						pid_trigger_speed[0].set = -PID_SHOOT_MOTOR_SPEED;
-						pid_trigger_speed[1].set = -PID_SHOOT_MOTOR_SPEED;
+						pid_trigger[0].set = -PID_SHOOT_MOTOR_SPEED;
+						pid_trigger[1].set = -PID_SHOOT_MOTOR_SPEED;
 				}
 
         if ( start_shooting_count > 100 && abs ( Poke1Encoder.filter_rate ) < 10  ) //开始了一段时间并且转速低于一定的值  说明堵转
@@ -90,14 +90,14 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
         {
             start_shooting_count = 0;//清零正转计时
             start_reversal_count = 0;//清零反转计时
-            pid_trigger_speed[0].set = 0;
-            pid_trigger_speed[0].set = 0;
+            pid_trigger[0].set = 0;
+            pid_trigger[0].set = 0;
         }
         else  if ( lock_rotor == 1 ) //堵转
         {
             start_shooting_count = 0;//清零正转计时
-            pid_trigger_speed[0].set = PID_SHOOT_MOTOR_SPEED ;
-            pid_trigger_speed[1].set = PID_SHOOT_MOTOR_SPEED ;
+            pid_trigger[0].set = PID_SHOOT_MOTOR_SPEED ;
+            pid_trigger[1].set = PID_SHOOT_MOTOR_SPEED ;
             start_reversal_count++;
             if ( start_reversal_count > 2 ) //反转一段时间
             {
@@ -117,11 +117,11 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
     else
     {
 				OpenLimit;
-        pid_trigger_speed[0].get = Poke1Encoder.filter_rate;
-        pid_calc ( &pid_trigger_speed[0], pid_trigger_speed[0].get, pid_trigger_speed[0].set );
-			  pid_trigger_speed[1].get = Poke2Encoder.filter_rate;
-        pid_calc ( &pid_trigger_speed[1], pid_trigger_speed[1].get, pid_trigger_speed[1].set );
-        CAN2_Send_Msg ( CAN2, pid_trigger_speed[0].out, pid_trigger_speed[1].out, 0, 0 );
+        pid_trigger[0].get = Poke1Encoder.filter_rate;
+        pid_calc ( &pid_trigger[0], pid_trigger[0].get, pid_trigger[0].set );
+			  pid_trigger[1].get = Poke2Encoder.filter_rate;
+        pid_calc ( &pid_trigger[1], pid_trigger[1].get, pid_trigger[1].set );
+        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, pid_trigger[1].out, 0, 0 );
 
     }
 
@@ -152,8 +152,8 @@ void shot_task ( void )
 
 void shot_param_init(void)
 {
-  PID_struct_init(&pid_trigger_speed[0], POSITION_PID, 10000, 10000,35, 0.7f, 4);		//拨盘
-  PID_struct_init(&pid_trigger_speed[1], POSITION_PID, 10000, 10000,35, 0.7f, 4);		//拨盘
+  PID_struct_init(&pid_trigger[0], POSITION_PID, 10000, 10000,35, 0.7f, 4);		//拨盘
+  PID_struct_init(&pid_trigger[1], POSITION_PID, 10000, 10000,35, 0.7f, 4);		//拨盘
   PID_struct_init(&pid_rotate[0], POSITION_PID,15500,11500,50,0.0,100);						//摩擦轮
   PID_struct_init(&pid_rotate[1], POSITION_PID,15500,11500,50,0.0,100);
   PID_struct_init(&pid_rotate[2], POSITION_PID,15500,11500,50,0.0,100);						//摩擦轮

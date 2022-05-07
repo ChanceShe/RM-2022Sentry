@@ -8,7 +8,7 @@
 #define REMOTE_SHOOT        0                 //1:Ò£¿ØÆ÷×ó²¦¸ËÎª·¢Éä  0:Ð¡ÍÓÂÝ
 
 #define GMPitchEncoder_Offset  	4557
-#define GMYawEncoder_Offset   	3203
+#define GMYawEncoder_Offset   	7560
 #define GYRO_REAL_X_OFFSET 			0.00559780467
 #define GYRO_REAL_Y_OFFSET 			-0.0156064359
 #define GYRO_REAL_Z_OFFSET 			-0.0091483118

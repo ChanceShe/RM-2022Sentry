@@ -145,6 +145,6 @@ extern pid_t pid_pit_speed;
 extern pid_t pid_yaw_speed;
 
 extern pid_t pid_rotate[4];
-extern pid_t pid_trigger_speed[2];
+extern pid_t pid_trigger[2];
 
 #endif

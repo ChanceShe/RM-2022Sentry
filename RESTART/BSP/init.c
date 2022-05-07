@@ -13,7 +13,7 @@ void BSP_Init(void)			//外设初始化
 	
 	USART3_Configuration_Send();
 	UART4_Configuration();
-  USART6_Configuration_For_Hi220();
+  USART6_Configuration_For_CH100();
 
 	delay_ms (100);
 	

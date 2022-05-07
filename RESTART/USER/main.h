@@ -30,7 +30,7 @@
 #include "output2vs.h"
 #include "usart4.h"
 
-#include "hi220.h"
+#include "ch100.h"
 
 
 #include "can1.h"

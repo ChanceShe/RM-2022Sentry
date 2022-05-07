@@ -15,7 +15,7 @@
         <TargetCommonOption>
           <Device>STM32F405RGTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.15.0</PackID>
+          <PackID>Keil.STM32F4xx_DFP.2.16.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00020000) IRAM2(0x10000000,0x00010000) IROM(0x08000000,0x00100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,__FPU_PRESENT,ARM_MATH_CM4,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING</Define>
               <Undefine></Undefine>
-              <IncludePath>..\RESTART;.\CORE;.\RmLib;.\STLIB;.\USER;.\APP;.\BSP;.\Hi220;.\Protocol;.\AutoShoot</IncludePath>
+              <IncludePath>..\RESTART;.\CORE;.\RmLib;.\STLIB;.\USER;.\APP;.\BSP;.\CH100;.\Protocol;.\AutoShoot</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -460,9 +460,9 @@
               <FilePath>.\BSP\can2.c</FilePath>
             </File>
             <File>
-              <FileName>hi220.c</FileName>
+              <FileName>ch100.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Hi220\hi220.c</FilePath>
+              <FilePath>.\CH100\ch100.c</FilePath>
             </File>
             <File>
               <FileName>bsp_flash.c</FileName>
