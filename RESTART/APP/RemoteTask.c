@@ -118,7 +118,6 @@ void SetInputMode(refrom_mainboard_t *rc)
   if(rc->s2 == 3)
     {
       inputmode = REMOTE_INPUT;				//遥控器模式
-
     }
   else if(rc->s2 == 1)
     {
@@ -149,7 +148,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器控制发射
 {
     GetRemoteSwitchAction ( sw, val ); //   遥控器的复杂s1  ，模式切换的索引
 
-    switch ( friction_wheel_state )
+    switch ( friction_wheel_state)
     {
         case FRICTION_WHEEL_OFF:								//摩擦轮关闭
         {

@@ -7,7 +7,7 @@
 #define REMOTE_CONTROLLER_STICK_OFFSET      1024u   //遥控器拨杆中间位置值
 #define STICK_TO_CHASSIS_SPEED_REF_FACT     0.6f
 #define STICK_TO_PITCH_ANGLE_INC_FACT       0.001f
-#define STICK_TO_YAW_ANGLE_INC_FACT         0.003f//0.005f
+#define STICK_TO_YAW_ANGLE_INC_FACT         0.0015f//0.005f
 
 #define REMOTE_SWITCH_VALUE_UP         		0x01u
 #define REMOTE_SWITCH_VALUE_DOWN			0x02u

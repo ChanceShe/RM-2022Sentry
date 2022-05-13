@@ -75,13 +75,13 @@ void gimbal_param_init ( void )		//云台任务初始化
 		PID_struct_init ( &pid_pit_speed, POSITION_PID , 29000, 29000,
                       200.0f, 0.1, 10 );
 
+//		PID_struct_init(&pid_yaw, POSITION_PID,3000, 40,11.0f,0.01f,14.0f);
+//		PID_struct_init(&pid_yaw_speed, POSITION_PID,25000, 2000,175.0f,0.14f,30.0f);
 
-		PID_struct_init ( &pid_yaw, POSITION_PID , 250, 50,
-                      12, 0.002, 12 );
-		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 25000, 20000,
-                      200.0f, 0, 150 );
-//		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 23000, 20000,
-//                      200.0f, 0, 400 );
+		PID_struct_init ( &pid_yaw, POSITION_PID , 300, 50,
+                      10, 0.002, 30 );
+		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 20000,
+                      200.0f, 0.001, 200 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
