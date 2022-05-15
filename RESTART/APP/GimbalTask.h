@@ -51,29 +51,31 @@ typedef struct
 } Speed_Prediction_t;
 typedef struct
 {
-    Speed_Prediction_t Speed_Prediction;
-    Speed_Prediction_t Speed_Prediction_Kalman;
-    float Filtered_Angular_Yaw_Speed;
-    float Filtered_Angular_Pit_Speed;
-    float Filtered_Yaw_Acceleration;
-    float Filtered_Pit_Acceleration;
+//    Speed_Prediction_t Speed_Prediction;
+//    Speed_Prediction_t Speed_Prediction_Kalman;
+//    float Filtered_Angular_Yaw_Speed;
+//    float Filtered_Angular_Pit_Speed;
+//    float Filtered_Yaw_Acceleration;
+//    float Filtered_Pit_Acceleration;
     uint8_t	  Recognized_Flag;
     uint16_t   Recognized_Timer;
     int16_t   Continue_Recognized_Cnt;
-    float Err_Pixels_Yaw;
-    float Err_Pixels_Pit;
-    float Distance;
-    float Ballistic_Compensation;
-    float Horizontal_Compensation;
-    float Yaw_Gimbal_Delay_Compensation;
-    float Pit_Gimbal_Delay_Compensation;
-    uint8_t Image_Gimbal_Delay_Compensation_Flag;
-    float Delta_Dect_Angle_Pit;
-    float Delta_Dect_Angle_Yaw;
-    uint16_t   Continue_Large_Err_Cnt;
-    double shoot_pitch_angle;
-    float Armor_yaw;
-    float Armor_pit;
+//    float Err_Pixels_Yaw;
+//    float Err_Pixels_Pit;
+//    float Distance;
+//    float Ballistic_Compensation;
+//    float Horizontal_Compensation;
+//    float Yaw_Gimbal_Delay_Compensation;
+//    float Pit_Gimbal_Delay_Compensation;
+//    uint8_t Image_Gimbal_Delay_Compensation_Flag;
+//    float Delta_Dect_Angle_Pit;
+//    float Delta_Dect_Angle_Yaw;
+//    uint16_t   Continue_Large_Err_Cnt;
+//    double shoot_pitch_angle;
+//    float Armor_yaw;
+//    float Armor_pit;
+		float target_pit;
+		float target_yaw;
 } Gimbal_Auto_Shoot_t;
 
 typedef struct

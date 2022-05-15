@@ -17,9 +17,12 @@ void Control_Task(void)
 
 	if(time_tick_1ms%5 == 0)
   {
-		shot_task();		
+//		shot_task();		
 	}		
-
+	if(time_tick_1ms%12 == 0)
+  {
+		send_protocol(pitch_Angle,yaw_Angle);		
+	}	
 	
 	OutData[0] = 0;
 	OutData[1] = 0;

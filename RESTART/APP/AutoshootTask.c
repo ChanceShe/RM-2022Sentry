@@ -13,63 +13,41 @@ char* command = "sc_r";
 /********* 自动打击相关定义 结束 *********/
 int wExpected = 0;
 
-Signal *Uart4_Protobuf_Receive_Message;
-int16_t Uart4_Content_Size;
 u8 *CRC_Content_buf;
-Protocol__Frame *Uart4_Protobuf_Receive_Gimbal_Angle;
+VToE__Frame *Uart4_Protobuf_Receive_Gimbal_Angle;
 //extern unsigned char get_crc8(unsigned char* data, unsigned int length);
-float flagg_pitch;
-float flagg_yaw;
 void targetOffsetDataDeal ( uint8_t len, u8 *buf )
 {
   process_general_message(buf,len);
 }
 
-void parse_signal(unsigned char* content_address, unsigned int content_length)
-{
-  //Todo: parse and process signal.
-  Uart4_Protobuf_Receive_Message=signal__unpack(NULL,content_length,content_address);
-  if(strcmp(Uart4_Protobuf_Receive_Message->name,"t_c_d"))
-    {
-    }
-  else if(strcmp(Uart4_Protobuf_Receive_Message->name,"t_c_a"))
-    {
-      gim.ctrl_mode=GIMBAL_INIT;
-    }
-  signal__free_unpacked(Uart4_Protobuf_Receive_Message,NULL);
-}
 
 float yaw_buff=0;
 
 void parse_turret_command(unsigned char* content_address, unsigned int content_length)
 {
 	// Protobuf 正确用法是新建一个对象去存数据，就算不新建对象好歹初始化一下啊傻X刘恒
-	Uart4_Protobuf_Receive_Gimbal_Angle->y = 0.0f;
-	Uart4_Protobuf_Receive_Gimbal_Angle->x = 0.0f;
-	Uart4_Protobuf_Receive_Gimbal_Angle->id = 0;
-  Uart4_Protobuf_Receive_Gimbal_Angle=protocol__frame__unpack(NULL,content_length,content_address);
-  flagg_pitch=Uart4_Protobuf_Receive_Gimbal_Angle->y;
-  flagg_yaw=Uart4_Protobuf_Receive_Gimbal_Angle->x;
+	Uart4_Protobuf_Receive_Gimbal_Angle->targetpitch_ = 0.0f;
+	Uart4_Protobuf_Receive_Gimbal_Angle->targetyaw_ = 0.0f;
+  Uart4_Protobuf_Receive_Gimbal_Angle=v_to_e__frame__unpack(NULL,content_length,content_address);
       /*这里有问题，数据是反的*/
 	new_location.receNewDataFlag  =  1;
-	if(Uart4_Protobuf_Receive_Gimbal_Angle->id != 2)		//id颜色:0:篮,1:蓝,2:红,3:紫.
+	if(Uart4_Protobuf_Receive_Gimbal_Angle->targetpitch_ != 0&&Uart4_Protobuf_Receive_Gimbal_Angle->targetyaw_ != 0)		//id颜色:0:篮,1:蓝,2:红,3:紫.
 	{	
-//		  LASER_ON();
-			new_location.x		= -Uart4_Protobuf_Receive_Gimbal_Angle->x;
-			new_location.y		= -Uart4_Protobuf_Receive_Gimbal_Angle->y;
-		  new_location.dis	= Uart4_Protobuf_Receive_Gimbal_Angle->distance;
-			new_location.id		= Uart4_Protobuf_Receive_Gimbal_Angle->color;
+		  LASER_ON();
+			new_location.pitch			= -Uart4_Protobuf_Receive_Gimbal_Angle->targetyaw_;
+			new_location.yaw				= -Uart4_Protobuf_Receive_Gimbal_Angle->targetpitch_;
+			new_location.recogflag	= 1;
 	}
 	else
 	{
 		  LASER_OFF();
-			new_location.x		= 0;
-			new_location.y		= 0;
-			new_location.dis	= 0;
-			new_location.id		= 0;
+			new_location.pitch				= 0;
+			new_location.yaw					= 0;
+			new_location.recogflag		= 0;
 	}
-
-  protocol__frame__free_unpacked(Uart4_Protobuf_Receive_Gimbal_Angle,NULL);
+ 
+  v_to_e__frame__free_unpacked(Uart4_Protobuf_Receive_Gimbal_Angle,NULL);
 }
 \
 typedef void(*Parser)(unsigned char* content_address, unsigned int content_length);
@@ -77,7 +55,7 @@ typedef void(*Parser)(unsigned char* content_address, unsigned int content_lengt
 Parser parsers[] =
 {
   NULL,
-  &parse_signal,
+  NULL,
   NULL,
   &parse_turret_command
 };
@@ -129,4 +107,25 @@ void process_general_message(unsigned char* address, unsigned int length)
 	(*parsers[3])(content_address,content_size);
 }
 
+EToV__Frame msg;
+char *flagg;
+u8 DateLength;
+
+void send_protocol(float pitch,float yaw)
+{
+  e_to_v__frame__init(&msg);
+  msg.currentpitch_=pitch*100;
+	msg.currentyaw_=yaw*100;
+	msg.currentcolor_=judge_rece_mesg.game_robot_state.remain_HP;
+//	msg.bulletspeed_=judge_rece_mesg.shoot_data.bullet_speed;
+	msg.bulletspeed_=27*10;
+  e_to_v__frame__pack(&msg,UART4_DMA_TX_BUF+1);
+  DateLength=e_to_v__frame__get_packed_size(&msg);
+  UART4_DMA_TX_BUF[0]=0xBE;
+  Append_CRC8_Check_Sum(&UART4_DMA_TX_BUF[1],DateLength+1);
+  UART4_DMA_TX_BUF[DateLength+2]=0xED;
+	UART4_DMA_TX_BUF[DateLength+3]='\r';
+	UART4_DMA_TX_BUF[DateLength+4]='\n';
+	Uart4SendBytesInfoProc(UART4_DMA_TX_BUF,DateLength+5);
+}
 

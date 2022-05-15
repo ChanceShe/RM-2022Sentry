@@ -4,9 +4,10 @@
 void UART4_Configuration(void);
 
 #define UART4_RX_BUF_LENGTH   64
-#define UART4_TX_BUF_LENGTH   32
+#define UART4_TX_BUF_LENGTH   64
 
 extern uint8_t UART4_DMA_RX_BUF[UART4_RX_BUF_LENGTH];
+extern uint8_t UART4_DMA_TX_BUF[UART4_TX_BUF_LENGTH];
 extern uint8_t USARTShootFlag;
 
 void Uart4DmaSendDataProc(DMA_Stream_TypeDef *DMA_Streamx,u16 ndtr);

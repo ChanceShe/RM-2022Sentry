@@ -128,7 +128,6 @@ void SetInputMode(refrom_mainboard_t *rc)
     {
       inputmode = STOP;								//停车
     }
-
 }
 
 //遥控器控制模式处理
@@ -180,7 +179,6 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //遥控器控制发射
                 {
                     friction_wheel_state = FRICTION_WHEEL_ON;
                 }
-
             }
         }
         break;

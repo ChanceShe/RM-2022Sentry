@@ -49,9 +49,8 @@
 #include "IOTask.h"
 
 #include "protobuf-c.h"
-#include "Attack.pb-c.h"
-#include "Signal.pb-c.h"
-#include "protocol.pb-c.h"
+#include "recieve_sentry.pb-c.h"
+#include "send.pb-c.h"
 #include "filter.h"
 #include "kalman_filter.h"
 

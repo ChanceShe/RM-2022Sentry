@@ -6,13 +6,9 @@
 
 typedef struct
 {
-  float x;
-  float y;
-//  int16_t x1;
-//  int16_t y1;
-  int16_t dis;
-  uint8_t id;
-  uint8_t color;
+  float pitch;
+  float yaw;
+	uint8_t recogflag;
   int16_t receNewDataFlag;
   uint8_t crc;
 } location;
@@ -34,6 +30,7 @@ extern float yaw_buff;
 void targetOffsetDataDeal(uint8_t  len, u8 *buf);
 
 void process_general_message(unsigned char* address, unsigned int length);
+void send_protocol(float pitch,float yaw);
 
 #endif
 
