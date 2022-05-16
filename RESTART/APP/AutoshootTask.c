@@ -35,8 +35,8 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 	if(Uart4_Protobuf_Receive_Gimbal_Angle->targetpitch_ != 0&&Uart4_Protobuf_Receive_Gimbal_Angle->targetyaw_ != 0)		//idÑÕÉ«:0:Àº,1:À¶,2:ºì,3:×Ï.
 	{	
 		  LASER_ON();
-			new_location.pitch			= -Uart4_Protobuf_Receive_Gimbal_Angle->targetyaw_;
-			new_location.yaw				= -Uart4_Protobuf_Receive_Gimbal_Angle->targetpitch_;
+			new_location.pitch			= Uart4_Protobuf_Receive_Gimbal_Angle->targetyaw_;
+			new_location.yaw				= Uart4_Protobuf_Receive_Gimbal_Angle->targetpitch_;
 			new_location.recogflag	= 1;
 	}
 	else
@@ -114,10 +114,10 @@ u8 DateLength;
 void send_protocol(float pitch,float yaw)
 {
   e_to_v__frame__init(&msg);
-  msg.currentpitch_=pitch*100;
-	msg.currentyaw_=yaw*100;
+  msg.currentpitch_=(int)(pitch*100);
+	testnum1=msg.currentpitch_;
+	msg.currentyaw_=(int)(yaw*100);
 	msg.currentcolor_=judge_rece_mesg.game_robot_state.remain_HP;
-//	msg.bulletspeed_=judge_rece_mesg.shoot_data.bullet_speed;
 	msg.bulletspeed_=27*10;
   e_to_v__frame__pack(&msg,UART4_DMA_TX_BUF+1);
   DateLength=e_to_v__frame__get_packed_size(&msg);

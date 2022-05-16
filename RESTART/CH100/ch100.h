@@ -1,3 +1,13 @@
+/************************************************************
+ *  @file ch100.c
+ *  @version 1.0
+ *  @date April 2022
+ *	@author SheChengqi
+ *  @brief ch100 contrl realization(CH100ÍÓÂÝÒÇ¿ØÖÆ)
+ *
+ *  @copyright 2022 UPC_RPS. All rights reserved.
+ *
+ ************************************************************/
 #ifndef __CH100_H
 #define __CH100_H
 #include "main.h"

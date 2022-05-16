@@ -8,6 +8,7 @@ float testnum4 = 0;
 
 int main(void)
 {
+
 	ControtLoopTaskInit();	//控制任务初始化
 	BSP_Init();							//外设初始化
 	SYS_START = 1;

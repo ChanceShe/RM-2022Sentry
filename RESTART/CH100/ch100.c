@@ -10,10 +10,10 @@
  ************************************************************/
 #include "main.h"
 
-float pitch_Angle, yaw_Angle, roll_Angle; 
-float pitch_Gyro, yaw_Gyro, roll_Gyro;
-float x_Acc, y_Acc, z_Acc;
-uint32_t imu_time_1ms = 0;
+float pitch_Angle, yaw_Angle, roll_Angle; 	//三轴角度
+float pitch_Gyro, yaw_Gyro, roll_Gyro;			//三轴角加速度
+float x_Acc, y_Acc, z_Acc;									//三向加速度
+uint32_t imu_time_1ms = 0;									//陀螺仪内置时钟
 
 /* common type conversion */
 #define U1(p) (*((uint8_t *)(p)))
@@ -23,7 +23,7 @@ static uint16_t U2(uint8_t *p) {uint16_t u; memcpy(&u,p,2); return u;}
 static uint32_t U4(uint8_t *p) {uint32_t u; memcpy(&u,p,4); return u;}
 static float    R4(uint8_t *p) {float    r; memcpy(&r,p,4); return r;}
 
-uint8_t decode_succ;          	 //陀螺仪数据接收标志成功返回1，不成功返回0
+uint8_t decode_succ;          	 //陀螺仪数据接收标志，成功返回1，不成功返回0
 raw_t ch100 = {0};               // IMU stram read/control struct
 
 void CH100_getDATA() 
@@ -39,7 +39,7 @@ void CH100_getDATA()
 	
 	
 	/*	get pitch angle	*/
-	pitch_Angle = ch100.imu.eul[0];
+	pitch_Angle = -ch100.imu.eul[0]-90;
 	
 	/*	get roll angle	*/
 	roll_Angle = ch100.imu.eul[1];
@@ -55,7 +55,7 @@ void CH100_getDATA()
 	{
 		Yaw_count++;
 	}
-	yaw_Angle = Yaw_temp + Yaw_count*360; 
+	yaw_Angle = -(Yaw_temp + Yaw_count*360); 
 
 
 	/*	get x acceleration	*/

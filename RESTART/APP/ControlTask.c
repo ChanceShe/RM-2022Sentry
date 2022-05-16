@@ -9,7 +9,7 @@ void Control_Task(void)
 	
   time_tick_1ms++;
 	IWDG_ReloadCounter();
-	if(time_tick_1ms%2 == 0)
+	if(time_tick_1ms%10 == 0)
   {
 		modeswitch_task();
 		gimbal_task();
@@ -19,10 +19,11 @@ void Control_Task(void)
   {
 //		shot_task();		
 	}		
-	if(time_tick_1ms%12 == 0)
+	if(time_tick_1ms%12== 0)
   {
-		send_protocol(pitch_Angle,yaw_Angle);		
-	}	
+		send_protocol(pitch_Angle,yaw_Angle);
+	}
+	
 	
 	OutData[0] = 0;
 	OutData[1] = 0;
