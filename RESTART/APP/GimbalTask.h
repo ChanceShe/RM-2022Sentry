@@ -90,6 +90,9 @@ typedef struct
     float pit_speed_ref;
     float yaw_speed_fdb;
     float pit_speed_fdb;
+		
+		float pit_lost_feb;
+		float yaw_lost_feb;	
 } gim_pid_t;
 
 typedef struct

@@ -50,7 +50,7 @@ void gimbal_task(void)
 	 }
 	 else if(gim.ctrl_mode == GIMBAL_AUTO_MODE)
 	 {
-//		 gim.pid.pit_angle_ref = -30;
+		 testnum1 = gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref;
 		 VAL_LIMIT ( gim.pid.pit_angle_ref, PITCH_MIN, PITCH_MAX );
 		 pid_calc ( &pid_yaw, gim.pid.yaw_angle_fdb, gim.pid.yaw_angle_ref );
      pid_calc ( &pid_pit, gim.pid.pit_angle_fdb, gim.pid.pit_angle_ref );
@@ -83,17 +83,14 @@ void gimbal_param_init ( void )		//云台任务初始化
 		gim.input.action_angle   = 5.0f;
 		Init_Yaw_Angle = yaw_Angle;
 		PID_struct_init ( &pid_pit, POSITION_PID , 200, 20,
-                      10, 0.005, 20 );
-		PID_struct_init ( &pid_pit_speed, POSITION_PID , 28000, 28000,
-                      180.0f, 0.01, 120 );
-
-//		PID_struct_init(&pid_yaw, POSITION_PID,3000, 40,11.0f,0.01f,14.0f);
-//		PID_struct_init(&pid_yaw_speed, POSITION_PID,25000, 2000,175.0f,0.14f,30.0f);
+                      8, 0.05, 30 );
+		PID_struct_init ( &pid_pit_speed, POSITION_PID , 25000, 28000,
+                      150.0f, 0, 180 );
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 20,
-                      10, 0.02, 30 );
-		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 5000,
-                      160.0f, 0.001, 150 );
+                      12, 0.2, 30 );
+		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 25000, 3000,
+                      180.0f, 0, 180 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -135,9 +132,10 @@ void gimbal_init_handle( void )		//云台回初始位置
         gim.ctrl_mode = GIMBAL_REMOTE_MODE;
         Init_Yaw_Angle = yaw_Angle;  //-GMYawEncoder.ecd_angle;
         gim.pid.pit_angle_fdb = pitch_Angle;
-        gim.pid.yaw_angle_fdb = GMYawEncoder.ecd_angle;
-//        GimbalRef.yaw_angle_dynamic_ref = yaw_Angle;		//陀螺仪向右为正
-			  GimbalRef.yaw_angle_dynamic_ref = GMYawEncoder.ecd_angle;		//陀螺仪向右为正
+			  gim.pid.yaw_angle_fdb = yaw_Angle;
+//        gim.pid.yaw_angle_fdb = GMYawEncoder.ecd_angle;
+        GimbalRef.yaw_angle_dynamic_ref = yaw_Angle;		//陀螺仪向右为正
+//			  GimbalRef.yaw_angle_dynamic_ref = GMYawEncoder.ecd_angle;		//陀螺仪向右为正
         GimbalRef.pitch_angle_dynamic_ref = pitch_Angle;	//陀螺仪向上为正
     }
 }
@@ -156,7 +154,7 @@ void gimbal_remote_handle(void)
 	  gim.pid.yaw_angle_ref = GimbalRef.yaw_angle_dynamic_ref;
     gim.pid.pit_angle_ref = GimbalRef.pitch_angle_dynamic_ref;
     gim.pid.pit_angle_fdb = pitch_Angle;	//GMPitchEncoder.ecd_angle;    //向上为正
-		gim.pid.yaw_angle_fdb = GMYawEncoder.ecd_angle;		// -GMYawEncoder.ecd_angle;
+		gim.pid.yaw_angle_fdb = yaw_Angle;		// -GMYawEncoder.ecd_angle;
 }
 
 auto_mode_e auto_mode = AUTO_PATROL;	//自动模式初始为巡逻状态
@@ -170,6 +168,9 @@ float shoot_angle_speed = 0;
 float distance_s, distance_x, distance_y;
 float x1, x2, x3, x4;
 float angle_tan , shoot_radian;
+
+Gimbal_Auto_Shoot_t Gimbal_Auto_Shoot;
+Speed_Prediction_t Speed_Prediction;
 
 void gimbal_auto_handle(void)
 {
@@ -190,12 +191,12 @@ void gimbal_auto_handle(void)
 	}
 	auto_shoot_task();										//自动射击任务
 }
+
 void gimbal_patrol_handle(void)					//巡逻模式
 {
-	  gim.pid.yaw_angle_fdb =  GMYawEncoder.ecd_angle;    //由编码器读到
-//    gim.pid.pit_angle_fdb =  GMPitchEncoder.ecd_angle;  
+	  gim.pid.yaw_angle_fdb =  yaw_Angle;    //由陀螺仪读到
     gim.pid.pit_angle_fdb =  pitch_Angle;  
-		if ( new_location .recogflag != 0 )                //一旦检测到目标就停下
+		if ( new_location .pitch != 0 )                //一旦检测到目标就停下
     {
         auto_mode = AUTO_FOLLOW;
 //        gim.pid.pit_angle_ref =  pitch_Angle;
@@ -208,43 +209,29 @@ void gimbal_patrol_handle(void)					//巡逻模式
     }
     else
     {
-//        if ( auto_lost )//yaw丢失后保持一段时间在顺时针运动
-//        {
-//            auto_lost_timer ++ ;
-//            if ( auto_lost_timer >= 30 )
-//            {
-//                auto_lost = 0;
-//                auto_lost_timer = 0;
-//                pitch_timer = ( int16_t ) ( pitch_Angle / ( ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD ) );
-//                yaw_timer = ( int16_t ) ( ( yaw_Angle - Init_Yaw_Angle ) / ( 160 / YAW_PERIOD ) );
-//            }
-//            gim.pid.pit_angle_ref = pitch_Angle;
-//            gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle;
-//        }
-//        else
-//        {
-//					rotate_num = ( GMYawEncoder.ecd_angle - Init_Yaw_Angle ) / 360;
-//					gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle + 3;
-        if ( auto_lost )
+        if ( auto_lost )//yaw丢失后保持一段时间在顺时针运动
         {
+						if(auto_lost_timer == 0)
+						{
+								gim.pid.pit_lost_feb	= pitch_Angle;
+								gim.pid.yaw_lost_feb	= yaw_Angle;
+						}
             auto_lost_timer ++ ;
-            if ( auto_lost_timer >= 10 )         // if(auto_lost_timer >= 1000)
+            if ( auto_lost_timer >= 3 )
             {
                 auto_lost = 0;
                 auto_lost_timer = 0;
                 pitch_timer = ( int16_t ) ( pitch_Angle / ( ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD ) );
                 yaw_timer = ( int16_t ) ( ( yaw_Angle - Init_Yaw_Angle ) / ( ( YAW_MAX - YAW_MIN ) / YAW_PERIOD ) );
             }
-            gim.pid.pit_angle_ref = pitch_Angle;
-            gim.pid.yaw_angle_ref = yaw_Angle;
+            gim.pid.pit_angle_ref = gim.pid.pit_lost_feb;
+            gim.pid.yaw_angle_ref = gim.pid.yaw_lost_feb;
         }
         else
         {
+					rotate_num = ( yaw_Angle - Init_Yaw_Angle ) / 360;
+					gim.pid.yaw_angle_ref = yaw_Angle + 0.3;
 
-            rotate_num = ( yaw_Angle - Init_Yaw_Angle ) / 360;
-
-//            gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle + 3;
-			
 					if ( pitch_dir == 1 )
 					{
 							if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD >= PITCH_MAX )
@@ -263,8 +250,7 @@ void gimbal_patrol_handle(void)					//巡逻模式
     }
 
 }
-Gimbal_Auto_Shoot_t Gimbal_Auto_Shoot;
-Speed_Prediction_t Speed_Prediction;
+
 
 void gimbal_follow_handle(void)		//识别到目标跟随模式
 {
@@ -295,9 +281,9 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
     if ( Gimbal_Auto_Shoot.Recognized_Flag )
     {
         Gimbal_Auto_Shoot.Continue_Recognized_Cnt ++;
-        VAL_LIMIT ( Gimbal_Auto_Shoot.Continue_Recognized_Cnt, 0, 100 );
+        VAL_LIMIT ( Gimbal_Auto_Shoot.Continue_Recognized_Cnt, 0, 200 );
         flag_lost = 0;
-        gim.pid.yaw_angle_fdb =  GMYawEncoder.ecd_angle ;
+        gim.pid.yaw_angle_fdb =  yaw_Angle ;
         gim.pid.pit_angle_fdb =  pitch_Angle;
 
        
@@ -307,6 +293,10 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
 				
         if ( new_location.receNewDataFlag )
         {
+//						if(Gimbal_Auto_Shoot.Continue_Recognized_Cnt>=30)
+//						{
+//							Gimbal_Auto_Shoot.target_pit = AvgFilter(Gimbal_Auto_Shoot.target_pit);
+//						}
             new_location.receNewDataFlag = 0;
 						gim.pid.yaw_angle_ref = gim.pid.yaw_angle_fdb + Gimbal_Auto_Shoot.target_yaw ;
 					  gim.pid.pit_angle_ref = gim.pid.pit_angle_fdb + Gimbal_Auto_Shoot.target_pit ;
@@ -517,7 +507,7 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
             auto_lost_timer = 0;
             auto_mode = AUTO_PATROL;
             flag_lost = 1;
-            gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle;//GMYawEncoder.ecd_angle ;
+            gim.pid.yaw_angle_ref = yaw_Angle;//GMYawEncoder.ecd_angle ;
             gim.pid.pit_angle_ref = pitch_Angle;//GMPitchEncoder.ecd_angle;
 
 //            pid_clr ( &pid_pit_speed_follow );

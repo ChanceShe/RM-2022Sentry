@@ -3,7 +3,7 @@
 #include "main.h"
 #define PID_SHOOT_MOTOR_SPEED           600.0f
 #define PID_SHOOT_NOJUDGE_MOTOR_SPEED   600.0f
-#define FRICTION_SPEED                  950
+#define FRICTION_SPEED                  800
 
 //·¢ÉäÏÞÎ»
 #define PWM4  TIM3->CCR4//µ¯²Ö

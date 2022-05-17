@@ -17,7 +17,7 @@ void Control_Task(void)
 
 	if(time_tick_1ms%5 == 0)
   {
-//		shot_task();		
+		shot_task();		
 	}		
 	if(time_tick_1ms%12== 0)
   {

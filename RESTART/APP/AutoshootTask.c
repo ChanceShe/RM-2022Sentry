@@ -115,9 +115,8 @@ void send_protocol(float pitch,float yaw)
 {
   e_to_v__frame__init(&msg);
   msg.currentpitch_=(int)(pitch*100);
-	testnum1=msg.currentpitch_;
 	msg.currentyaw_=(int)(yaw*100);
-	msg.currentcolor_=judge_rece_mesg.game_robot_state.remain_HP;
+	msg.currentcolor_= 101;
 	msg.bulletspeed_=27*10;
   e_to_v__frame__pack(&msg,UART4_DMA_TX_BUF+1);
   DateLength=e_to_v__frame__get_packed_size(&msg);
