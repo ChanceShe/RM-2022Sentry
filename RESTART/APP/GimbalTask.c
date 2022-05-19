@@ -50,15 +50,14 @@ void gimbal_task(void)
 	 }
 	 else if(gim.ctrl_mode == GIMBAL_AUTO_MODE)
 	 {
-		 testnum1 = gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref;
 		 VAL_LIMIT ( gim.pid.pit_angle_ref, PITCH_MIN, PITCH_MAX );
 		 pid_calc ( &pid_yaw, gim.pid.yaw_angle_fdb, gim.pid.yaw_angle_ref );
      pid_calc ( &pid_pit, gim.pid.pit_angle_fdb, gim.pid.pit_angle_ref );
      cascade_pid_ctrl();   			//?j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, -( int16_t ) pid_pit_speed.out );
-//		 CAN2_Gimbal_Msg(( int16_t ) pid_yaw_speed.out,0);
+		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
 //		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg(0,0); 
 	 }
@@ -70,7 +69,9 @@ void gimbal_task(void)
      cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, -( int16_t ) pid_pit_speed.out );
+		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
+//		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg(0,0); 
 	 }
 }
@@ -81,16 +82,25 @@ void gimbal_param_init ( void )		//ÔÆÌ¨ÈÎÎñ³õÊ¼»¯
 		gim.last_ctrl_mode = GIMBAL_RELAX;
 		gim.input.ac_mode        = NO_ACTION;
 		gim.input.action_angle   = 5.0f;
-		Init_Yaw_Angle = yaw_Angle;
+		Init_Yaw_Angle = GMYawEncoder.ecd_angle;
 		PID_struct_init ( &pid_pit, POSITION_PID , 200, 20,
-                      8, 0.05, 30 );
+                      8, 0.01, 5 );
 		PID_struct_init ( &pid_pit_speed, POSITION_PID , 25000, 28000,
-                      150.0f, 0, 180 );
+                      150.0f, 0, 120 );
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 20,
-                      12, 0.2, 30 );
+                      10, 0.1, 10 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 25000, 3000,
                       180.0f, 0, 180 );
+//		PID_struct_init ( &pid_pit, POSITION_PID , 200, 20,
+//                      10, 0.05, 2 );
+//		PID_struct_init ( &pid_pit_speed, POSITION_PID , 25000, 28000,
+//                      150.0f, 0, 10 );
+
+//		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 20,
+//                      8, 0.1, 5 );
+//		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 25000, 3000,
+//                      180.0f, 0, 150 );
 	//Ð±ÆÂ³õÊ¼»¯
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -110,7 +120,7 @@ void gimbal_init_handle( void )		//ÔÆÌ¨»Ø³õÊ¼Î»ÖÃ
 {
     auto_mode = AUTO_PATROL ; //Ñ²Âß£¬Ã»ÓÐÊ¶±ðµ½Ä¿±ê
     int32_t init_rotate_num = 0;
-    gim.pid.pit_angle_fdb =  pitch_Angle;    //GMPitchEncoder.ecd_angle;
+    gim.pid.pit_angle_fdb = GMPitchEncoder.ecd_angle;   //pitch_Angle
 //    gim.pid.pit_angle_fdb = GMPitchEncoder.ecd_angle;
 //    gim.pid.pit_angle_ref = 0 * ( 1 - GMPitchRamp.Calc ( &GMPitchRamp ) ); //GMPitchEncoder.ecd_angle * (1 - GMPitchRamp.Calc(&GMPitchRamp));
     gim.pid.pit_angle_ref = Init_Pitch_Angle;
@@ -130,19 +140,20 @@ void gimbal_init_handle( void )		//ÔÆÌ¨»Ø³õÊ¼Î»ÖÃ
 		{
         /* yaw arrive and switch gimbal state */
         gim.ctrl_mode = GIMBAL_REMOTE_MODE;
-        Init_Yaw_Angle = yaw_Angle;  //-GMYawEncoder.ecd_angle;
-        gim.pid.pit_angle_fdb = pitch_Angle;
-			  gim.pid.yaw_angle_fdb = yaw_Angle;
+        Init_Yaw_Angle = GMYawEncoder.ecd_angle;  //yaw_Angle;
+        gim.pid.pit_angle_fdb = GMPitchEncoder.ecd_angle;
+			  gim.pid.yaw_angle_fdb = GMYawEncoder.ecd_angle;
 //        gim.pid.yaw_angle_fdb = GMYawEncoder.ecd_angle;
-        GimbalRef.yaw_angle_dynamic_ref = yaw_Angle;		//ÍÓÂÝÒÇÏòÓÒÎªÕý
-//			  GimbalRef.yaw_angle_dynamic_ref = GMYawEncoder.ecd_angle;		//ÍÓÂÝÒÇÏòÓÒÎªÕý
-        GimbalRef.pitch_angle_dynamic_ref = pitch_Angle;	//ÍÓÂÝÒÇÏòÉÏÎªÕý
+//        GimbalRef.yaw_angle_dynamic_ref = yaw_Angle;		//ÍÓÂÝÒÇÏòÓÒÎªÕý
+			  GimbalRef.yaw_angle_dynamic_ref = GMYawEncoder.ecd_angle;		//ÍÓÂÝÒÇÏòÓÒÎªÕý
+//        GimbalRef.pitch_angle_dynamic_ref = pitch_Angle;	//ÍÓÂÝÒÇÏòÉÏÎªÕý
+        GimbalRef.pitch_angle_dynamic_ref = GMPitchEncoder.ecd_angle;	//ÍÓÂÝÒÇÏòÉÏÎªÕý
     }
 }
 
 void no_action_handle ( void )
 {
-    gim.pid.pit_angle_fdb = pitch_Angle;
+    gim.pid.pit_angle_fdb = GMPitchEncoder.ecd_angle;
     gim.pid.yaw_angle_fdb = 0;
     gim.pid.pit_angle_ref = Init_Pitch_Angle;
     GimbalRef.yaw_angle_dynamic_ref = 0;
@@ -153,8 +164,8 @@ void gimbal_remote_handle(void)
 		VAL_LIMIT ( GimbalRef.pitch_angle_dynamic_ref, PITCH_MIN, PITCH_MAX ); //pitchÖáÔÆÌ¨¸©ÑöÏÞÖÆ
 	  gim.pid.yaw_angle_ref = GimbalRef.yaw_angle_dynamic_ref;
     gim.pid.pit_angle_ref = GimbalRef.pitch_angle_dynamic_ref;
-    gim.pid.pit_angle_fdb = pitch_Angle;	//GMPitchEncoder.ecd_angle;    //ÏòÉÏÎªÕý
-		gim.pid.yaw_angle_fdb = yaw_Angle;		// -GMYawEncoder.ecd_angle;
+    gim.pid.pit_angle_fdb = GMPitchEncoder.ecd_angle;	//pitch_Angle;    //ÏòÉÏÎªÕý
+		gim.pid.yaw_angle_fdb = GMYawEncoder.ecd_angle;		// yaw_Angle;
 }
 
 auto_mode_e auto_mode = AUTO_PATROL;	//×Ô¶¯Ä£Ê½³õÊ¼ÎªÑ²Âß×´Ì¬
@@ -194,8 +205,8 @@ void gimbal_auto_handle(void)
 
 void gimbal_patrol_handle(void)					//Ñ²ÂßÄ£Ê½
 {
-	  gim.pid.yaw_angle_fdb =  yaw_Angle;    //ÓÉÍÓÂÝÒÇ¶Áµ½
-    gim.pid.pit_angle_fdb =  pitch_Angle;  
+	  gim.pid.yaw_angle_fdb =  GMYawEncoder.ecd_angle;    //ÓÉÍÓÂÝÒÇ¶Áµ½
+    gim.pid.pit_angle_fdb =  GMPitchEncoder.ecd_angle;  
 		if ( new_location .pitch != 0 )                //Ò»µ©¼ì²âµ½Ä¿±ê¾ÍÍ£ÏÂ
     {
         auto_mode = AUTO_FOLLOW;
@@ -213,24 +224,24 @@ void gimbal_patrol_handle(void)					//Ñ²ÂßÄ£Ê½
         {
 						if(auto_lost_timer == 0)
 						{
-								gim.pid.pit_lost_feb	= pitch_Angle;
-								gim.pid.yaw_lost_feb	= yaw_Angle;
+								gim.pid.pit_lost_feb	= GMPitchEncoder.ecd_angle;
+								gim.pid.yaw_lost_feb	= GMYawEncoder.ecd_angle;
 						}
             auto_lost_timer ++ ;
-            if ( auto_lost_timer >= 3 )
+            if ( auto_lost_timer >= 60 )
             {
                 auto_lost = 0;
                 auto_lost_timer = 0;
-                pitch_timer = ( int16_t ) ( pitch_Angle / ( ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD ) );
-                yaw_timer = ( int16_t ) ( ( yaw_Angle - Init_Yaw_Angle ) / ( ( YAW_MAX - YAW_MIN ) / YAW_PERIOD ) );
+                pitch_timer = ( int16_t ) ( GMPitchEncoder.ecd_angle / ( ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD ) );
+                yaw_timer = ( int16_t ) ( ( GMYawEncoder.ecd_angle - Init_Yaw_Angle ) / ( ( YAW_MAX - YAW_MIN ) / YAW_PERIOD ) );
             }
             gim.pid.pit_angle_ref = gim.pid.pit_lost_feb;
             gim.pid.yaw_angle_ref = gim.pid.yaw_lost_feb;
         }
         else
         {
-					rotate_num = ( yaw_Angle - Init_Yaw_Angle ) / 360;
-					gim.pid.yaw_angle_ref = yaw_Angle + 0.3;
+					rotate_num = ( GMYawEncoder.ecd_angle - Init_Yaw_Angle ) / 360;
+					gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle + 0.3;
 
 					if ( pitch_dir == 1 )
 					{
@@ -269,7 +280,7 @@ void gimbal_follow_handle(void)		//Ê¶±ðµ½Ä¿±ê¸úËæÄ£Ê½
     else
     {
         Gimbal_Auto_Shoot.Recognized_Timer++;
-        if ( Gimbal_Auto_Shoot.Recognized_Timer == 2 ) //200ms£¬Ê±¼äÌ«³¤£¬ÔÆÌ¨±£³ÖÔ­ÓÐ¸ø¶¨µ¼ÖÂÂÒ¶¯×÷
+        if ( Gimbal_Auto_Shoot.Recognized_Timer == 20 ) //200ms£¬Ê±¼äÌ«³¤£¬ÔÆÌ¨±£³ÖÔ­ÓÐ¸ø¶¨µ¼ÖÂÂÒ¶¯×÷
         {
             Gimbal_Auto_Shoot.Recognized_Flag 	= 0;
             Gimbal_Auto_Shoot.Recognized_Timer 	= 0;
@@ -283,8 +294,8 @@ void gimbal_follow_handle(void)		//Ê¶±ðµ½Ä¿±ê¸úËæÄ£Ê½
         Gimbal_Auto_Shoot.Continue_Recognized_Cnt ++;
         VAL_LIMIT ( Gimbal_Auto_Shoot.Continue_Recognized_Cnt, 0, 200 );
         flag_lost = 0;
-        gim.pid.yaw_angle_fdb =  yaw_Angle ;
-        gim.pid.pit_angle_fdb =  pitch_Angle;
+        gim.pid.yaw_angle_fdb =  GMYawEncoder.ecd_angle;			//yaw_Angle ;
+        gim.pid.pit_angle_fdb =  GMPitchEncoder.ecd_angle;		//pitch_Angle;
 
        
 
@@ -299,7 +310,7 @@ void gimbal_follow_handle(void)		//Ê¶±ðµ½Ä¿±ê¸úËæÄ£Ê½
 //						}
             new_location.receNewDataFlag = 0;
 						gim.pid.yaw_angle_ref = gim.pid.yaw_angle_fdb + Gimbal_Auto_Shoot.target_yaw ;
-					  gim.pid.pit_angle_ref = gim.pid.pit_angle_fdb + Gimbal_Auto_Shoot.target_pit ;
+					  gim.pid.pit_angle_ref = gim.pid.pit_angle_fdb - Gimbal_Auto_Shoot.target_pit ;
 
 
 //						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.Armor_yaw + Gimbal_Auto_Shoot.Horizontal_Compensation ;
@@ -507,8 +518,8 @@ void gimbal_follow_handle(void)		//Ê¶±ðµ½Ä¿±ê¸úËæÄ£Ê½
             auto_lost_timer = 0;
             auto_mode = AUTO_PATROL;
             flag_lost = 1;
-            gim.pid.yaw_angle_ref = yaw_Angle;//GMYawEncoder.ecd_angle ;
-            gim.pid.pit_angle_ref = pitch_Angle;//GMPitchEncoder.ecd_angle;
+            gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle;//yaw_Angle;
+            gim.pid.pit_angle_ref = GMPitchEncoder.ecd_angle;//pitch_Angle;
 
 //            pid_clr ( &pid_pit_speed_follow );
 //            pid_clr ( &pid_yaw_speed_follow );
@@ -560,14 +571,14 @@ void auto_shoot_task(void)
     }
 
 
-    if ( gim.pid.yaw_angle_fdb < 2.5f + gim.pid.yaw_angle_ref	\
-            && gim.pid.yaw_angle_fdb > -2.5f + gim.pid.yaw_angle_ref )
+    if ( gim.pid.yaw_angle_fdb < 2.0f + gim.pid.yaw_angle_ref	\
+            && gim.pid.yaw_angle_fdb > -2.0f + gim.pid.yaw_angle_ref )
         dir_yaw = 1;
     else
         dir_yaw = 0;
 
-    if (  gim.pid.pit_angle_fdb < 2.5f + gim.pid.pit_angle_ref	\
-            && gim.pid.pit_angle_fdb > -2.5f + gim.pid.pit_angle_ref  )
+    if (  gim.pid.pit_angle_fdb < 10.0f + gim.pid.pit_angle_ref	\
+            && gim.pid.pit_angle_fdb > -10.0f + gim.pid.pit_angle_ref  )
     {
 			dir_pitch = 1;
 		}

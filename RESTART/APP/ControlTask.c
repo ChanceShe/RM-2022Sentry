@@ -19,9 +19,10 @@ void Control_Task(void)
   {
 		shot_task();		
 	}		
-	if(time_tick_1ms%12== 0)
+	if(time_tick_1ms%5== 0)
   {
-		send_protocol(pitch_Angle,yaw_Angle);
+//		send_protocol(pitch_Angle,yaw_Angle);
+		send_protocol(-GMPitchEncoder.ecd_angle-90,GMYawEncoder.ecd_angle);
 	}
 	
 	

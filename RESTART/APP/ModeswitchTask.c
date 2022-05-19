@@ -61,8 +61,8 @@ void gimbal_mode_handle ( void )    //云台模式切换
                 GMPitchRamp.ResetCounter ( &GMPitchRamp );
                 if ( gim.last_ctrl_mode != GIMBAL_REMOTE_MODE )
                 {
-                    gim.pid.pit_angle_ref = pitch_Angle;
-									  gim.pid.yaw_angle_ref = yaw_Angle;
+                    gim.pid.pit_angle_ref = GMPitchEncoder.ecd_angle;	//pitch_Angle;
+									  gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle;	//yaw_Angle;
                 }
             }
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
@@ -86,7 +86,7 @@ void gimbal_mode_handle ( void )    //云台模式切换
                 GMPitchRamp.ResetCounter ( &GMPitchRamp );
                 if ( gim.last_ctrl_mode != GIMBAL_REMOTE_MODE )
                 {
-                    Init_Yaw_Angle = yaw_Angle;//-GMYawEncoder.ecd_angle;
+                    Init_Yaw_Angle = GMYawEncoder.ecd_angle;//-GMYawEncoder.ecd_angle;
                 }
             }
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
@@ -105,7 +105,7 @@ void gimbal_mode_handle ( void )    //云台模式切换
                 gim.ctrl_mode = GIMBAL_REMOTE_MODE;
 								if ( gim.last_ctrl_mode != GIMBAL_REMOTE_MODE )
 									{
-											Init_Yaw_Angle = yaw_Angle;//-GMYawEncoder.ecd_angle;
+											Init_Yaw_Angle = GMYawEncoder.ecd_angle;//-GMYawEncoder.ecd_angle;
 									}
 						}
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
@@ -125,7 +125,7 @@ void gimbal_mode_handle ( void )    //云台模式切换
                 GMPitchRamp.ResetCounter ( &GMPitchRamp );
                 if ( gim.last_ctrl_mode != GIMBAL_REMOTE_MODE )
                 {
-                    GimbalRef.yaw_angle_dynamic_ref = yaw_Angle;       //-GMYawEncoder.ecd_angle;
+                    GimbalRef.yaw_angle_dynamic_ref =-GMYawEncoder.ecd_angle;//yaw_Angle; 
                 }
             }
             else if ( GetInputMode() == KEY_MOUSE_INPUT )
