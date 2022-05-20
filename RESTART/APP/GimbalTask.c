@@ -83,12 +83,12 @@ void gimbal_param_init ( void )		//云台任务初始化
 		gim.input.ac_mode        = NO_ACTION;
 		gim.input.action_angle   = 5.0f;
 		Init_Yaw_Angle = GMYawEncoder.ecd_angle;
-		PID_struct_init ( &pid_pit, POSITION_PID , 200, 20,
-                      8, 0.01, 5 );
-		PID_struct_init ( &pid_pit_speed, POSITION_PID , 25000, 28000,
-                      150.0f, 0, 120 );
+		PID_struct_init ( &pid_pit, POSITION_PID , 150, 20,
+                      10, 0.01, 5 );
+		PID_struct_init ( &pid_pit_speed, POSITION_PID , 28000, 28000,
+                      180.0f, 0, 120 );
 
-		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 20,
+		PID_struct_init ( &pid_yaw, POSITION_PID , 100, 20,
                       10, 0.1, 10 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 25000, 3000,
                       180.0f, 0, 180 );
