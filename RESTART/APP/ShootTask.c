@@ -121,8 +121,8 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
         pid_calc ( &pid_trigger[0], pid_trigger[0].get, pid_trigger[0].set );
 			  pid_trigger[1].get = Poke2Encoder.filter_rate;
         pid_calc ( &pid_trigger[1], pid_trigger[1].get, pid_trigger[1].set );
-        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, pid_trigger[1].out, 0, 0 );
-//        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, 0, 0, 0 );	//转左拨盘
+//        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, pid_trigger[1].out, 0, 0 );
+        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, 0, 0, 0 );	//转左拨盘
 //        CAN2_Send_Msg ( CAN2, 0, pid_trigger[1].out, 0, 0 );	//转右拨盘
     }
 

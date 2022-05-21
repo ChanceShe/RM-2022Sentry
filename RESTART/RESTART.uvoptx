@@ -171,7 +171,7 @@
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>UART4_DMA_TX_BUF</ItemText>
+          <ItemText>UART4_DMA_TX_BUF,0x10</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
@@ -181,42 +181,32 @@
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pitch_Angle</ItemText>
+          <ItemText>pid_pit_speed</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>yaw_Angle</ItemText>
+          <ItemText>pid_yaw_speed</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pid_pit_speed</ItemText>
+          <ItemText>pid_pit</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pid_yaw_speed</ItemText>
+          <ItemText>\\RESTART\APP/AutoshootTask.c\new_location.recogflag</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>judge_rece_mesg</ItemText>
+          <ItemText>\\RESTART\APP/AutoshootTask.c\new_location.recogflag</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Gimbal_Auto_Shoot,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>10</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>pid_pit</ItemText>
-        </Ww>
-        <Ww>
-          <count>11</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>pid_yaw</ItemText>
+          <ItemText>\\RESTART\APP/AutoshootTask.c\new_location.recogflag</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -239,6 +229,21 @@
           <count>3</count>
           <WinNumber>2</WinNumber>
           <ItemText>Friction1Encoder,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>refromData,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>dir_yaw</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>dir_pitch</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>
