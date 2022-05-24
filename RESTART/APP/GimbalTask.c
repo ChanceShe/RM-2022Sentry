@@ -91,7 +91,7 @@ void gimbal_param_init ( void )		//云台任务初始化
 		PID_struct_init ( &pid_yaw, POSITION_PID , 150, 20,
                       10, 0.02, 30 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 3000,
-                      150.0f, 0, 200 );
+                      180.0f, 0, 200 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -219,7 +219,7 @@ void gimbal_patrol_handle(void)					//巡逻模式
 								gim.pid.yaw_lost_feb	= GMYawEncoder.ecd_angle;
 						}
             auto_lost_timer ++ ;
-            if ( auto_lost_timer >= 60 )
+            if ( auto_lost_timer >= 6 )
             {
                 auto_lost = 0;
                 auto_lost_timer = 0;
@@ -234,19 +234,19 @@ void gimbal_patrol_handle(void)					//巡逻模式
 					rotate_num = ( GMYawEncoder.ecd_angle - Init_Yaw_Angle ) / 360;
 					gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle + 0.3;
 
-//					if ( pitch_dir == 1 )
-//					{
-//							if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD >= PITCH_MAX )
-//									pitch_dir = -1;
-//							pitch_timer ++ ;
-//					}
-//					else
-//					{
-//							if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD <= PITCH_MIN )
-//									pitch_dir = 1;
-//							pitch_timer -- ;
-//					}
-//					gim.pid.pit_angle_ref = ( float ) ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD );
+					if ( pitch_dir == 1 )
+					{
+							if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD >= PITCH_MAX )
+									pitch_dir = -1;
+							pitch_timer ++ ;
+					}
+					else
+					{
+							if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD <= PITCH_MIN )
+									pitch_dir = 1;
+							pitch_timer -- ;
+					}
+					gim.pid.pit_angle_ref = ( float ) ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD );
 
         }
     }
