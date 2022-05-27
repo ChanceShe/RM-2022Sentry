@@ -1,10 +1,23 @@
 #include  "main.h"
 chassis_t chassis;
-
+uint8_t brake_en;
+uint32_t chassis_patrol_time = 0;
 sensor_state_e sensor_l = sensor_off;
 sensor_state_e sensor_r = sensor_off;
 Power_Control_Struct Power_Control = POWER_CONTROL_DEFAULT;
 int last_remain_HP = 0;
+
+void chassis_param_init(void)//底盘参数初始化
+{
+  memset(&chassis, 0, sizeof(chassis_t));
+  chassis.ctrl_mode      = CHASSIS_REMOTE;
+  chassis.last_ctrl_mode = CHASSIS_RELAX;
+	chassis.crazydata.crazyflag = 0;
+	chassis.direction = direction_right;
+	chassis.powerlimit = limit_strict;
+  PID_struct_init ( &pid_spd, POSITION_PID, 12000, 3000, 45.0f, 0, 0 );
+	PID_struct_init ( &pid_brake, POSITION_PID, 10000,10000, 60 , 0, 0 );
+}
 
 void chassis_task(void)
 {
@@ -81,13 +94,13 @@ void chassis_task(void)
 			power_limit_handle();			//使用缓冲能量功率限制
 		}
 
-		if(chassis.ctrl_mode != CHASSIS_RELAX)
+		if(chassis.ctrl_mode == CHASSIS_RELAX || brake_en)
 		{
-			CAN1_Send_Msg(CAN1,0,0,chassis.current,0);
+			CAN1_Send_Msg(CAN1,0,0,0,0);
 		}
 		else
 		{
-			CAN1_Send_Msg(CAN1,0,0,0,0);
+			CAN1_Send_Msg(CAN1,0,0,chassis.current,0);
 		}
     
 
@@ -115,16 +128,17 @@ void chassis_patrol_handle(void)		//巡逻
 		if(chassis.crazydata.crazyflag)
 		{
 			if(judge_rece_mesg.power_heat_data.chassis_power_buffer > WARNING_ENERGY)
-			chassis.powerlimit = limit_buffer;
-		else
-			chassis.powerlimit = limit_strict;
+				chassis.powerlimit = limit_buffer;
+			else
+				chassis.powerlimit = limit_strict;
 			if(chassis.crazydata.crazychangetime == 0)
 			{
-				chassis.crazydata.crazyspeed			= rand()%150 + 500;
+				chassis.crazydata.crazyspeed			= rand()%100 + 600;
 				chassis.crazydata.crazychangetime		  	= rand()%70 + 70;
 
 #if			CRAZY_DIR_CHANGE_MODE == 0
-				chassis.direction = !chassis.direction;
+//				chassis.direction = !chassis.direction;
+				brake_en = 1;
 				
 #elif			CRAZY_DIR_CHANGE_MODE == 1
 				chassis.crazydata.crazyspeeddir 	= rand()%2;
@@ -147,43 +161,80 @@ void chassis_patrol_handle(void)		//巡逻
 		//检测防止撞柱
 		if(sensor_l == sensor_on && chassis.direction == direction_left)						//变向
 		{
-			chassis.direction = direction_right;
+			brake_en = 1;
 		}
 		else if(sensor_r == sensor_on && chassis.direction == direction_right)			//变向
 		{
-			chassis.direction = direction_left;
+			brake_en = 1;
 		}
 		
-
-    switch ( chassis.direction )
-    {
-        case direction_left:    //向左运动
-        {
-					if(chassis.crazydata.crazyflag)
-						chassis.vx = -chassis.crazydata.crazyspeed;
-					else
-						chassis.vx = -500;
-        }
-        break;
-				
-        case direction_right:    //向右运动
-        {
-					if(chassis.crazydata.crazyflag)
-						chassis.vx = chassis.crazydata.crazyspeed;
-					else
-						chassis.vx = 500;
-        }
-        break;
-				
-        case direction_stop:   //停止
-        {
-            chassis.vx = 0 ;
-        }
-        break;
-        default:
-        break;
-    }
-		
+		if(brake_en)
+		{
+			chassis.vx = 0;
+			if(chassis.direction == direction_left)
+			{
+				pid_brake.get = BrakeEncoder.filter_rate;
+				pid_brake.set = -200;
+				if(CM1Encoder.filter_rate>=-10)
+				{
+					chassis.direction = direction_right;
+					brake_en = 0;
+					chassis_patrol_time = 0;
+				}
+			}
+			else if(chassis.direction == direction_right)
+			{
+				pid_brake.get = BrakeEncoder.filter_rate;
+				pid_brake.set = 200;
+				if(CM1Encoder.filter_rate<=10)
+				{
+					chassis.direction = direction_left;
+					brake_en = 0;
+					chassis_patrol_time = 0;
+				}
+			}
+			
+			pid_calc ( &pid_brake, pid_brake.get, pid_brake.set );
+			CAN1_Send_Msg1 ( CAN1, pid_brake.out, 0, 0, 0 );
+			
+		}
+		else
+		{
+				chassis_patrol_time++;
+				switch ( chassis.direction )
+				{
+						case direction_left:    //向左运动
+						{
+							if(chassis.crazydata.crazyflag)
+								chassis.vx = -chassis.crazydata.crazyspeed;
+							else
+								chassis.vx = -700;
+						}
+						break;
+						
+						case direction_right:    //向右运动
+						{
+							if(chassis.crazydata.crazyflag)
+								chassis.vx = chassis.crazydata.crazyspeed;
+							else
+								chassis.vx = 700;
+						}
+						break;
+						
+						case direction_stop:   //停止
+						{
+								chassis.vx = 0 ;
+						}
+						break;
+						default:
+						break;
+				}
+			if(chassis_patrol_time >=100 && fabs((double)chassis.wheel_speed_ref-(double)chassis.wheel_speed_fdb)>500)
+			{
+					brake_en = 1;
+			}
+			CAN1_Send_Msg1 ( CAN1, 0, 0, 0, 0 );
+		}
 		last_remain_HP = judge_rece_mesg.game_robot_state.remain_HP;
 }
 
@@ -193,16 +244,6 @@ void chassis_stop_handle(void)			//停车
   pid_clr(&pid_spd);
 }
 
-void chassis_param_init(void)//底盘参数初始化
-{
-  memset(&chassis, 0, sizeof(chassis_t));			
-  chassis.ctrl_mode      = CHASSIS_REMOTE;
-  chassis.last_ctrl_mode = CHASSIS_RELAX;
-	chassis.crazydata.crazyflag = 0;
-	chassis.direction = direction_right;
-	chassis.powerlimit = limit_strict;
-  PID_struct_init ( &pid_spd, POSITION_PID, 12000, 3000, 45.0f, 0, 0 );
-}
 
 
 /**
@@ -315,4 +356,5 @@ void power_limit_handle ( void )
 		break;
 	}
 }
+
 

@@ -7,7 +7,7 @@ Gimbal_Ref_t GimbalRef;
 FrictionWheelState_e friction_wheel_state = FRICTION_WHEEL_OFF;
 
 
- InputMode_e inputmode = STOP;															//输入模式设定
+ InputMode_e inputmode = RELAX;															//输入模式设定
 static volatile Shoot_State_e shootState = NOSHOOTING;						//射击模式
 
 //遥控器数据初始化，斜坡函数等的初始化
@@ -65,10 +65,9 @@ void RemoteDataPrcess(uint8_t *pData)
       //巡逻模式
     }
     break;
-    case STOP:
+    case RELAX:
     {
-      //紧急停车
-			chassis.ctrl_mode = CHASSIS_STOP;
+      //放松模式
     }
     break;
     }
@@ -152,7 +151,7 @@ void SetInputMode(Remote *rc)
     }
   else if(rc->s2 == 2)
     {
-      inputmode = STOP;								//停车
+      inputmode = RELAX;								//停车
     }
 
 }

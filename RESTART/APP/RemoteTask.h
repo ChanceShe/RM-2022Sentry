@@ -72,7 +72,7 @@ typedef enum
 {
 	REMOTE_INPUT = 1,
 	KEY_MOUSE_INPUT = 3,
-	STOP = 2,
+	RELAX = 2,
 }InputMode_e;
 
 //²¦¸Ë¶¯×÷Ã¶¾Ù

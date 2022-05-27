@@ -141,8 +141,6 @@ void  pid_clr(pid_t *pid);
 		
 
 extern pid_t pid_spd;
-extern pid_t pid_rotate[2];
-extern pid_t pid_trigger;
-extern pid_t pid_trigger_speed;
-
+extern pid_t pid_brake;
+		
 #endif

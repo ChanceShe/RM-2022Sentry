@@ -6,7 +6,7 @@
 #define MAX_WHEEL_RPM  7400		//轮最大转速
 
 //暴走模式变向方案
-#define	CRAZY_DIR_CHANGE_MODE	1		//0:击打变向(反制视觉预测), 1:全随机运动(反制操作手手打)
+#define	CRAZY_DIR_CHANGE_MODE	0		//0:击打变向(反制视觉预测), 1:全随机运动(反制操作手手打)
 
 //功率限制方案
 #define POWER_LIMIT_MODE   1   //1上交 0
@@ -98,8 +98,8 @@ typedef struct
 extern chassis_t chassis;
 
 
-
-
+extern uint8_t brake_en;
+extern uint32_t chassis_patrol_time;
 
 void chassis_param_init(void);//底盘参数初始化
 void chassis_task(void);

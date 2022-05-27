@@ -5,7 +5,7 @@ static uint32_t can2_count = 0;
 
 //CAN1电机编码器
 volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0};								//底盘主动轮
-
+volatile Encoder BrakeEncoder = {0,0,0,0,0,0,0,0,0};							//底盘刹车
 //CAN2电机编码器
 
 
@@ -68,7 +68,12 @@ void Can1ReceiveMsgProcess(CanRxMsg * msg)
 			( can1_count <= 50 ) ? GetEncoderBias ( &CM1Encoder , msg ) : EncoderProcess ( &CM1Encoder , msg ); //获取到编码器的初始偏差值
 		}
 		break;
-	}
+		case CAN_BUS1_BRAKE_MOTOR_FEEDBACK_MSG_ID:		//底盘主动轮
+		{
+			LostCounterFeed ( GetLostCounter ( LOST_COUNTER_INDEX_MOTOR1 ) );
+			( can1_count <= 50 ) ? GetEncoderBias ( &BrakeEncoder , msg ) : EncoderProcess ( &BrakeEncoder , msg ); //获取到编码器的初始偏差值
+		}
+		break;	}
 }
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg)

@@ -23,6 +23,10 @@ void chassis_mode_handle(void)
 		{
 				chassis.ctrl_mode  =  CHASSIS_REMOTE;
 		}
+		else if ( GetInputMode() == RELAX)
+		{
+				chassis.ctrl_mode  =  CHASSIS_RELAX;
+		}
 		else
 		{
 				chassis.ctrl_mode  =  CHASSIS_RELAX;

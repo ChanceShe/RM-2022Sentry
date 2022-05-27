@@ -4,7 +4,7 @@
 
 /* CAN Bus 1 */  
 #define CAN_BUS1_CHASSIS_MOTOR_FEEDBACK_MSG_ID         0x203    		//   底盘主动轮
-
+#define CAN_BUS1_BRAKE_MOTOR_FEEDBACK_MSG_ID         	 0x205    		//   底盘刹车
 
 /* CAN Bus 2 */ 
 
@@ -28,6 +28,7 @@ typedef struct{
 
 //CAN1
 extern volatile Encoder CM1Encoder;						//主动轮
+extern volatile Encoder BrakeEncoder;					//刹车
 //CAN2
 
 void Can2ReceiveMsgProcess(CanRxMsg * msg);
