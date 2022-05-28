@@ -8,7 +8,7 @@ RampGen_t GMYawRamp = RAMP_GEN_DAFAULT;
 
 /*****************************		巡逻模式参数				*************************************/
 /******************************   pitch角度范围      ************************************/
-int PITCH_PERIOD = 100 ;
+int PITCH_PERIOD = 500 ;
 int16_t pitch_timer = 0;
 int8_t pitch_dir = 1;
 /******************************    yaw角度范围        ***********************************/
@@ -303,7 +303,7 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
 //						gim.pid.yaw_angle_ref = gim.pid.yaw_angle_fdb + Gimbal_Auto_Shoot.target_yaw ;
 //					  gim.pid.pit_angle_ref = gim.pid.pit_angle_fdb - Gimbal_Auto_Shoot.target_pit ;
 						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw ;
-					  gim.pid.pit_angle_ref = -( Gimbal_Auto_Shoot.target_pit + 90 + 6) ;
+					  gim.pid.pit_angle_ref = -( Gimbal_Auto_Shoot.target_pit + 200 + 5) ;
 					testnum1=-( Gimbal_Auto_Shoot.target_pit + 90 );
 
 //						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.Armor_yaw + Gimbal_Auto_Shoot.Horizontal_Compensation ;
