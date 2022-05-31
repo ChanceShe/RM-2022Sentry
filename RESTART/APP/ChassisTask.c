@@ -16,7 +16,7 @@ void chassis_param_init(void)//µ×ÅÌ²ÎÊý³õÊ¼»¯
 	chassis.direction = direction_right;
 	chassis.powerlimit = limit_strict;
   PID_struct_init ( &pid_spd, POSITION_PID, 12000, 3000, 45.0f, 0, 0 );
-	PID_struct_init ( &pid_brake, POSITION_PID, 10000,10000, 60 , 0, 0 );
+	PID_struct_init ( &pid_brake, POSITION_PID, 10000,10000,60 , 0, 0 );
 }
 
 void chassis_task(void)
@@ -134,18 +134,18 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 			if(chassis.crazydata.crazychangetime == 0)
 			{
 				chassis.crazydata.crazyspeed			= rand()%100 + 600;
-				chassis.crazydata.crazychangetime		  	= rand()%70 + 70;
+				chassis.crazydata.crazychangetime		  	= rand()%70 + 50;
 
 #if			CRAZY_DIR_CHANGE_MODE == 0
 //				chassis.direction = !chassis.direction;
 				brake_en = 1;
 				
 #elif			CRAZY_DIR_CHANGE_MODE == 1
-				chassis.crazydata.crazyspeeddir 	= rand()%2;
-				if(chassis.crazydata.crazyspeeddir == 0)
-						chassis.direction = direction_right;
-				else if(chassis.crazydata.crazyspeeddir == 1)
-						chassis.direction = direction_left;
+				chassis.crazydata.crazyspeeddir 	= rand()%10;
+				if(chassis.crazydata.crazyspeeddir >= 3)
+						brake_en = 1;
+				else if(chassis.crazydata.crazyspeeddir < 3)
+						chassis.direction = chassis.direction;
 #endif
 
 			}
@@ -174,7 +174,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 			if(chassis.direction == direction_left)
 			{
 				pid_brake.get = BrakeEncoder.filter_rate;
-				pid_brake.set = -200;
+				pid_brake.set = -300;
 				if(CM1Encoder.filter_rate>=-10)
 				{
 					chassis.direction = direction_right;
@@ -185,7 +185,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 			else if(chassis.direction == direction_right)
 			{
 				pid_brake.get = BrakeEncoder.filter_rate;
-				pid_brake.set = 200;
+				pid_brake.set = 300;
 				if(CM1Encoder.filter_rate<=10)
 				{
 					chassis.direction = direction_left;
