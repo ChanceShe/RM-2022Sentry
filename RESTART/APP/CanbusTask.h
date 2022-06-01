@@ -4,7 +4,7 @@
 
 /* CAN Bus 1 */  
 #define CAN_BUS1_CHASSIS_MOTOR_FEEDBACK_MSG_ID         0x203    		//   ╣велжВ╤╞бж
-#define CAN_BUS1_BRAKE_MOTOR_FEEDBACK_MSG_ID         	 0x205    		//   ╣вели╡Ё╣
+#define CAN_BUS1_BRAKE_MOTOR_FEEDBACK_MSG_ID         	 0x204    		//   ╣вели╡Ё╣
 
 /* CAN Bus 2 */ 
 

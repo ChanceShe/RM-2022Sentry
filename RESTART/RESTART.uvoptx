@@ -118,7 +118,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>d</Name>
+          <Name>桉?d</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -191,7 +191,12 @@
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pid_spd</ItemText>
+          <ItemText>pid_brake</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>brake_en</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

@@ -169,13 +169,14 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 		}
 		
 		if(brake_en)
+//		if(1)
 		{
 			chassis.vx = 0;
 			if(chassis.direction == direction_left)
 			{
 				pid_brake.get = BrakeEncoder.filter_rate;
-				pid_brake.set = -300;
-				if(CM1Encoder.filter_rate>=-10)
+				pid_brake.set = -500;
+				if(CM1Encoder.filter_rate>=-5)
 				{
 					chassis.direction = direction_right;
 					brake_en = 0;
@@ -185,17 +186,20 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 			else if(chassis.direction == direction_right)
 			{
 				pid_brake.get = BrakeEncoder.filter_rate;
-				pid_brake.set = 300;
-				if(CM1Encoder.filter_rate<=10)
+				pid_brake.set = 500;
+				if(CM1Encoder.filter_rate<=5)
 				{
 					chassis.direction = direction_left;
 					brake_en = 0;
 					chassis_patrol_time = 0;
 				}
 			}
+
+//				pid_brake.get = BrakeEncoder.filter_rate;
+//				pid_brake.set = testnum1;			
 			
 			pid_calc ( &pid_brake, pid_brake.get, pid_brake.set );
-			CAN1_Send_Msg1 ( CAN1, pid_brake.out, 0, 0, 0 );
+			CAN1_Send_Msg ( CAN1, 0, 0, 0, pid_brake.out );
 			
 		}
 		else
@@ -229,11 +233,12 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 						default:
 						break;
 				}
-			if(chassis_patrol_time >=100 && fabs((double)chassis.wheel_speed_ref-(double)chassis.wheel_speed_fdb)>500)
-			{
-					brake_en = 1;
-			}
-			CAN1_Send_Msg1 ( CAN1, 0, 0, 0, 0 );
+				if(chassis_patrol_time >=100 && fabs((double)chassis.wheel_speed_ref-(double)chassis.wheel_speed_fdb)>500)
+				{
+						brake_en = 1;
+				}
+
+				CAN1_Send_Msg1 ( CAN1, 0, 0, 0, 0 );
 		}
 		last_remain_HP = judge_rece_mesg.game_robot_state.remain_HP;
 }
