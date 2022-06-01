@@ -10,7 +10,7 @@
 #define STICK_TO_YAW_ANGLE_INC_FACT         0.0015f//0.005f
 
 #define REMOTE_SWITCH_VALUE_UP         		0x01u
-#define REMOTE_SWITCH_VALUE_DOWN			0x02u
+#define REMOTE_SWITCH_VALUE_DOWN				0x02u
 #define REMOTE_SWITCH_VALUE_CENTRAL			0x03u
 
 #define REMOTE_SWITCH_CHANGE_1TO3      (uint8_t)((REMOTE_SWITCH_VALUE_UP << 2) | REMOTE_SWITCH_VALUE_CENTRAL)
@@ -32,9 +32,9 @@
 //#define PITCH_MIN -30.0f
 //#define Init_Pitch_Angle -15.0f
 
-#define PITCH_MAX -155.0f
-#define PITCH_MIN -2104.0f
-#define Init_Pitch_Angle -175.0f
+#define PITCH_MAX -45.0f
+#define PITCH_MIN -80.0f
+#define Init_Pitch_Angle -55.0f
 #define YAW_MAX 80				//ÔÆÌ¨½Ç¶ÈµÄ·¶Î§
 #define YAW_MIN -80
 

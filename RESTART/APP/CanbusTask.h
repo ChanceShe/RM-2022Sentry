@@ -10,8 +10,8 @@
 #define CAN_BUS1_FRICTION_MOTOR4_FEEDBACK_MSG_ID       0x204    		//   云台摩擦轮   
 
 /* CAN Bus 2 */ 
-#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x209    		// 	 云台yaw
-#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x20B   			//   云台pitch
+#define CAN_BUS2_YAW_MOTOR_FEEDBACK_MSG_ID             0x206    		// 	 云台yaw
+#define CAN_BUS2_PITCH_MOTOR_FEEDBACK_MSG_ID           0x205   			//   云台pitch
 #define CAN_BUS2_POKE1_FEEDBACK_MSG_ID            		 0x201    		//拨盘
 #define CAN_BUS2_POKE2_FEEDBACK_MSG_ID            		 0x202    		//拨盘
 #define CAN_BUS2_SLAVE_FEEDBACK_MSG_ID   		      		 0x408   			//上云台向下云台传输数据ID

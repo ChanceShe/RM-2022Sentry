@@ -263,17 +263,17 @@ void CAN2_Send_Msg1(CAN_TypeDef *CANx, int16_t cm5_iq, int16_t cm6_iq, int16_t c
 void CAN2_Gimbal_Msg ( int16_t gimbal_yaw_iq, int16_t gimbal_pitch_iq )
 {
     CanTxMsg tx_message;
-    tx_message.StdId = 0x2FF;
+    tx_message.StdId = 0x1FF;
     tx_message.IDE = CAN_Id_Standard;
     tx_message.RTR = CAN_RTR_Data;
     tx_message.DLC = 0x08;
 
-    tx_message.Data[0] = ( unsigned char ) ( gimbal_yaw_iq >> 8 );
-    tx_message.Data[1] = ( unsigned char ) gimbal_yaw_iq;
-    tx_message.Data[2] = 0x00;
-    tx_message.Data[3] = 0x00;
-    tx_message.Data[4] = ( unsigned char ) ( gimbal_pitch_iq >> 8 );
-    tx_message.Data[5] = ( unsigned char ) gimbal_pitch_iq;
+    tx_message.Data[0] = ( unsigned char ) ( gimbal_pitch_iq >> 8 );
+    tx_message.Data[1] = ( unsigned char ) gimbal_pitch_iq;
+    tx_message.Data[2] = ( unsigned char ) ( gimbal_yaw_iq >> 8 );
+    tx_message.Data[3] = ( unsigned char ) gimbal_yaw_iq;
+    tx_message.Data[4] = 0x00;
+    tx_message.Data[5] = 0x00;
     tx_message.Data[6] = 0x00;
     tx_message.Data[7] = 0x00;
     CAN_Transmit ( CAN2, &tx_message );
