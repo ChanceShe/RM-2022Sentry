@@ -8,7 +8,7 @@ RampGen_t GMYawRamp = RAMP_GEN_DAFAULT;
 
 /*****************************		巡逻模式参数				*************************************/
 /******************************   pitch角度范围      ************************************/
-int PITCH_PERIOD = 500 ;
+int PITCH_PERIOD = 100 ;
 int16_t pitch_timer = 0;
 int8_t pitch_dir = 1;
 /******************************    yaw角度范围        ***********************************/
@@ -232,7 +232,7 @@ void gimbal_patrol_handle(void)					//巡逻模式
         else
         {
 					rotate_num = ( GMYawEncoder.ecd_angle - Init_Yaw_Angle ) / 360;
-					gim.pid.yaw_angle_ref = gim.pid.yaw_angle_ref + 0.5;
+					gim.pid.yaw_angle_ref = gim.pid.yaw_angle_ref + 0.8;
 
 					if ( pitch_dir == 1 )
 					{
@@ -299,11 +299,10 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
 //						{
 //							Gimbal_Auto_Shoot.target_pit = AvgFilter(Gimbal_Auto_Shoot.target_pit);
 //						}
-            new_location.recogflag = 0;
 //						gim.pid.yaw_angle_ref = gim.pid.yaw_angle_fdb + Gimbal_Auto_Shoot.target_yaw ;
 //					  gim.pid.pit_angle_ref = gim.pid.pit_angle_fdb - Gimbal_Auto_Shoot.target_pit ;
 						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw ;
-					  gim.pid.pit_angle_ref = -( Gimbal_Auto_Shoot.target_pit + 90 + 5) ;
+					  gim.pid.pit_angle_ref = -( Gimbal_Auto_Shoot.target_pit + 90 + 8) ;
 
 //						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.Armor_yaw + Gimbal_Auto_Shoot.Horizontal_Compensation ;
 //					  gim.pid.pit_angle_ref =
@@ -563,14 +562,14 @@ void auto_shoot_task(void)
     }
 
 
-    if ( gim.pid.yaw_angle_fdb < 2.0f + gim.pid.yaw_angle_ref	\
-            && gim.pid.yaw_angle_fdb > -2.0f + gim.pid.yaw_angle_ref )
+    if ( gim.pid.yaw_angle_fdb < 5.0f + gim.pid.yaw_angle_ref	\
+            && gim.pid.yaw_angle_fdb > -5.0f + gim.pid.yaw_angle_ref )
         dir_yaw = 1;
     else
         dir_yaw = 0;
 
-    if (  gim.pid.pit_angle_fdb < 5.0f + gim.pid.pit_angle_ref	\
-            && gim.pid.pit_angle_fdb > -5.0f + gim.pid.pit_angle_ref  )
+    if (  gim.pid.pit_angle_fdb < 7.0f + gim.pid.pit_angle_ref	\
+            && gim.pid.pit_angle_fdb > -7.0f + gim.pid.pit_angle_ref  )
     {
 			dir_pitch = 1;
 		}
