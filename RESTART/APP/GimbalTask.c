@@ -91,7 +91,7 @@ void gimbal_param_init ( void )		//云台任务初始化
 		PID_struct_init ( &pid_yaw, POSITION_PID , 150, 20,
                       10, 0.02, 30 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 3000,
-                      180.0f, 0, 200 );
+                      200.0f, 0, 200 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -126,8 +126,8 @@ void gimbal_init_handle( void )		//云台回初始位置
     else if ( gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref < -180 )
         gim.pid.yaw_angle_ref -= 360;
 		
-    if ( (gim.pid.yaw_angle_fdb-gim.pid.yaw_angle_ref>=-2.0f) && (gim.pid.yaw_angle_fdb-gim.pid.yaw_angle_ref<=2.0f) && \
-			 (gim.pid.pit_angle_fdb-gim.pid.pit_angle_ref >= -2.0f) && (gim.pid.pit_angle_fdb-gim.pid.pit_angle_ref<=2.0f) )    //云台回到初始角度后进入遥控器模式
+    if ( (gim.pid.yaw_angle_fdb-gim.pid.yaw_angle_ref>=-5.0f) && (gim.pid.yaw_angle_fdb-gim.pid.yaw_angle_ref<=5.0f) && \
+			 (gim.pid.pit_angle_fdb-gim.pid.pit_angle_ref >= -5.0f) && (gim.pid.pit_angle_fdb-gim.pid.pit_angle_ref<=5.0f) )    //云台回到初始角度后进入遥控器模式
 		{
         /* yaw arrive and switch gimbal state */
         gim.ctrl_mode = GIMBAL_REMOTE_MODE;
@@ -232,7 +232,7 @@ void gimbal_patrol_handle(void)					//巡逻模式
         else
         {
 					rotate_num = ( GMYawEncoder.ecd_angle - Init_Yaw_Angle ) / 360;
-					gim.pid.yaw_angle_ref = GMYawEncoder.ecd_angle + 0.3;
+					gim.pid.yaw_angle_ref = gim.pid.yaw_angle_ref + 0.5;
 
 					if ( pitch_dir == 1 )
 					{
@@ -293,18 +293,17 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         //-/-------------------- 收到一帧图像识别的数据，进行处理 ---------------------/-//
         //如果此时丢帧，那么new_location.x和new_location.y值将保持不变
 				
-        if ( new_location.receNewDataFlag )
+        if ( new_location.recogflag )
         {
 //						if(Gimbal_Auto_Shoot.Continue_Recognized_Cnt>=30)
 //						{
 //							Gimbal_Auto_Shoot.target_pit = AvgFilter(Gimbal_Auto_Shoot.target_pit);
 //						}
-            new_location.receNewDataFlag = 0;
+            new_location.recogflag = 0;
 //						gim.pid.yaw_angle_ref = gim.pid.yaw_angle_fdb + Gimbal_Auto_Shoot.target_yaw ;
 //					  gim.pid.pit_angle_ref = gim.pid.pit_angle_fdb - Gimbal_Auto_Shoot.target_pit ;
 						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw ;
-					  gim.pid.pit_angle_ref = -( Gimbal_Auto_Shoot.target_pit + 200 + 5) ;
-					testnum1=-( Gimbal_Auto_Shoot.target_pit + 90 );
+					  gim.pid.pit_angle_ref = -( Gimbal_Auto_Shoot.target_pit + 90 + 5) ;
 
 //						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.Armor_yaw + Gimbal_Auto_Shoot.Horizontal_Compensation ;
 //					  gim.pid.pit_angle_ref =
@@ -552,7 +551,7 @@ void auto_shoot_task(void)
     if ( !Gimbal_Auto_Shoot.Recognized_Flag )
     {
         losttimer ++ ;
-        if ( losttimer >= 500 )
+        if ( losttimer >= 50 )
         {
             lostflag = 1;
         }
@@ -570,8 +569,8 @@ void auto_shoot_task(void)
     else
         dir_yaw = 0;
 
-    if (  gim.pid.pit_angle_fdb < 30.0f + gim.pid.pit_angle_ref	\
-            && gim.pid.pit_angle_fdb > -30.0f + gim.pid.pit_angle_ref  )
+    if (  gim.pid.pit_angle_fdb < 5.0f + gim.pid.pit_angle_ref	\
+            && gim.pid.pit_angle_fdb > -5.0f + gim.pid.pit_angle_ref  )
     {
 			dir_pitch = 1;
 		}
@@ -658,12 +657,6 @@ void auto_shoot_task(void)
                 friction_rotor = 0;
                 friction_wheel_state = FRICTION_WHEEL_OFF;
                 /*预案，限位开关不好使就用这个*/
-
-#if  PRELOADED == 1
-                SetShootState ( SHOOTING );
-                start_preloaded = 1;
-                preloaded_timer = 0;
-#endif
 
             }
         }

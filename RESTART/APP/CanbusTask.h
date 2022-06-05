@@ -30,6 +30,7 @@ typedef struct
     uint16_t shoot_heart0;
 } refrom_mainboard_t;  //   云台通信接收结构体
 extern refrom_mainboard_t refromData;
+extern uint8_t currentid;
 
 typedef struct{
 	int32_t raw_value;   				    //编码器不经处理的原始值

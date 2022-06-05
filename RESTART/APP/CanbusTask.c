@@ -16,7 +16,9 @@ volatile Encoder Poke1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//≤¶≈Ã
 volatile Encoder Poke2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//≤¶≈Ã
 
 //refrom_info_t  main_info = {0};
-refrom_mainboard_t refromData = {0, 0, 3, 3};
+refrom_mainboard_t refromData = {0, 0, 0, 0};
+uint8_t currentid = 0;
+
 static volatile Shoot_State_e shootState_h = NOSHOOTING;
 uint8_t  ShootConFlag = 1;
 
@@ -172,13 +174,11 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
             revice_main_information ( &refromData, msg );
             if ( refromData.color == 0 )     //—’…´«–ªª
             {
-                auto_shoot_mode_set = 7;
-							  command = "sc_r";
+                currentid = 7;
             }
             else if ( refromData.color == 1 )
             {
-                auto_shoot_mode_set = 107;
-							  command = "sc_b";
+                currentid = 107;
             }
 						RemoteDataPrcess(&refromData);
 			}

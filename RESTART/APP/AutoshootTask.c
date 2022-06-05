@@ -8,8 +8,6 @@ int last_receive_time = 0;
 
 /* *** *** *******************************/
 uint8_t auto_shoot_mode_set;
-robot_color_e robot_color = unkown ;   //0-9以下标识自己都是红方，其它都是蓝方
-char* command = "sc_r";
 /********* 自动打击相关定义 结束 *********/
 int wExpected = 0;
 
@@ -22,7 +20,6 @@ void targetOffsetDataDeal ( uint8_t len, u8 *buf )
 }
 
 
-float yaw_buff=0;
 
 void parse_turret_command(unsigned char* content_address, unsigned int content_length)
 {
@@ -111,12 +108,12 @@ EToV__Frame msg;
 char *flagg;
 u8 DateLength;
 
-void send_protocol(float pitch,float yaw)
+void send_protocol(float pitch,float yaw,uint8_t currentcolor)
 {
   e_to_v__frame__init(&msg);
   msg.currentpitch_=(int)(pitch*100);
 	msg.currentyaw_=(int)(yaw*100);
-	msg.currentcolor_= 101;
+	msg.currentcolor_= currentcolor;
 	msg.bulletspeed_=27*10;
   e_to_v__frame__pack(&msg,UART4_DMA_TX_BUF+1);
   DateLength=e_to_v__frame__get_packed_size(&msg);

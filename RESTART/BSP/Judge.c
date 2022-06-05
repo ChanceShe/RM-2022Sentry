@@ -450,12 +450,10 @@ void Append_CRC16_Check_Sum ( uint8_t * pchMessage, uint32_t dwLength )
 //                        if ( judge_rece_mesg.game_robot_state.robot_id >= 1 && judge_rece_mesg.game_robot_state.robot_id <= 9 )
 //                        {
 //                            robot_color = red;
-//													  command = "sc_r";
 //                        }
 //                        else if ( judge_rece_mesg.game_robot_state.robot_id >= 100 && judge_rece_mesg.game_robot_state.robot_id <= 109 )
 //                        {
 //                            robot_color = blue;
-//													  command = "sc_b";
 //                        }
 //                        if ( judge_rece_mesg.game_robot_state.mains_power_gimbal_output == 0 )
 //                        {

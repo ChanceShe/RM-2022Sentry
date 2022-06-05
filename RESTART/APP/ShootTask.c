@@ -121,8 +121,8 @@ static void shoot_bullet_handle ( void ) //   ¸ù¾Ý (GetShootState() == ????)  À´
         pid_calc ( &pid_trigger[0], pid_trigger[0].get, pid_trigger[0].set );
 			  pid_trigger[1].get = Poke2Encoder.filter_rate;
         pid_calc ( &pid_trigger[1], pid_trigger[1].get, pid_trigger[1].set );
-//        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, pid_trigger[1].out, 0, 0 );
-        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, 0, 0, 0 );	//×ª×ó²¦ÅÌ
+        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, pid_trigger[1].out, 0, 0 );
+//        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, 0, 0, 0 );	//×ª×ó²¦ÅÌ
 //        CAN2_Send_Msg ( CAN2, 0, pid_trigger[1].out, 0, 0 );	//×ªÓÒ²¦ÅÌ
     }
 
@@ -153,8 +153,8 @@ void shot_task ( void )
 
 void shot_param_init(void)
 {
-  PID_struct_init(&pid_trigger[0], POSITION_PID, 10000, 10000,40, 0.7f, 4);		//²¦ÅÌ
-  PID_struct_init(&pid_trigger[1], POSITION_PID, 10000, 10000,40, 0.7f, 4);		//²¦ÅÌ
+  PID_struct_init(&pid_trigger[0], POSITION_PID, 10000, 10000,60, 0.5f, 0);		//²¦ÅÌ
+  PID_struct_init(&pid_trigger[1], POSITION_PID, 10000, 10000,60, 0.5f, 0);		//²¦ÅÌ
   PID_struct_init(&pid_rotate[0], POSITION_PID,15500,11500,50,0.0,100);						//Ä¦²ÁÂÖ
   PID_struct_init(&pid_rotate[1], POSITION_PID,15500,11500,50,0.0,100);
   PID_struct_init(&pid_rotate[2], POSITION_PID,15500,11500,50,0.0,100);						//Ä¦²ÁÂÖ

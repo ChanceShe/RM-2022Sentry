@@ -13,16 +13,14 @@ void Control_Task(void)
   {
 		modeswitch_task();
 		gimbal_task();
-	}		
-
+	}
 	if(time_tick_1ms%5 == 0)
   {
 		shot_task();		
 	}		
 	if(time_tick_1ms%5== 0)
   {
-//		send_protocol(pitch_Angle,yaw_Angle);
-		send_protocol(-GMPitchEncoder.ecd_angle-200,GMYawEncoder.ecd_angle);
+		send_protocol(-GMPitchEncoder.ecd_angle-90,GMYawEncoder.ecd_angle,currentid);
 	}
 	
 	

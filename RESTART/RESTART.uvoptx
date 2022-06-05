@@ -161,7 +161,7 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>new_location</ItemText>
+          <ItemText>new_location,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
@@ -181,27 +181,37 @@
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pid_pit_speed</ItemText>
+          <ItemText>auto_lost_timer,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pid_yaw_speed</ItemText>
+          <ItemText>auto_lost,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pid_pit</ItemText>
+          <ItemText>Uart4_Protobuf_Receive_Gimbal_Angle</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>GMYawEncoder,0x0A</ItemText>
+          <ItemText>pid_trigger[1]</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>GMPitchEncoder</ItemText>
+          <ItemText>Gimbal_Auto_Shoot,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>auto_lost,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>friction_wheel_state</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -233,20 +243,10 @@
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>dir_yaw</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>dir_pitch</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>2</WinNumber>
           <ItemText>Poke1Encoder,0x0A</ItemText>
         </Ww>
         <Ww>
-          <count>8</count>
+          <count>6</count>
           <WinNumber>2</WinNumber>
           <ItemText>Poke2Encoder,0x0A</ItemText>
         </Ww>
@@ -356,7 +356,7 @@
 
   <Group>
     <GroupName>BSP</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
