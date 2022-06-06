@@ -14,7 +14,13 @@ void chassis_param_init(void)//µ×ÅÌ²ÎÊý³õÊ¼»¯
   chassis.last_ctrl_mode = CHASSIS_RELAX;
 	chassis.crazydata.crazyflag = 0;
 	chassis.direction = direction_right;
+	
+#if			POWER_LIMIT_MODE == 0
 	chassis.powerlimit = limit_strict;
+#elif			POWER_LIMIT_MODE == 1
+	chassis.powerlimit = limit_buffer;
+#endif
+	
   PID_struct_init ( &pid_spd, POSITION_PID, 12000, 3000, 45.0f, 0, 0 );
 	PID_struct_init ( &pid_brake, POSITION_PID, 10000,10000,60 , 0, 0 );
 }
@@ -108,7 +114,7 @@ void chassis_task(void)
 
 void chassis_remote_handle(void)		//Ò£¿ØÆ÷¿ØÖÆ
 {
-		chassis.powerlimit = limit_strict;
+		chassis.powerlimit = limit_buffer;
 		chassis.vx = ChassisSpeedRef.forward_back_ref;
 		if ( (sensor_r == sensor_on && chassis.vx > 0) || (sensor_l == sensor_on && chassis.vx < 0) )	//¼ì²â·ÀÖ¹×²Öù
 		{
@@ -122,7 +128,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 		if(judge_rece_mesg.game_robot_state.remain_HP < last_remain_HP)
 		{
 			chassis.crazydata.crazyflag = 1;
-			chassis.crazydata.crazytime = 200;
+			chassis.crazydata.crazytime = 1000;
 		}
 	//±©×ßÄ£Ê½
 		if(chassis.crazydata.crazyflag)
@@ -133,18 +139,24 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 				chassis.powerlimit = limit_strict;
 			if(chassis.crazydata.crazychangetime == 0)
 			{
-				chassis.crazydata.crazyspeed			= rand()%100 + 600;
-				chassis.crazydata.crazychangetime		  	= rand()%70 + 50;
+				chassis.crazydata.crazyspeed			= rand()%100 + 550;
+				chassis.crazydata.crazychangetime		  	= rand()%70 + 70;
 
 #if			CRAZY_DIR_CHANGE_MODE == 0
-//				chassis.direction = !chassis.direction;
+				#if BRAKE_EN == 0
+				chassis.direction = !chassis.direction;
+				#elif BRAKE_EN == 1
 				brake_en = 1;
-				
+				#endif
 #elif			CRAZY_DIR_CHANGE_MODE == 1
 				chassis.crazydata.crazyspeeddir 	= rand()%10;
-				if(chassis.crazydata.crazyspeeddir >= 3)
+				if(chassis.crazydata.crazyspeeddir >= 4)
+						#if BRAKE_EN == 0
+						chassis.direction = !chassis.direction;
+						#elif BRAKE_EN == 1
 						brake_en = 1;
-				else if(chassis.crazydata.crazyspeeddir < 3)
+						#endif				
+				else if(chassis.crazydata.crazyspeeddir < 4)
 						chassis.direction = chassis.direction;
 #endif
 
@@ -154,28 +166,42 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 			if(chassis.crazydata.crazytime <= 0)
 			{
 				chassis.crazydata.crazyflag = 0;
-				chassis.powerlimit = limit_strict;
 			}
+		}
+		else
+		{
+				#if			POWER_LIMIT_MODE == 0
+					chassis.powerlimit = limit_strict;
+				#elif			POWER_LIMIT_MODE == 1
+					chassis.powerlimit = limit_buffer;
+				#endif
 		}
 		
 		//¼ì²â·ÀÖ¹×²Öù
 		if(sensor_l == sensor_on && chassis.direction == direction_left)						//±äÏò
 		{
-			brake_en = 1;
+			#if BRAKE_EN == 0
+				chassis.direction = direction_right;
+			#elif BRAKE_EN == 1
+				brake_en = 1;
+			#endif	
 		}
 		else if(sensor_r == sensor_on && chassis.direction == direction_right)			//±äÏò
 		{
-			brake_en = 1;
+			#if BRAKE_EN == 0
+				chassis.direction = direction_left;
+			#elif BRAKE_EN == 1
+				brake_en = 1;
+			#endif	
 		}
 		
 		if(brake_en)
-//		if(1)
 		{
 			chassis.vx = 0;
 			if(chassis.direction == direction_left)
 			{
 				pid_brake.get = BrakeEncoder.filter_rate;
-				pid_brake.set = -500;
+				pid_brake.set = -300;
 				if(CM1Encoder.filter_rate>=-5)
 				{
 					chassis.direction = direction_right;
@@ -186,7 +212,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 			else if(chassis.direction == direction_right)
 			{
 				pid_brake.get = BrakeEncoder.filter_rate;
-				pid_brake.set = 500;
+				pid_brake.set = 300;
 				if(CM1Encoder.filter_rate<=5)
 				{
 					chassis.direction = direction_left;
@@ -195,8 +221,6 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 				}
 			}
 
-//				pid_brake.get = BrakeEncoder.filter_rate;
-//				pid_brake.set = testnum1;			
 			
 			pid_calc ( &pid_brake, pid_brake.get, pid_brake.set );
 			CAN1_Send_Msg ( CAN1, 0, 0, 0, pid_brake.out );
@@ -204,7 +228,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 		}
 		else
 		{
-				chassis_patrol_time++;
+			chassis_patrol_time++;
 				switch ( chassis.direction )
 				{
 						case direction_left:    //Ïò×óÔË¶¯
@@ -212,7 +236,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 							if(chassis.crazydata.crazyflag)
 								chassis.vx = -chassis.crazydata.crazyspeed;
 							else
-								chassis.vx = -700;
+								chassis.vx = -550;
 						}
 						break;
 						
@@ -221,7 +245,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 							if(chassis.crazydata.crazyflag)
 								chassis.vx = chassis.crazydata.crazyspeed;
 							else
-								chassis.vx = 700;
+								chassis.vx = 550;
 						}
 						break;
 						
@@ -233,12 +257,14 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 						default:
 						break;
 				}
+				#if BRAKE_EN == 1	
 				if(chassis_patrol_time >=100 && fabs((double)chassis.wheel_speed_ref-(double)chassis.wheel_speed_fdb)>500)
 				{
 						brake_en = 1;
 				}
-
-				CAN1_Send_Msg1 ( CAN1, 0, 0, 0, 0 );
+				#endif
+				
+				CAN1_Send_Msg1 ( CAN1, 0, 0, 0, 0 );		//¸øÉ²³µµç»úÐ¶Á¦
 		}
 		last_remain_HP = judge_rece_mesg.game_robot_state.remain_HP;
 }
@@ -324,9 +350,9 @@ void power_limit_handle ( void )
 					b = -pid_spd.p * ( float ) chassis.wheel_speed_fdb + pid_spd.iout \
 							-pid_spd.d * ( float ) chassis.wheel_speed_fdb - pid_spd.d * pid_spd.err[LAST];
 					// Max_power=heat_power+drive_power
-					//	i_n=a[n]*k+b[n]	´øÈë
-					//Max_Power=m*k^2+n*k+o
-					//0=m*k^2+n*k+l(l=o-Max_Power)
+					// i_n=a[n]*k+b[n]	´øÈë
+					// Max_Power=m*k^2+n*k+o
+					// 0=m*k^2+n*k+l(l=o-Max_Power)
 
 					float m = ( a * a ) * FACTOR_2;
 

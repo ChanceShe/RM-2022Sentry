@@ -4,9 +4,9 @@
 
 typedef enum
 {
-  unkown = 0,
+  red = 0,
   blue = 1,
-  red  = 2,
+  unkown = 2,
 } robot_color_e;
 extern robot_color_e robot_color ;
 

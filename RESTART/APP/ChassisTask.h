@@ -9,7 +9,10 @@
 #define	CRAZY_DIR_CHANGE_MODE	1		//0:击打变向(反制视觉预测), 1:全随机运动(反制操作手手打)
 
 //功率限制方案
-#define POWER_LIMIT_MODE   1   //1上交 0
+#define POWER_LIMIT_MODE   1   //0严格限制 1使用缓冲能量
+
+//刹车使能
+#define BRAKE_EN			1
 
 //缓冲能量警告下限
 #define WARNING_ENERGY 	80
@@ -62,7 +65,7 @@ typedef enum
 typedef struct
 {
 	uint8_t 				crazyflag;
-	uint8_t 			 	crazytime;
+	uint16_t 			 	crazytime;
 	uint8_t 			 	crazychangetime;
 	uint8_t		 			crazyspeeddir;
 	int 			 			crazyspeed;
