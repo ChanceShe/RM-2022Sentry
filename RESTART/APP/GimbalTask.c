@@ -43,6 +43,8 @@ void gimbal_task(void)
     break;
    }
 	 
+	 testnum1 = gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref ;
+	 
 	 if(gim.ctrl_mode == GIMBAL_RELAX)
 //	 if(gim.ctrl_mode == GIMBAL_RELAX||gim.ctrl_mode == GIMBAL_AUTO_MODE)
 	 {
@@ -261,17 +263,17 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         Gimbal_Auto_Shoot.Recognized_Flag = 1;
         Gimbal_Auto_Shoot.Recognized_Timer = 0;
 
-				if(fabs(new_location.pitch - Gimbal_Auto_Shoot.target_pit)<=20)
-						Gimbal_Auto_Shoot.target_pit = new_location.pitch;
-				else
-						Gimbal_Auto_Shoot.target_pit = 0;
+//				if(fabs(-(new_location.pitch - PITCH_MIN) - Gimbal_Auto_Shoot.target_pit)<=20)
+						Gimbal_Auto_Shoot.target_pit = -(new_location.pitch - PITCH_MIN);
+//				else
+//						Gimbal_Auto_Shoot.target_pit = 0;
 				
         Gimbal_Auto_Shoot.target_yaw	= new_location.yaw;
     }
     else
     {
         Gimbal_Auto_Shoot.Recognized_Timer++;
-        if ( Gimbal_Auto_Shoot.Recognized_Timer == 20 ) //200ms，时间太长，云台保持原有给定导致乱动作
+        if ( Gimbal_Auto_Shoot.Recognized_Timer == 50 ) //200ms，时间太长，云台保持原有给定导致乱动作
         {
             Gimbal_Auto_Shoot.Recognized_Flag 	= 0;
             Gimbal_Auto_Shoot.Recognized_Timer 	= 0;
@@ -295,209 +297,15 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
 				
         if ( new_location.recogflag )
         {
-//						if(Gimbal_Auto_Shoot.Continue_Recognized_Cnt>=30)
-//						{
-//							Gimbal_Auto_Shoot.target_pit = AvgFilter(Gimbal_Auto_Shoot.target_pit);
-//						}
-//						gim.pid.yaw_angle_ref = gim.pid.yaw_angle_fdb + Gimbal_Auto_Shoot.target_yaw ;
-//					  gim.pid.pit_angle_ref = gim.pid.pit_angle_fdb - Gimbal_Auto_Shoot.target_pit ;
-						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw ;
-					  gim.pid.pit_angle_ref = -( Gimbal_Auto_Shoot.target_pit + 90 + 8) ;
-
-//						gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.Armor_yaw + Gimbal_Auto_Shoot.Horizontal_Compensation ;
-//					  gim.pid.pit_angle_ref =
-
-//						Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw = RAD_TO_ANGLE * atan2 ( Gimbal_Auto_Shoot.Err_Pixels_Yaw * IMAGE_LENGTH, FOCAL_LENGTH );
-//						Gimbal_Auto_Shoot.Delta_Dect_Angle_Pit = RAD_TO_ANGLE * atan2 ( Gimbal_Auto_Shoot.Err_Pixels_Pit * IMAGE_LENGTH, FOCAL_LENGTH );
-
-//						Gimbal_Auto_Shoot.Armor_yaw = gim.pid.yaw_angle_fdb - Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw;
-//						Gimbal_Auto_Shoot.Armor_pit = gim.pid.pit_angle_fdb - Gimbal_Auto_Shoot.Delta_Dect_Angle_Pit; 
-
-//					  shoot_angle_speed = 27.0;
-//					
-//						distance_s =   Gimbal_Auto_Shoot.Distance  / 1000;
-//						distance_x = ( cos ( Gimbal_Auto_Shoot.Armor_pit * ANGLE_TO_RAD ) * distance_s );
-//						distance_y = ( sin ( Gimbal_Auto_Shoot.Armor_pit * ANGLE_TO_RAD ) * distance_s );
-
-//						x1 = shoot_angle_speed * shoot_angle_speed;
-//						x2 = distance_x * distance_x;
-//						x3 = sqrt ( x2 - ( 19.6f * x2 * ( ( 9.8f * x2 ) / ( 2.0f * x1 ) + distance_y ) ) / x1 );
-//						x4 = 9.8f * x2;
-//						angle_tan = ( x1 * ( distance_x - x3 ) ) / ( x4 );
-//						shoot_radian = atan ( angle_tan );
-//						Gimbal_Auto_Shoot.shoot_pitch_angle = shoot_radian * RAD_TO_ANGLE;
-//				
-//           
-////            Gimbal_Auto_Shoot.Speed_Prediction.time_delay = 0;//130e-3f;
-//            //--/----------  计算枪管距离目标点的偏差角 ----------------------/--//
-//            Gimbal_Auto_Shoot.Horizontal_Compensation = YAW_ANGLE_BETWEEN_GUN_CAMERA ;
-//						Gimbal_Auto_Shoot.Ballistic_Compensation = ANGLE_BETWEEN_GUN_CAMERA - RAD_TO_ANGLE * atan2 ( HEIGHT_BETWEEN_GUN_CAMERA , Gimbal_Auto_Shoot.Distance );
-//            //Amror_pit 装甲板的pitch轴角度  Amror_yaw 装甲板的yaw轴角度
-
-//					  Gimbal_Auto_Shoot.Speed_Prediction.time_delay = distance_x / ( shoot_angle_speed * cos( shoot_radian ) );
-
-//            //--/----------------------- 云台角度给定 ----------------------/--//
-//            gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.Armor_yaw + Gimbal_Auto_Shoot.Horizontal_Compensation ;
-//					  gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.Armor_pit + Gimbal_Auto_Shoot.Ballistic_Compensation  ;
-
-
-//            //--/--------------速度预测，计算目标相对于自己的移动速度---------/--//
-//#if ARMY_SPEED_PREDICTION == 1
-//            if ( Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample % 1 == 0 )
-//            {
-//                Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Now;                    //上次采集的角度
-//                Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Now = ( Gimbal_Auto_Shoot.Armor_yaw );																			//本次采集的角度
-//                Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Now;
-//                Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Now = Gimbal_Auto_Shoot.Armor_pit;
-//                Gimbal_Auto_Shoot.Speed_Prediction.time1 = Gimbal_Auto_Shoot.Speed_Prediction.time2;																		//上次采集的时间
-//                Gimbal_Auto_Shoot.Speed_Prediction.time2 = time_tick_1ms;																																//本次采集的时间
-//                Gimbal_Auto_Shoot.Speed_Prediction.time_error = Gimbal_Auto_Shoot.Speed_Prediction.time2 - Gimbal_Auto_Shoot.Speed_Prediction.time1;
-//                Gimbal_Auto_Shoot.Speed_Prediction.yaw_angle_error = Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Now - Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Angle_Pre;
-//                Gimbal_Auto_Shoot.Speed_Prediction.pit_angle_error = Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Now - Gimbal_Auto_Shoot.Speed_Prediction.Pit_Angle_Pre;
-//               
-//                Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Yaw = ( ( Gimbal_Auto_Shoot.Speed_Prediction.yaw_angle_error )						//角速度计算
-//                        / ( Gimbal_Auto_Shoot.Speed_Prediction.time_error ) ) * 1000;
-//                Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Pit = ( ( Gimbal_Auto_Shoot.Speed_Prediction.pit_angle_error )
-//                        / ( Gimbal_Auto_Shoot.Speed_Prediction.time_error ) ) * 1000;
-
-
-////                if ( fabs ( Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Yaw ) < 50 )
-//                if ( fabs ( Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Yaw ) < 100 )
-//                {
-//                    Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed;		//上次的角速度
-//                    Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed = Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Yaw;						//本次的角速度
-//                    Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Acceleration = ( ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed			//角加速度计算(未使用)
-//                            - Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed_Pre )
-//                            / Gimbal_Auto_Shoot.Speed_Prediction.time_error ) * 1000;
-//                }
-//                if ( fabs ( Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Pit ) < 50 )
-//                {
-//                    Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed_Pre = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed;
-//                    Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed = Gimbal_Auto_Shoot.Speed_Prediction.Army_Speed_Pit;
-//                    Gimbal_Auto_Shoot.Speed_Prediction.Pit_Acceleration = ( ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed
-//                            - Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed_Pre )
-//                            / Gimbal_Auto_Shoot.Speed_Prediction.time_error ) * 1000;
-//                }
-//            }
-
-
-//            Gimbal_Auto_Shoot.Image_Gimbal_Delay_Compensation_Flag = 1;
-////            Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample = 0;
-//#endif
-//            Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed = AvgFilter ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed );
-////            OutData[1] =  ( int ) ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * 100 );
-//            Gimbal_Auto_Shoot.Speed_Prediction.Continuity_timer = Speed_Continuity_Timmer ( Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed );
-////            OutData[0] = ( int ) ( Gimbal_Auto_Shoot.Armor_yaw * 100 );
-////					OutData[3] =  (int)(Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * 100);
+						if(Gimbal_Auto_Shoot.target_pit!=0 && Gimbal_Auto_Shoot.target_yaw!= 0)
+						{
+								Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - Init_Pitch_Angle)*0.3;
+								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw;
+								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
+						}
         }
 
 
-//        //-/---------------- 卡尔曼滤波并更新云台给定角度----------------------------/-//
-//#if ENABLE_KALMAN_FILTER == 1
-//        kalman_filter_calc ( &kalman_filter_F,
-//                             gim.pid.yaw_angle_ref,
-//                             gim.pid.pit_angle_ref,
-//                             Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed,
-//                             Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed
-//                           );
-//        Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed = kalman_filter_F.filtered_value[2];
-//        Gimbal_Auto_Shoot.Filtered_Angular_Pit_Speed = kalman_filter_F.filtered_value[3];
-////        OutData[1] =  (int)(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * 100;
-////        Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed = AvgFilter(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed );
-////        OutData[3] =  (int)(Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * 100);
-
-////        gim.pid.yaw_angle_ref =  kalman_filter_F.filtered_value[0];
-////        gim.pid.pit_angle_ref =  kalman_filter_F.filtered_value[1];
-
-//#endif
-
-//        //-/-------------------- 计算图像处理和云台动作延迟量，作为预测的补偿 ----------------------/-//
-//#if ARMY_SPEED_PREDICTION == 1
-//        if ( Gimbal_Auto_Shoot.Image_Gimbal_Delay_Compensation_Flag == 1 )
-//        {
-//            Gimbal_Auto_Shoot.Image_Gimbal_Delay_Compensation_Flag = 0;
-//#if ENABLE_KALMAN_FILTER == 1	           //使用卡尔曼滤波之后的速度进行补偿，补偿图像处理延迟和弹道延迟
-////							Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
-//        Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Filtered_Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
-//        Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation  = ( ( float ) ( ( int ) ( ( Gimbal_Auto_Shoot.Filtered_Angular_Pit_Speed * ( PIT_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay ) + 0.005 ) ) * 100 ) )  / 100  ;
-
-////					    Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay )
-////                                                          					+ Gimbal_Auto_Shoot.Filtered_Yaw_Acceleration
-////					                                                          * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay )
-////					                                                          * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay ) / 2;
-////					    Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay )
-////                                                          					+ Gimbal_Auto_Shoot.Speed_Prediction.Yaw_Acceleration
-////					                                                          * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay )
-////					                                                          * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay ) / 2;
-
-
-
-//#else							                       //使用直接求得的速度进行补偿	
-//            Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed * ( YAW_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
-//            Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation  = Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed * ( PIT_IMAGE_GIMBAL_DELAY_TIME + Gimbal_Auto_Shoot.Speed_Prediction.time_delay );
-//#endif
-
-//        }
-//#if ENABLE_KALMAN_FILTER == 1
-//				
-//        if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 3.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
-//				{
-//					if(Gimbal_Auto_Shoot.Speed_Prediction.Continuity_timer > 20)
-//					{
-//							Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
-//							gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
-//							gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
-//					}
-//				}
-//			
-//        //偏差角大于2°，分为另种情况。
-//        //1、刚识别到，偏差较大，如果直接补偿会导致云台抖动震荡；
-//        //2、识别到一定时间，但是由于无补偿导致跟踪滞后
-//        //3、云台在抖动，导致yaw反馈在中间跳跃
-//        else
-//        {
-//            Gimbal_Auto_Shoot.Continue_Large_Err_Cnt++;
-//            if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >= 40 )  //300ms，持续300ms的偏差，表明此时为跟踪滞后，需加入补偿
-//            {
-//                Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 40;
-//                gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
-//                gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
-//            }
-//        }
-
-
-//#else
-//				
-//				  //-/------------------------ 加入补偿，更新云台给定角度 ----------------------/-//
-
-//          //根据偏差角计算偏差距离，由于距离信息存在误差，不使用计算的temp = fabs(Gimbal_Auto_Shoot.Distance * 2.0f * arm_sin_f32(0.5f * fabs(Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw) * 0.01745329252f ));
-//          //偏差角度小于2度，说明此时基本瞄准装甲片，两个时间参数应该需要调整。
-//          //该处应该加上pitch轴的预测判定
-//        if ( fabs ( Gimbal_Auto_Shoot.Delta_Dect_Angle_Yaw ) < 3.0 + fabs ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation ) )
-//        {
-//            Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
-//            gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
-//            gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
-//        }
-//        //偏差角大于2°，分为另种情况。
-//        //1、刚识别到，偏差较大，如果直接补偿会导致云台抖动震荡；
-//        //2、识别到一定时间，但是由于无补偿导致跟踪滞后
-//        //3、云台在抖动，导致yaw反馈在中间跳跃
-//        else
-//        {
-//            Gimbal_Auto_Shoot.Continue_Large_Err_Cnt++;
-//            if ( Gimbal_Auto_Shoot.Continue_Large_Err_Cnt >=100 )  //300ms，持续300ms的偏差，表明此时为跟踪滞后，需加入补偿
-//            {
-//                Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 100;
-//                gim.pid.yaw_angle_ref += ( Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation );
-//                gim.pid.pit_angle_ref += ( Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation );
-//            }
-//        }
-
-//#endif
-//        Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation = 0;         //补偿一次后清零
-//        Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = 0;
-//#endif
      
     }
     else
@@ -521,23 +329,9 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
             pid_clr ( &pid_pit_speed );
             pid_clr ( &pid_yaw );
             pid_clr ( &pid_pit );
-//#if ENABLE_KALMAN_FILTER == 1
-//            kalman_filter_reset ( &kalman_filter_F, &kalman_filter_I );
-//#endif
         }
-//        gim.pid.yaw_angle_fdb =  yaw_Angle;//-GMYawEncoder.ecd_angle;//最终转换成角度  系数需要调整
-//        gim.pid.pit_angle_fdb =  pitch_Angle;//GMPitchEncoder.ecd_angle;//最终转换成角度  系数需要调整
 
         Gimbal_Auto_Shoot.Continue_Recognized_Cnt = 0;
-//#if ARMY_SPEED_PREDICTION == 1
-//        Gimbal_Auto_Shoot.Speed_Prediction.Time_Sample = 0;
-//        Gimbal_Auto_Shoot.Speed_Prediction.Angular_Pit_Speed = 0;
-//        Gimbal_Auto_Shoot.Speed_Prediction.Angular_Yaw_Speed = 0;
-//        Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation = 0;
-//        Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = 0;
-//        Gimbal_Auto_Shoot.Image_Gimbal_Delay_Compensation_Flag = 0;
-//        Gimbal_Auto_Shoot.Continue_Large_Err_Cnt = 0;
-//#endif
 
 	}
 }
@@ -569,7 +363,7 @@ void auto_shoot_task(void)
         dir_yaw = 0;
 
     if (  gim.pid.pit_angle_fdb < 7.0f + gim.pid.pit_angle_ref	\
-            && gim.pid.pit_angle_fdb > -7.0f + gim.pid.pit_angle_ref  )
+            && gim.pid.pit_angle_fdb > -7.0f + gim.pid.pit_angle_ref )
     {
 			dir_pitch = 1;
 		}

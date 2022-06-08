@@ -20,7 +20,7 @@ void Control_Task(void)
 	}		
 	if(time_tick_1ms%5== 0)
   {
-		send_protocol(-GMPitchEncoder.ecd_angle-90,GMYawEncoder.ecd_angle,currentid);
+		send_protocol(-GMPitchEncoder.ecd_angle+PITCH_MIN,GMYawEncoder.ecd_angle,currentid);
 	}
 	
 	

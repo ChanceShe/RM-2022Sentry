@@ -65,8 +65,8 @@ typedef struct
 //    float Distance;
 //    float Ballistic_Compensation;
 //    float Horizontal_Compensation;
-//    float Yaw_Gimbal_Delay_Compensation;
-//    float Pit_Gimbal_Delay_Compensation;
+    float Yaw_Gimbal_Delay_Compensation;
+    float Pit_Gimbal_Delay_Compensation;
 //    uint8_t Image_Gimbal_Delay_Compensation_Flag;
 //    float Delta_Dect_Angle_Pit;
 //    float Delta_Dect_Angle_Yaw;

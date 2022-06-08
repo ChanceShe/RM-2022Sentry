@@ -171,47 +171,42 @@
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>UART4_DMA_TX_BUF,0x10</ItemText>
+          <ItemText>gim</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>gim</ItemText>
+          <ItemText>auto_lost_timer,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>auto_lost_timer,0x0A</ItemText>
+          <ItemText>auto_lost,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>auto_lost,0x0A</ItemText>
+          <ItemText>pid_trigger[1]</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Uart4_Protobuf_Receive_Gimbal_Angle</ItemText>
+          <ItemText>Gimbal_Auto_Shoot,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>pid_trigger[1]</ItemText>
+          <ItemText>testnum1</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Gimbal_Auto_Shoot,0x0A</ItemText>
+          <ItemText>pid_yaw</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>auto_lost,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>10</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>friction_wheel_state</ItemText>
+          <ItemText>pid_yaw_speed</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
