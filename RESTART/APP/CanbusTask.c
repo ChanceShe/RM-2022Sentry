@@ -78,8 +78,8 @@ void revice_main_information ( refrom_mainboard_t *data, CanRxMsg * msg )
     data->color = msg->Data[5] >> 7 & 0x00000001;
     data->VehicleShootFlag = ( msg->Data[5] >> 6 ) & 0x00000001;
     data->JudgeShootFlag = msg->Data[5] & 0x03;
-    data->shoot_heart0 = ( msg->Data[6] << 8 ) | msg->Data[7];
-
+    data->shoot_heart_l =  msg->Data[6];
+		data->shoot_heart_r =  msg->Data[7];
 }
 
 void Can1ReceiveMsgProcess(CanRxMsg * msg)

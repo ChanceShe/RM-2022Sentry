@@ -299,7 +299,7 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         {
 						if(Gimbal_Auto_Shoot.target_pit!=0 && Gimbal_Auto_Shoot.target_yaw!= 0)
 						{
-								Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - Init_Pitch_Angle)*0.3;
+								Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - Init_Pitch_Angle)*0.4;
 								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw;
 								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
 						}
@@ -387,6 +387,7 @@ void auto_shoot_task(void)
         case FRICTION_WHEEL_OFF:
         {
             frictionRamp.ResetCounter ( &frictionRamp );
+//            if ( refromData.s1 != 3  &&  ( new_location.recogflag != 0 ) && ( refromData.JudgeShootFlag == 1 )) //从关闭到start turning
             if ( refromData.s1 != 3  &&  ( new_location.recogflag != 0 ) ) //从关闭到start turning
             {
                 SetShootState ( NOSHOOTING );

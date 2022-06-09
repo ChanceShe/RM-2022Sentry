@@ -132,7 +132,7 @@ void heat0_limit ( void )
     //枪管热量上限320，枪口每秒冷却100
     shot.max_heart0 = 320;
     shot.cooling_ratio = 50;
-    shot.limit_heart0 = shot.max_heart0 - refromData.shoot_heart0 + 0.005 * shot.cooling_ratio;
+    shot.limit_heart0 = shot.max_heart0 - refromData.shoot_heart_l + 0.005 * shot.cooling_ratio;
     shot.total_speed = 0;
 
     if ( shot.limit_heart0 < 20 )
