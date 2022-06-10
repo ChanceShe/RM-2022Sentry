@@ -23,6 +23,16 @@ void chassis_param_init(void)//底盘参数初始化
 	
   PID_struct_init ( &pid_spd, POSITION_PID, 12000, 3000, 45.0f, 0, 0 );
 	PID_struct_init ( &pid_brake, POSITION_PID, 10000,10000,60 , 0, 0 );
+	
+	  GPIO_InitTypeDef gpio;
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+	  gpio.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+    gpio.GPIO_Mode = GPIO_Mode_IN;
+    gpio.GPIO_Speed = GPIO_Speed_50MHz;
+    gpio.GPIO_PuPd = GPIO_PuPd_UP;//上拉
+    GPIO_Init(GPIOC, &gpio);
+		GPIO_SetBits(GPIOC,GPIO_Pin_8);
+		GPIO_SetBits(GPIOC,GPIO_Pin_9);
 }
 
 void chassis_task(void)
@@ -68,23 +78,24 @@ void chassis_task(void)
 		}
 
 		/*   检测两侧圆柱  */
-		if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_0 ) == 0 )
+		if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_8 ) == 0 )
     {
       sensor_l = sensor_on;
     }
-		else if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_0 ) == 1 )
+		else if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_8 ) == 1 )
 		{
 			sensor_l = sensor_off;
 		}
-    if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_1 ) == 0 )
+    if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_9 ) == 0 )
     {
 			sensor_r = sensor_on;
 		}
-    else if ( GPIO_ReadInputDataBit ( GPIOA, GPIO_Pin_1 ) == 1 )
+    else if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_9 ) == 1 )
     {
       sensor_r = sensor_off;
     }
-		
+		GPIO_ResetBits(GPIOC,GPIO_Pin_8);
+		GPIO_ResetBits(GPIOC,GPIO_Pin_9);
 		
 		chassis.wheel_speed_ref = chassis.vx ;
 		chassis.wheel_speed_fdb = CM1Encoder.filter_rate;

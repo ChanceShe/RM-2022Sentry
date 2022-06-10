@@ -118,7 +118,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>(駔</Name>
+          <Name>d</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -202,6 +202,11 @@
           <count>9</count>
           <WinNumber>1</WinNumber>
           <ItemText>sensor_l</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>sensor_r</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
