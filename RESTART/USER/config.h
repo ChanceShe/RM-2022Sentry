@@ -8,16 +8,13 @@
 #define REMOTE_SHOOT        0                 //1:遥控器左拨杆为发射  0:小陀螺
 
 #define GMPitchEncoder_Offset  	4557
-#define GMYawEncoder_Offset   	7460
+#define GMYawEncoder_Offset   	6152
 #define GYRO_REAL_X_OFFSET 			0.00559780467
 #define GYRO_REAL_Y_OFFSET 			-0.0156064359
 #define GYRO_REAL_Z_OFFSET 			-0.0091483118
 
 //#define ARMY_SPEED_PREDICTION   1
 //#define ENABLE_KALMAN_FILTER    1
-
-//#define IMAGE_X_OFFET 0.0f
-//#define IMAGE_Y_OFFET 0.0f
 
 ////==========================================================
 ////摄像头和枪管中心的安装偏差角-Yaw方向

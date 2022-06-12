@@ -5,6 +5,10 @@ gimbal_t gim;
 float Init_Yaw_Angle  =  0;
 RampGen_t GMPitchRamp = RAMP_GEN_DAFAULT;
 RampGen_t GMYawRamp = RAMP_GEN_DAFAULT;
+float GMYawAngle = 0,GMYawLastAngle = 0;
+float GMYawGyro = 0;
+float GMPitAngle = 0,GMPitLastAngle = 0;
+float GMPitGyro = 0;
 
 /*****************************		巡逻模式参数				*************************************/
 /******************************   pitch角度范围      ************************************/
@@ -44,6 +48,7 @@ void gimbal_task(void)
    }
 	 
 	 testnum1 = gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref ;
+	 testnum2 = gim.pid.pit_angle_fdb - gim.pid.pit_angle_ref ;
 	 
 	 if(gim.ctrl_mode == GIMBAL_RELAX)
 //	 if(gim.ctrl_mode == GIMBAL_RELAX||gim.ctrl_mode == GIMBAL_AUTO_MODE)
@@ -91,9 +96,9 @@ void gimbal_param_init ( void )		//云台任务初始化
                       150.0f, 0.001, 120 );
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 150, 20,
-                      10, 0.02, 30 );
+                      10, 0.02, 10 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 3000,
-                      200.0f, 0, 200 );
+                      180.0f, 0, 5 );
 	//斜坡初始化
     GMPitchRamp.SetScale ( &GMPitchRamp, PREPARE_TIME_TICK_MS );
     GMYawRamp.SetScale ( &GMYawRamp, PREPARE_TIME_TICK_MS );
@@ -103,10 +108,16 @@ void gimbal_param_init ( void )		//云台任务初始化
 
 void cascade_pid_ctrl ( void )	//级联pid函数
 {
+		GMYawLastAngle = GMYawAngle;
+		GMYawAngle =  GMYawEncoder.ecd_angle;
+		GMYawGyro = (GMYawAngle - GMYawLastAngle)/(57.3*0.01);
+		GMPitLastAngle = GMPitAngle;
+		GMPitAngle =  GMPitchEncoder.ecd_angle;
+		GMPitGyro = (GMPitAngle - GMPitLastAngle)/(57.3*0.01);
     gim.pid.yaw_speed_ref = pid_yaw.out;
     gim.pid.pit_speed_ref = pid_pit.out;
-    gim.pid.yaw_speed_fdb = yaw_Gyro;     //  角速度
-    gim.pid.pit_speed_fdb = pitch_Gyro;
+    gim.pid.yaw_speed_fdb = GMYawGyro;     //  角速度
+    gim.pid.pit_speed_fdb = GMPitGyro;
 }
 
 void gimbal_init_handle( void )		//云台回初始位置
@@ -234,7 +245,7 @@ void gimbal_patrol_handle(void)					//巡逻模式
         else
         {
 					rotate_num = ( GMYawEncoder.ecd_angle - Init_Yaw_Angle ) / 360;
-					gim.pid.yaw_angle_ref = gim.pid.yaw_angle_ref + 0.8;
+					gim.pid.yaw_angle_ref = gim.pid.yaw_angle_ref + 0.5;
 
 					if ( pitch_dir == 1 )
 					{
@@ -299,8 +310,10 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         {
 						if(Gimbal_Auto_Shoot.target_pit!=0 && Gimbal_Auto_Shoot.target_yaw!= 0)
 						{
-								Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - Init_Pitch_Angle)*0.4;
-								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw;
+//								Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - PITCH_MAX)*(-0.035);//环形高地下
+								Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - PITCH_MAX)*(-1.5);//环形高地上
+								Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation =  -1.8;
+								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw + Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
 								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
 						}
         }
@@ -362,8 +375,8 @@ void auto_shoot_task(void)
     else
         dir_yaw = 0;
 
-    if (  gim.pid.pit_angle_fdb < 7.0f + gim.pid.pit_angle_ref	\
-            && gim.pid.pit_angle_fdb > -7.0f + gim.pid.pit_angle_ref )
+    if (  gim.pid.pit_angle_fdb < 20.0f + gim.pid.pit_angle_ref	\
+            && gim.pid.pit_angle_fdb > -20.0f + gim.pid.pit_angle_ref )
     {
 			dir_pitch = 1;
 		}
@@ -402,7 +415,6 @@ void auto_shoot_task(void)
         {
             if ( auto_mode == AUTO_PATROL || lostflag == 1 ) //刚启动就被关闭
             {
-//
 							SetShootState ( NOSHOOTING );
                 friction_wheel_state = FRICTION_WHEEL_STOP_TURNNING;
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
@@ -431,7 +443,8 @@ void auto_shoot_task(void)
                 frictionRamp.ResetCounter ( &frictionRamp );
                 SetShootState ( NOSHOOTING );
             }
-            else if (  ( dir_pitch == 1 ) &&  ( dir_yaw == 1 ) && ( new_location.recogflag != 0 ) )
+//            else if (  ( dir_pitch == 1 ) &&  ( dir_yaw == 1 ) && ( new_location.recogflag != 0 ) )
+						  else if (  ( dir_yaw == 1 ) && ( new_location.recogflag != 0 ) )
             {
                 SetShootState ( SHOOTING );
                 USARTShootFlag = 0;

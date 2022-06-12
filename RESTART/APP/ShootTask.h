@@ -1,8 +1,7 @@
 #ifndef __SHOOT_TASK_H__
 #define __SHOOT_TASK_H__
 #include "main.h"
-#define PID_SHOOT_MOTOR_SPEED           400.0f
-#define PID_SHOOT_NOJUDGE_MOTOR_SPEED   400.0f
+#define PID_SHOOT_MOTOR_SPEED           200.0f
 #define FRICTION_SPEED                  850
 
 //∑¢…‰œﬁŒª

@@ -51,12 +51,6 @@ typedef struct
 } Speed_Prediction_t;
 typedef struct
 {
-//    Speed_Prediction_t Speed_Prediction;
-//    Speed_Prediction_t Speed_Prediction_Kalman;
-//    float Filtered_Angular_Yaw_Speed;
-//    float Filtered_Angular_Pit_Speed;
-//    float Filtered_Yaw_Acceleration;
-//    float Filtered_Pit_Acceleration;
     uint8_t	  Recognized_Flag;
     uint16_t   Recognized_Timer;
     int16_t   Continue_Recognized_Cnt;
@@ -70,7 +64,7 @@ typedef struct
 //    uint8_t Image_Gimbal_Delay_Compensation_Flag;
 //    float Delta_Dect_Angle_Pit;
 //    float Delta_Dect_Angle_Yaw;
-//    uint16_t   Continue_Large_Err_Cnt;
+////    uint16_t   Continue_Large_Err_Cnt;
 //    double shoot_pitch_angle;
 //    float Armor_yaw;
 //    float Armor_pit;
@@ -140,6 +134,9 @@ extern float Init_Yaw_Angle;
 extern RampGen_t GMPitchRamp ;
 extern RampGen_t GMYawRamp ;
 extern auto_mode_e auto_mode;
+
+extern float GMYawAngle, GMYawLastAngle, GMYawGyro;
+extern float GMPitAngle, GMPitLastAngle, GMPitGyro;
 
 static void cascade_pid_ctrl ( void );
 
