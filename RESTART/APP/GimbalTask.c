@@ -110,10 +110,10 @@ void cascade_pid_ctrl ( void )	//级联pid函数
 {
 		GMYawLastAngle = GMYawAngle;
 		GMYawAngle =  GMYawEncoder.ecd_angle;
-		GMYawGyro = (GMYawAngle - GMYawLastAngle)/(57.3*0.01);
+		GMYawGyro = (GMYawAngle - GMYawLastAngle)/(57.3*0.005);
 		GMPitLastAngle = GMPitAngle;
 		GMPitAngle =  GMPitchEncoder.ecd_angle;
-		GMPitGyro = (GMPitAngle - GMPitLastAngle)/(57.3*0.01);
+		GMPitGyro = (GMPitAngle - GMPitLastAngle)/(57.3*0.005);
     gim.pid.yaw_speed_ref = pid_yaw.out;
     gim.pid.pit_speed_ref = pid_pit.out;
     gim.pid.yaw_speed_fdb = GMYawGyro;     //  角速度
@@ -275,7 +275,7 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         Gimbal_Auto_Shoot.Recognized_Timer = 0;
 
 //				if(fabs(-(new_location.pitch - PITCH_MIN) - Gimbal_Auto_Shoot.target_pit)<=20)
-						Gimbal_Auto_Shoot.target_pit = -(new_location.pitch - PITCH_MIN);
+						Gimbal_Auto_Shoot.target_pit = -(new_location.pitch - PITCH_ZERO);
 //				else
 //						Gimbal_Auto_Shoot.target_pit = 0;
 				
@@ -310,8 +310,14 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
         {
 						if(Gimbal_Auto_Shoot.target_pit!=0 && Gimbal_Auto_Shoot.target_yaw!= 0)
 						{
-//								Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - PITCH_MAX)*(-0.035);//环形高地下
-								Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - PITCH_MAX)*(-1.5);//环形高地上
+//								if(Gimbal_Auto_Shoot.target_pit<=PITCH_HIGHLAND)
+//								{
+//										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = -7;//环形高地上
+//								}
+//								else
+//								{
+//										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - Init_Pitch_Angle)*(3)-3;//环形高地下
+//								}
 								Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation =  -1.8;
 								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw + Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
 								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;

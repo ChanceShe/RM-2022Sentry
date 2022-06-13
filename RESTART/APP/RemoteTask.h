@@ -32,9 +32,12 @@
 //#define PITCH_MIN -30.0f
 //#define Init_Pitch_Angle -15.0f
 
-#define PITCH_MIN 30.0f
-#define PITCH_MAX PITCH_MIN+60
-#define Init_Pitch_Angle PITCH_MIN+16
+#define PITCH_ZERO 30.0f
+#define PITCH_MIN PITCH_ZERO-10
+#define PITCH_MAX PITCH_ZERO+70
+#define Init_Pitch_Angle PITCH_ZERO+16
+#define PITCH_HIGHLAND PITCH_ZERO
+
 #define YAW_MAX 80				//ÔÆÌ¨½Ç¶ÈµÄ·¶Î§
 #define YAW_MIN -80
 
