@@ -76,10 +76,10 @@ void gimbal_task(void)
      cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
 //		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
-//		 CAN2_Gimbal_Msg(0,0); 
+		 CAN2_Gimbal_Msg(0,0); 
 	 }
 }
 void gimbal_param_init ( void )		//ÔÆÌ¨ÈÎÎñ³õÊ¼»¯
@@ -96,7 +96,7 @@ void gimbal_param_init ( void )		//ÔÆÌ¨ÈÎÎñ³õÊ¼»¯
                       150.0f, 0.001, 120 );
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 150, 20,
-                      10, 0.02, 10 );
+                      10, 0.02, 20 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 3000,
                       180.0f, 0, 5 );
 	//Ð±ÆÂ³õÊ¼»¯
@@ -111,7 +111,8 @@ void cascade_pid_ctrl ( void )	//¼¶Áªpidº¯Êý
 		GMYawLastAngle = GMYawAngle;
 		GMYawAngle =  GMYawEncoder.ecd_angle;
 		GMYawGyro = (GMYawAngle - GMYawLastAngle)/(57.3*0.005);
-		GMPitLastAngle = GMPitAngle;
+
+	GMPitLastAngle = GMPitAngle;
 		GMPitAngle =  GMPitchEncoder.ecd_angle;
 		GMPitGyro = (GMPitAngle - GMPitLastAngle)/(57.3*0.005);
     gim.pid.yaw_speed_ref = pid_yaw.out;
@@ -310,14 +311,14 @@ void gimbal_follow_handle(void)		//Ê¶±ðµ½Ä¿±ê¸úËæÄ£Ê½
         {
 						if(Gimbal_Auto_Shoot.target_pit!=0 && Gimbal_Auto_Shoot.target_yaw!= 0)
 						{
-//								if(Gimbal_Auto_Shoot.target_pit<=PITCH_HIGHLAND)
-//								{
-//										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = -7;//»·ÐÎ¸ßµØÉÏ
-//								}
-//								else
-//								{
-//										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - Init_Pitch_Angle)*(3)-3;//»·ÐÎ¸ßµØÏÂ
-//								}
+								if(Gimbal_Auto_Shoot.target_pit<=PITCH_HIGHLAND)
+								{
+										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = -7;//»·ÐÎ¸ßµØÉÏ
+								}
+								else
+								{
+										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - PITCH_MIN)*0.03-5;//»·ÐÎ¸ßµØÏÂ
+								}
 								Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation =  -1.8;
 								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw + Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
 								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
