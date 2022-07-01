@@ -46,10 +46,7 @@ void gimbal_task(void)
 		default:
     break;
    }
-	 
-	 testnum1 = gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref ;
-	 testnum2 = gim.pid.pit_angle_fdb - gim.pid.pit_angle_ref ;
-	 
+	 	 
 	 if(gim.ctrl_mode == GIMBAL_RELAX)
 //	 if(gim.ctrl_mode == GIMBAL_RELAX||gim.ctrl_mode == GIMBAL_AUTO_MODE)
 	 {
@@ -63,9 +60,9 @@ void gimbal_task(void)
      cascade_pid_ctrl();   			//?j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
-//		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
+		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg(0,0); 
 	 }
 	 else
@@ -76,10 +73,10 @@ void gimbal_task(void)
      cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-//		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
 //		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
-		 CAN2_Gimbal_Msg(0,0); 
+//		 CAN2_Gimbal_Msg(0,0); 
 	 }
 }
 void gimbal_param_init ( void )		//ÔÆÌ¨ÈÎÎñ³õÊ¼»¯
@@ -313,13 +310,15 @@ void gimbal_follow_handle(void)		//Ê¶±ðµ½Ä¿±ê¸úËæÄ£Ê½
 						{
 								if(Gimbal_Auto_Shoot.target_pit<=PITCH_HIGHLAND)
 								{
-										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = -7;//»·ÐÎ¸ßµØÉÏ
+										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Init_Pitch_Angle - Gimbal_Auto_Shoot.target_pit)*(-1)-3.5;//»·ÐÎ¸ßµØÉÏ
+										testnum1=1;
 								}
 								else
 								{
-										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Gimbal_Auto_Shoot.target_pit - PITCH_MIN)*0.03-5;//»·ÐÎ¸ßµØÏÂ
+										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Init_Pitch_Angle - Gimbal_Auto_Shoot.target_pit)*(-0.2)-2.5;//»·ÐÎ¸ßµØÏÂ
+										testnum1=2;
 								}
-								Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation =  -1.8;
+								Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation =  -1.5;
 								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw + Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
 								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
 						}
@@ -376,14 +375,14 @@ void auto_shoot_task(void)
     }
 
 
-    if ( gim.pid.yaw_angle_fdb < 5.0f + gim.pid.yaw_angle_ref	\
-            && gim.pid.yaw_angle_fdb > -5.0f + gim.pid.yaw_angle_ref )
+    if ( gim.pid.yaw_angle_fdb < 7.0f + gim.pid.yaw_angle_ref	\
+            && gim.pid.yaw_angle_fdb > -7.0f + gim.pid.yaw_angle_ref )
         dir_yaw = 1;
     else
         dir_yaw = 0;
 
-    if (  gim.pid.pit_angle_fdb < 20.0f + gim.pid.pit_angle_ref	\
-            && gim.pid.pit_angle_fdb > -20.0f + gim.pid.pit_angle_ref )
+    if (  gim.pid.pit_angle_fdb < 10.0f + Gimbal_Auto_Shoot.target_pit	\
+            && gim.pid.pit_angle_fdb > -10.0f + Gimbal_Auto_Shoot.target_pit )
     {
 			dir_pitch = 1;
 		}

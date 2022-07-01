@@ -52,7 +52,9 @@ void shoot_friction_handle ( void ) //摩擦轮 根据   friction_rotor标志  来设置输
     pid_calc ( & pid_rotate[1], pid_rotate[1].get, pid_rotate[1].set );
     pid_calc ( & pid_rotate[2], pid_rotate[2].get, pid_rotate[2].set );
     pid_calc ( & pid_rotate[3], pid_rotate[3].get, pid_rotate[3].set );
-    CAN1_Send_Msg ( CAN1, pid_rotate[0].out, pid_rotate[1].out, pid_rotate[2].out, pid_rotate[3].out );
+//    CAN1_Send_Msg ( CAN1, pid_rotate[0].out, pid_rotate[1].out, pid_rotate[2].out, pid_rotate[3].out );
+    CAN1_Send_Msg ( CAN1, 0, 0, pid_rotate[2].out, pid_rotate[3].out );		//左枪管发射
+		
 //    CAN1_Send_Msg ( CAN1, 0, 0, 0, 0 );
 }
 static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来设定给定
@@ -121,9 +123,9 @@ static void shoot_bullet_handle ( void ) //   根据 (GetShootState() == ????)  来
         pid_calc ( &pid_trigger[0], pid_trigger[0].get, pid_trigger[0].set );
 			  pid_trigger[1].get = Poke2Encoder.filter_rate;
         pid_calc ( &pid_trigger[1], pid_trigger[1].get, pid_trigger[1].set );
-        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, pid_trigger[1].out, 0, 0 );
+//        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, pid_trigger[1].out, 0, 0 );
 //        CAN2_Send_Msg ( CAN2, pid_trigger[0].out, 0, 0, 0 );	//转右拨盘
-//        CAN2_Send_Msg ( CAN2, 0, pid_trigger[1].out, 0, 0 );	//转左拨盘
+        CAN2_Send_Msg ( CAN2, 0, pid_trigger[1].out, 0, 0 );	//转左拨盘
     }
 
 }
@@ -134,6 +136,7 @@ void heat0_limit ( void )
     shot.cooling_ratio = 50;
     shot.limit_heart0 = shot.max_heart0 - refromData.shoot_heart_l + 0.005 * shot.cooling_ratio;
     shot.total_speed = 0;
+
 
     if ( shot.limit_heart0 < 20 )
     {
