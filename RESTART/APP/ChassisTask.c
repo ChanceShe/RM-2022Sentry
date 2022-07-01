@@ -127,85 +127,99 @@ void chassis_remote_handle(void)		//遥控器控制
 {
 		chassis.powerlimit = limit_buffer;
 		chassis.vx = ChassisSpeedRef.forward_back_ref;
-		if ( (sensor_r == sensor_on && chassis.vx > 0) || (sensor_l == sensor_on && chassis.vx < 0) )	//检测防止撞柱
-		{
-				chassis.vx = 0;
-		}
+//		if ( (sensor_r == sensor_on && chassis.vx > 0) || (sensor_l == sensor_on && chassis.vx < 0) )	//检测防止撞柱
+//		{
+//				chassis.vx = 0;
+//		}
 }
 
 
 void chassis_patrol_handle(void)		//巡逻
 {
-		if(judge_rece_mesg.game_robot_state.remain_HP < last_remain_HP)
-		{
-			chassis.crazydata.crazyflag = 1;
-			chassis.crazydata.crazytime = 1000;
-		}
-	//暴走模式
-		if(chassis.crazydata.crazyflag)
-		{
-			if(judge_rece_mesg.power_heat_data.chassis_power_buffer > WARNING_ENERGY)
-				chassis.powerlimit = limit_buffer;
-			else
-				chassis.powerlimit = limit_strict;
-			if(chassis.crazydata.crazychangetime == 0)
-			{
-				chassis.crazydata.crazyspeed			= rand()%100 + 550;
-				chassis.crazydata.crazychangetime		  	= rand()%70 + 70;
+//		if ( (judge_rece_mesg.game_robot_state.robot_id ==107 && judge_rece_mesg.game_robot_HP.blue_outpost_HP > 0) ||
+//					(judge_rece_mesg.game_robot_state.robot_id ==7 && judge_rece_mesg.game_robot_HP.red_outpost_HP > 0))
+//		{
+//				if(sensor_r == sensor_off)
+//				{
+//						chassis.direction = direction_right;
+//				}
+//				else
+//				{
+//						chassis.direction = direction_stop;
+//				}
+//		}
+//		else
+//		{
+			if(judge_rece_mesg.game_robot_state.remain_HP < last_remain_HP)
+				{
+					chassis.crazydata.crazyflag = 1;
+					chassis.crazydata.crazytime = 1000;
+				}
+			//暴走模式
+				if(chassis.crazydata.crazyflag)
+				{
+					if(judge_rece_mesg.power_heat_data.chassis_power_buffer > WARNING_ENERGY)
+						chassis.powerlimit = limit_buffer;
+					else
+						chassis.powerlimit = limit_strict;
+					if(chassis.crazydata.crazychangetime == 0)
+					{
+						chassis.crazydata.crazyspeed			= rand()%100 + 550;
+						chassis.crazydata.crazychangetime		  	= rand()%170 + 70;
 
-#if			CRAZY_DIR_CHANGE_MODE == 0
-				#if BRAKE_EN == 0
-				chassis.direction = !chassis.direction;
-				#elif BRAKE_EN == 1
-				brake_en = 1;
-				#endif
-#elif			CRAZY_DIR_CHANGE_MODE == 1
-				chassis.crazydata.crazyspeeddir 	= rand()%10;
-				if(chassis.crazydata.crazyspeeddir >= 4)
+		#if			CRAZY_DIR_CHANGE_MODE == 0
 						#if BRAKE_EN == 0
 						chassis.direction = !chassis.direction;
 						#elif BRAKE_EN == 1
 						brake_en = 1;
-						#endif				
-				else if(chassis.crazydata.crazyspeeddir < 4)
-						chassis.direction = chassis.direction;
-#endif
+						#endif
+		#elif			CRAZY_DIR_CHANGE_MODE == 1
+						chassis.crazydata.crazyspeeddir 	= rand()%10;
+						if(chassis.crazydata.crazyspeeddir >= 4)
+								#if BRAKE_EN == 0
+								chassis.direction = !chassis.direction;
+								#elif BRAKE_EN == 1
+								brake_en = 1;
+								#endif				
+						else if(chassis.crazydata.crazyspeeddir < 4)
+								chassis.direction = chassis.direction;
+		#endif
 
-			}
-			chassis.crazydata.crazychangetime--;
-			chassis.crazydata.crazytime--;
-			if(chassis.crazydata.crazytime <= 0)
-			{
-				chassis.crazydata.crazyflag = 0;
-			}
-		}
-		else
-		{
-				#if			POWER_LIMIT_MODE == 0
-					chassis.powerlimit = limit_strict;
-				#elif			POWER_LIMIT_MODE == 1
-					chassis.powerlimit = limit_buffer;
-				#endif
-		}
-		
-		//检测防止撞柱
-		if(sensor_l == sensor_on && chassis.direction == direction_left)						//变向
-		{
-			#if BRAKE_EN == 0
-				chassis.direction = direction_right;
-			#elif BRAKE_EN == 1
-				brake_en = 1;
-			#endif	
-		}
-		else if(sensor_r == sensor_on && chassis.direction == direction_right)			//变向
-		{
-			#if BRAKE_EN == 0
-				chassis.direction = direction_left;
-			#elif BRAKE_EN == 1
-				brake_en = 1;
-			#endif	
-		}
-		
+					}
+					chassis.crazydata.crazychangetime--;
+					chassis.crazydata.crazytime--;
+					if(chassis.crazydata.crazytime <= 0)
+					{
+						chassis.crazydata.crazyflag = 0;
+					}
+				}
+				else
+				{
+						#if			POWER_LIMIT_MODE == 0
+							chassis.powerlimit = limit_strict;
+						#elif			POWER_LIMIT_MODE == 1
+							chassis.powerlimit = limit_buffer;
+						#endif
+				}
+				
+				//检测防止撞柱
+				if(sensor_l == sensor_on && chassis.direction == direction_left)						//变向
+				{
+					#if BRAKE_EN == 0
+						chassis.direction = direction_right;
+					#elif BRAKE_EN == 1
+						brake_en = 1;
+					#endif	
+				}
+				else if(sensor_r == sensor_on &&( chassis.direction == direction_right || chassis.direction == direction_stop))			//变向
+				{
+					#if BRAKE_EN == 0
+						chassis.direction = direction_left;
+					#elif BRAKE_EN == 1
+						brake_en = 1;
+					#endif	
+				}
+//		}
 		if(brake_en)
 		{
 			chassis.vx = 0;
@@ -250,7 +264,6 @@ void chassis_patrol_handle(void)		//巡逻
 								chassis.vx = -550;
 						}
 						break;
-						
 						case direction_right:    //向右运动
 						{
 							if(chassis.crazydata.crazyflag)
@@ -275,7 +288,7 @@ void chassis_patrol_handle(void)		//巡逻
 				}
 				#endif
 				
-				CAN1_Send_Msg1 ( CAN1, 0, 0, 0, 0 );		//给刹车电机卸力
+				CAN1_Send_Msg ( CAN1, 0, 0, 0, 0 );		//给刹车电机卸力
 		}
 		last_remain_HP = judge_rece_mesg.game_robot_state.remain_HP;
 }
