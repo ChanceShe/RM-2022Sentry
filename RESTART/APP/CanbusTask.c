@@ -15,8 +15,8 @@ volatile Encoder GMPitchEncoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};			//ÔÆÌ¨Pitch
 volatile Encoder Poke1Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//²¦ÅÌ
 volatile Encoder Poke2Encoder = {0, 0, 0, 0, 0, 0, 0, 0, 0};					//²¦ÅÌ
 
-//refrom_info_t  main_info = {0};
 refrom_mainboard_t refromData = {0, 0, 0, 0};
+judge_mainboard_t judgeData = {0, 0, 0, 0};
 uint8_t currentid = 0;
 
 static volatile Shoot_State_e shootState_h = NOSHOOTING;
@@ -80,6 +80,13 @@ void revice_main_information ( refrom_mainboard_t *data, CanRxMsg * msg )
     data->JudgeShootFlag = msg->Data[5] & 0x03;
     data->shoot_heart_l =  msg->Data[6];
 		data->shoot_heart_r =  msg->Data[7];
+}
+void revice_judge_information ( judge_mainboard_t *data, CanRxMsg * msg )
+{
+    data->robot1_HP = ( msg->Data[0] << 8 ) | msg->Data[1];
+    data->robot3_HP = ( msg->Data[2] << 8 ) | msg->Data[3];
+    data->robot4_HP = ( msg->Data[4] << 8 ) | msg->Data[5];
+    data->robot5_HP = ( msg->Data[6] << 8 ) | msg->Data[7];
 }
 
 void Can1ReceiveMsgProcess(CanRxMsg * msg)
@@ -181,6 +188,11 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
                 currentid = 107;
             }
 						RemoteDataPrcess(&refromData);
+			}
+      break;
+			case CAN_BUS2_JUDGE_FEEDBACK_MSG_ID:
+			{
+					revice_judge_information(&judgeData, msg );
 			}
       break;
 			default:

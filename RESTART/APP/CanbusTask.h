@@ -15,6 +15,7 @@
 #define CAN_BUS2_POKE1_FEEDBACK_MSG_ID            		 0x201    		//拨盘
 #define CAN_BUS2_POKE2_FEEDBACK_MSG_ID            		 0x202    		//拨盘
 #define CAN_BUS2_SLAVE_FEEDBACK_MSG_ID   		      		 0x408   			//上云台向下云台传输数据ID
+#define CAN_BUS2_JUDGE_FEEDBACK_MSG_ID   		      		 0x406   			//底盘向下云台传输裁判系统数据ID
 
 #define RATE_BUF_SIZE 6						//滤波数量
 
@@ -33,6 +34,15 @@ typedef struct
 extern refrom_mainboard_t refromData;
 extern uint8_t currentid;
 
+typedef struct
+{
+    uint16_t robot1_HP;
+    uint16_t robot3_HP;
+    uint16_t robot4_HP;
+    uint16_t robot5_HP;
+} judge_mainboard_t;  //   云台通信接收结构体
+extern judge_mainboard_t judgeData;
+
 typedef struct{
 	int32_t raw_value;   				    //编码器不经处理的原始值
 	int32_t last_raw_value;				  //上一次的编码器原始值
@@ -48,16 +58,7 @@ typedef struct{
 	float ecd_angle;					      //角度
 }Encoder;
 
-typedef struct
-{
-    uint8_t s1;
-    uint8_t s2;
-    int16_t ch2;
-    int16_t ch3;
-	  uint8_t Communication_Flag;  //下云台发送通讯标志位
-    uint8_t location_Flag;
-	
-} refrom_info_t;  //   云台通信接收结构体
+
 
 //CAN1
 extern volatile Encoder Friction1Encoder ;		//云台摩擦轮
