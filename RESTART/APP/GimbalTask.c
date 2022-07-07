@@ -12,7 +12,7 @@ float GMPitGyro = 0;
 
 /*****************************		Ñ²ÂßÄ£Ê½²ÎÊý				*************************************/
 /******************************   pitch½Ç¶È·¶Î§      ************************************/
-int PITCH_PERIOD = 100 ;
+int PITCH_PERIOD = 200 ;
 int16_t pitch_timer = 0;
 int8_t pitch_dir = 1;
 /******************************    yaw½Ç¶È·¶Î§        ***********************************/
@@ -60,7 +60,7 @@ void gimbal_task(void)
      cascade_pid_ctrl();   			//?j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-//		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, -( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
 //		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg(0,0); 
@@ -73,7 +73,7 @@ void gimbal_task(void)
      cascade_pid_ctrl();   			//¼0j¶Áªpidº¯Êý
      pid_calc ( &pid_yaw_speed, gim.pid.yaw_speed_fdb, gim.pid.yaw_speed_ref );
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
-		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, ( int16_t ) pid_pit_speed.out );
+		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, -( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
 //		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg(0,0); 
@@ -89,12 +89,12 @@ void gimbal_param_init ( void )		//ÔÆÌ¨ÈÎÎñ³õÊ¼»¯
 //		Init_Yaw_Angle = GMYawEncoder.ecd_angle;
 		Init_Yaw_Angle = yaw_Angle;
 		PID_struct_init ( &pid_pit, POSITION_PID , 150, 20,
-                      15, 0.1, 200 );
+                      15, 0.1, 100 );
 		PID_struct_init ( &pid_pit_speed, POSITION_PID , 28000, 28000,
-                      200.0f, 0, 0 );
+                      150.0f, 0, 0 );
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 150, 20,
-                      20, 0.04, 500 );
+                      20, 0.04, 300 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 28000,
                       200.0f, 0, 0 );
 	//Ð±ÆÂ³õÊ¼»¯
@@ -243,7 +243,7 @@ void gimbal_patrol_handle(void)					//Ñ²ÂßÄ£Ê½
 								gim.pid.yaw_lost_feb	= yaw_Angle;
 						}
             auto_lost_timer ++ ;
-            if ( auto_lost_timer >= 6 )
+            if ( auto_lost_timer >= 3 )
             {
                 auto_lost = 0;
                 auto_lost_timer = 0;
@@ -259,22 +259,23 @@ void gimbal_patrol_handle(void)					//Ñ²ÂßÄ£Ê½
         {
 //					rotate_num = ( GMYawEncoder.ecd_angle - Init_Yaw_Angle ) / 360;
 					rotate_num = ( yaw_Angle - Init_Yaw_Angle ) / 360;
-					gim.pid.yaw_angle_ref = gim.pid.yaw_angle_ref + 0.5;
-
+					gim.pid.yaw_angle_ref = gim.pid.yaw_angle_ref + 0.3;
 					if ( pitch_dir == 1 )
 					{
-							if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD >= PITCH_MAX )
+							if ( (-pitch_timer * ( PITCH_MAX - PITCH_MIN ))/ PITCH_PERIOD >= PITCH_MAX )
 									pitch_dir = -1;
 							pitch_timer ++ ;
 					}
 					else
 					{
-							if ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD <= PITCH_MIN )
+							if ( (-pitch_timer * ( PITCH_MAX - PITCH_MIN ))/ PITCH_PERIOD <= PITCH_MIN )
 									pitch_dir = 1;
 							pitch_timer -- ;
 					}
 					gim.pid.pit_angle_ref = ( float ) ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD );
-
+					testnum1 = pitch_timer;
+					testnum2 = pitch_dir;
+					testnum3 = (-pitch_timer * ( PITCH_MIN - PITCH_MAX ));
         }
     }
 
@@ -288,11 +289,8 @@ void gimbal_follow_handle(void)		//Ê¶±ðµ½Ä¿±ê¸úËæÄ£Ê½
         Gimbal_Auto_Shoot.Recognized_Flag = 1;
         Gimbal_Auto_Shoot.Recognized_Timer = 0;
 
-//				if(fabs(-(new_location.pitch - PITCH_MIN) - Gimbal_Auto_Shoot.target_pit)<=20)
-						Gimbal_Auto_Shoot.target_pit = -(new_location.pitch - PITCH_ZERO);
-//				else
-//						Gimbal_Auto_Shoot.target_pit = 0;
-				
+//						Gimbal_Auto_Shoot.target_pit = -(new_location.pitch - PITCH_ZERO);
+				Gimbal_Auto_Shoot.target_pit 	= new_location.pitch ;
         Gimbal_Auto_Shoot.target_yaw	= new_location.yaw;
     }
     else
@@ -389,8 +387,8 @@ void auto_shoot_task(void)
     }
 
 
-    if ( gim.pid.yaw_angle_fdb < 7.0f + gim.pid.yaw_angle_ref	\
-            && gim.pid.yaw_angle_fdb > -7.0f + gim.pid.yaw_angle_ref )
+    if ( gim.pid.yaw_angle_fdb < 5.0f + gim.pid.yaw_angle_ref	\
+            && gim.pid.yaw_angle_fdb > -5.0f + gim.pid.yaw_angle_ref )
         dir_yaw = 1;
     else
         dir_yaw = 0;

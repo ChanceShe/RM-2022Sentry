@@ -111,9 +111,14 @@ u8 DateLength;
 void send_protocol(float pitch,float yaw,uint8_t currentcolor)
 {
   e_to_v__frame__init(&msg);
-  msg.currentpitch_=(int)(pitch*100);
-	msg.currentyaw_=(int)(yaw*100);
-	msg.currentcolor_= currentcolor;
+  msg.currentpitch_ = (int)(pitch*100);
+	msg.currentyaw_ = (int)(yaw*100);
+	msg.currentcolor_ = currentcolor;
+//	msg.hero_ = judgeData.robot1_HP;
+	msg.hero_ = 114;
+	msg.infantry3_ = judgeData.robot3_HP;
+	msg.infantry4_ = judgeData.robot3_HP;
+	msg.infantry3_ = judgeData.robot3_HP;
 	msg.bulletspeed_=27*10;
   e_to_v__frame__pack(&msg,UART4_DMA_TX_BUF+1);
   DateLength=e_to_v__frame__get_packed_size(&msg);

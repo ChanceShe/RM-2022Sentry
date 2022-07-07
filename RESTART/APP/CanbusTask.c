@@ -195,7 +195,7 @@ void Can2ReceiveMsgProcess(CanRxMsg * msg)
 					revice_judge_information(&judgeData, msg );
 			}
       break;
-			default:
+  		default:
 			{
 			}
 			break;
