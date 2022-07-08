@@ -262,20 +262,20 @@ void gimbal_patrol_handle(void)					//Ñ²ÂßÄ£Ê½
 					gim.pid.yaw_angle_ref = gim.pid.yaw_angle_ref + 0.3;
 					if ( pitch_dir == 1 )
 					{
-							if ( (-pitch_timer * ( PITCH_MAX - PITCH_MIN ))/ PITCH_PERIOD >= PITCH_MAX )
+							if ( (pitch_timer * ( PITCH_MAX - PITCH_MIN ))/ PITCH_PERIOD >= PITCH_MAX )
 									pitch_dir = -1;
 							pitch_timer ++ ;
 					}
 					else
 					{
-							if ( (-pitch_timer * ( PITCH_MAX - PITCH_MIN ))/ PITCH_PERIOD <= PITCH_MIN )
+							if ( (pitch_timer * ( PITCH_MAX - PITCH_MIN ))/ PITCH_PERIOD <= PITCH_MIN )
 									pitch_dir = 1;
 							pitch_timer -- ;
 					}
 					gim.pid.pit_angle_ref = ( float ) ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD );
 					testnum1 = pitch_timer;
 					testnum2 = pitch_dir;
-					testnum3 = (-pitch_timer * ( PITCH_MIN - PITCH_MAX ));
+					testnum3 = ( PITCH_MAX - PITCH_MIN );
         }
     }
 
