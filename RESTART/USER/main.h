@@ -49,7 +49,7 @@
 #include "IOTask.h"
 
 #include "protobuf-c.h"
-#include "recieve_sentry.pb-c.h"
+#include "Recieve.pb-c.h"
 #include "send.pb-c.h"
 #include "filter.h"
 #include "kalman_filter.h"

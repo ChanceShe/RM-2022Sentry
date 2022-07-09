@@ -8,6 +8,7 @@ typedef struct
 {
   float pitch;
   float yaw;
+	int32_t distance;
 	uint8_t recogflag;
   int16_t receNewDataFlag;
   uint8_t crc;
