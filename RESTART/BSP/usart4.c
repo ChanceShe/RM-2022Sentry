@@ -32,7 +32,7 @@ void UART4_Configuration(void)
     gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOC,&gpio);
 
-    uart4.USART_BaudRate = 115200;          // speed 10byte/ms
+    uart4.USART_BaudRate = 921600;          // speed 10byte/ms
     uart4.USART_WordLength = USART_WordLength_8b;
     uart4.USART_StopBits = USART_StopBits_1;
     uart4.USART_Parity = USART_Parity_No;

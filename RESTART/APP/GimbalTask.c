@@ -273,9 +273,6 @@ void gimbal_patrol_handle(void)					//Ñ²ÂßÄ£Ê½
 							pitch_timer -- ;
 					}
 					gim.pid.pit_angle_ref = ( float ) ( pitch_timer * ( PITCH_MAX - PITCH_MIN ) / PITCH_PERIOD );
-					testnum1 = pitch_timer;
-					testnum2 = pitch_dir;
-					testnum3 = ( PITCH_MAX - PITCH_MIN );
         }
     }
 

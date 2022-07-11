@@ -116,12 +116,10 @@ void send_protocol(float pitch,float yaw,uint8_t currentcolor)
   msg.current_pitch_ = (int)(pitch*100);
 	msg.current_yaw_ = (int)(yaw*100);
 	msg.current_color_ = currentcolor;
-//	msg.hero_ = judgeData.robot1_HP;
-	msg.hero = 114;
-//	msg.infantry3 = judgeData.robot3_HP;
-	msg.infantry3 = 514;
-	msg.infantry4 = judgeData.robot3_HP;
+	msg.hero = judgeData.robot1_HP;
 	msg.infantry3 = judgeData.robot3_HP;
+	msg.infantry4 = judgeData.robot4_HP;
+	msg.infantry5 = judgeData.robot5_HP;
 	msg.bullet_speed_=27*10;
   device_to_host__frame__pack(&msg,UART4_DMA_TX_BUF+2);
   DateLength=device_to_host__frame__get_packed_size(&msg);
