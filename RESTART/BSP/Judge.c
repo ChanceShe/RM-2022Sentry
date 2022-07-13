@@ -263,8 +263,8 @@ void BSP_UART5_InitConfig ( void )
 #endif
     NVIC_InitStructure.NVIC_IRQChannel						=	UART5_IRQn;          //串口5接收中断
     NVIC_InitStructure.NVIC_IRQChannelCmd					=	ENABLE;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority	=	1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority			=	2;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority	=	0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority			=	1;
     NVIC_Init ( &NVIC_InitStructure );
     USART_ITConfig ( UART5, USART_IT_IDLE, ENABLE );
     USART_Cmd ( UART5, ENABLE );

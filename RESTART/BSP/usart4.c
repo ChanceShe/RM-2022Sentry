@@ -86,15 +86,15 @@ void UART4_Configuration(void)
     dma.DMA_FIFOThreshold 		= DMA_FIFOThreshold_Full;
     dma.DMA_MemoryBurst 		= DMA_MemoryBurst_Single;
     dma.DMA_PeripheralBurst 	= DMA_PeripheralBurst_Single;
-	DMA_Init(DMA1_Stream4,&dma);
+		DMA_Init(DMA1_Stream4,&dma);
 	
 //	DMA_Cmd(DMA1_Stream3, DISABLE);                           // 关DMA通道
-	nvic.NVIC_IRQChannel = DMA1_Stream4_IRQn;   // 发送DMA通道的中断配置
+		nvic.NVIC_IRQChannel = DMA1_Stream4_IRQn;   // 发送DMA通道的中断配置
     nvic.NVIC_IRQChannelPreemptionPriority = 2;     // 优先级设置
     nvic.NVIC_IRQChannelSubPriority = 1;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
-	DMA_ITConfig(DMA1_Stream4,DMA_IT_TC,ENABLE);
+		DMA_ITConfig(DMA1_Stream4,DMA_IT_TC,ENABLE);
 	
 	
     USART_ITConfig(UART4,USART_IT_IDLE,ENABLE);
