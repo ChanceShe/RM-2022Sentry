@@ -5,11 +5,14 @@
 #define CHASSIS_SPEED_ATTENUATION   (1.0f)
 #define MAX_WHEEL_RPM  7400		//轮最大转速
 
+//左右立柱检测传感器
+#define SENSOR_TYPE 1		//0:光电管,1:激光雷达
+
 //暴走模式变向方案
-#define	CRAZY_DIR_CHANGE_MODE	1		//0:击打变向(反制视觉预测), 1:全随机运动(反制操作手手打)
+#define	CRAZY_DIR_CHANGE_MODE	1		//0:击打变向(反制视觉预测),1:全随机运动(反制操作手手打)
 
 //功率限制方案
-#define POWER_LIMIT_MODE   1   //0严格限制 1使用缓冲能量
+#define POWER_LIMIT_MODE   1   //0:严格限制,1:使用缓冲能量
 
 //刹车使能
 #define BRAKE_EN			1
@@ -42,9 +45,9 @@ typedef enum
 
 typedef enum
 {
-    sensor_off 	    = 0,
-    sensor_on       = 1,
-} sensor_state_e;			//		光电管状态
+    switch_off 	    = 0,
+    switch_on       = 1,
+} opt_switch_e;			//		光电管状态
 
 typedef enum
 {
@@ -91,6 +94,8 @@ typedef struct
   int16_t         current;
   powerlimit_e		powerlimit;
 	
+	opt_switch_e		opt_switch_l,opt_switch_r;
+
 	crazydata_t			crazydata;
 	
 	position_e 			position;

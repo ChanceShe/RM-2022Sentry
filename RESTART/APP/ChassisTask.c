@@ -2,8 +2,6 @@
 chassis_t chassis;
 uint8_t brake_en;
 uint32_t chassis_patrol_time = 0;
-sensor_state_e sensor_l = sensor_off;
-sensor_state_e sensor_r = sensor_off;
 Power_Control_Struct Power_Control = POWER_CONTROL_DEFAULT;
 int last_remain_HP = 0;
 
@@ -24,15 +22,15 @@ void chassis_param_init(void)//µ×ÅÌ²ÎÊý³õÊ¼»¯
   PID_struct_init ( &pid_spd, POSITION_PID, 12000, 3000, 45.0f, 0, 0 );
 	PID_struct_init ( &pid_brake, POSITION_PID, 10000,10000,60 , 0, 0 );
 	
-	  GPIO_InitTypeDef gpio;
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
-	  gpio.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
-    gpio.GPIO_Mode = GPIO_Mode_IN;
-    gpio.GPIO_Speed = GPIO_Speed_50MHz;
-    gpio.GPIO_PuPd = GPIO_PuPd_UP;//ÉÏÀ­
-    GPIO_Init(GPIOC, &gpio);
-		GPIO_SetBits(GPIOC,GPIO_Pin_8);
-		GPIO_SetBits(GPIOC,GPIO_Pin_9);
+//	  GPIO_InitTypeDef gpio;
+//    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+//	  gpio.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+//    gpio.GPIO_Mode = GPIO_Mode_IN;
+//    gpio.GPIO_Speed = GPIO_Speed_50MHz;
+//    gpio.GPIO_PuPd = GPIO_PuPd_UP;//ÉÏÀ­
+//    GPIO_Init(GPIOC, &gpio);
+//		GPIO_SetBits(GPIOC,GPIO_Pin_8);
+//		GPIO_SetBits(GPIOC,GPIO_Pin_9);
 }
 
 void chassis_task(void)
@@ -77,25 +75,25 @@ void chassis_task(void)
 			break;
 		}
 
-		/*   ¼ì²âÁ½²àÔ²Öù  */
-		if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_8 ) == 0 )
-    {
-      sensor_l = sensor_on;
-    }
-		else if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_8 ) == 1 )
-		{
-			sensor_l = sensor_off;
-		}
-    if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_9 ) == 0 )
-    {
-			sensor_r = sensor_on;
-		}
-    else if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_9 ) == 1 )
-    {
-      sensor_r = sensor_off;
-    }
-		GPIO_ResetBits(GPIOC,GPIO_Pin_8);
-		GPIO_ResetBits(GPIOC,GPIO_Pin_9);
+//		/*   ¼ì²âÁ½²àÔ²Öù  */
+//		if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_8 ) == 0 )
+//    {
+//      chassis.opt_switch_l = switch_on;
+//    }
+//		else if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_8 ) == 1 )
+//		{
+//			chassis.opt_switch_l = switch_off;
+//		}
+//    if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_9 ) == 0 )
+//    {
+//			chassis.opt_switch_r = switch_on;
+//		}
+//    else if ( GPIO_ReadInputDataBit ( GPIOC, GPIO_Pin_9 ) == 1 )
+//    {
+//      chassis.opt_switch_r = switch_off;
+//    }
+//		GPIO_ResetBits(GPIOC,GPIO_Pin_8);
+//		GPIO_ResetBits(GPIOC,GPIO_Pin_9);
 		
 		chassis.wheel_speed_ref = chassis.vx ;
 		chassis.wheel_speed_fdb = CM1Encoder.filter_rate;
@@ -127,7 +125,7 @@ void chassis_remote_handle(void)		//Ò£¿ØÆ÷¿ØÖÆ
 {
 		chassis.powerlimit = limit_buffer;
 		chassis.vx = ChassisSpeedRef.forward_back_ref;
-//		if ( (sensor_r == sensor_on && chassis.vx > 0) || (sensor_l == sensor_on && chassis.vx < 0) )	//¼ì²â·ÀÖ¹×²Öù
+//		if ( (chassis.opt_switch_r == sensor_on && chassis.vx > 0) || (chassis.opt_switch_l == sensor_on && chassis.vx < 0) )	//¼ì²â·ÀÖ¹×²Öù
 //		{
 //				chassis.vx = 0;
 //		}
@@ -139,7 +137,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 //		if ( (judge_rece_mesg.game_robot_state.robot_id ==107 && judge_rece_mesg.game_robot_HP.blue_outpost_HP > 0) ||
 //					(judge_rece_mesg.game_robot_state.robot_id ==7 && judge_rece_mesg.game_robot_HP.red_outpost_HP > 0))
 //		{
-//				if(sensor_r == sensor_off)
+//				if(chassis.opt_switch_r == sensor_off)
 //				{
 //						chassis.direction = direction_right;
 //				}
@@ -203,7 +201,24 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 				}
 				
 				//¼ì²â·ÀÖ¹×²Öù
-				if(sensor_l == sensor_on && chassis.direction == direction_left)						//±äÏò
+//				if((chassis.opt_switch_l == switch_on) && chassis.direction == direction_left)						//±äÏò
+//				{
+//					#if BRAKE_EN == 0
+//						chassis.direction = direction_right;
+//					#elif BRAKE_EN == 1
+//						brake_en = 1;
+//					#endif	
+//				}
+//				else if(chassis.opt_switch_r == switch_on && chassis.direction == direction_right)			//±äÏò
+//				{
+//					#if BRAKE_EN == 0
+//						chassis.direction = direction_left;
+//					#elif BRAKE_EN == 1
+//						brake_en = 1;
+//					#endif	
+//				}
+//		}
+				if((TF02_L.Dist<50&&TF02_L.Dist>5) && chassis.direction == direction_left)						//±äÏò
 				{
 					#if BRAKE_EN == 0
 						chassis.direction = direction_right;
@@ -211,7 +226,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 						brake_en = 1;
 					#endif	
 				}
-				else if(sensor_r == sensor_on &&( chassis.direction == direction_right || chassis.direction == direction_stop))			//±äÏò
+				else if((TF02_R.Dist<50&&TF02_R.Dist>5) && chassis.direction == direction_right)			//±äÏò
 				{
 					#if BRAKE_EN == 0
 						chassis.direction = direction_left;
@@ -219,7 +234,6 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 						brake_en = 1;
 					#endif	
 				}
-//		}
 		if(brake_en)
 		{
 			chassis.vx = 0;
