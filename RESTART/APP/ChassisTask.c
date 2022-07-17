@@ -160,10 +160,10 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 						chassis.powerlimit = limit_buffer;
 					else
 						chassis.powerlimit = limit_strict;
-					if(chassis.crazydata.crazychangetime == 0)
+					if(chassis.crazydata.crazychangetime == 0&&chassis.powerlimit == limit_buffer)
 					{
-						chassis.crazydata.crazyspeed			= rand()%100 + 550;
-						chassis.crazydata.crazychangetime		  	= rand()%170 + 70;
+						chassis.crazydata.crazyspeed			= rand()%100 + 600;
+						chassis.crazydata.crazychangetime		  	= rand()%100 + 100;
 
 		#if			CRAZY_DIR_CHANGE_MODE == 0
 						#if BRAKE_EN == 0
@@ -173,17 +173,42 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 						#endif
 		#elif			CRAZY_DIR_CHANGE_MODE == 1
 						chassis.crazydata.crazyspeeddir 	= rand()%10;
-						if(chassis.crazydata.crazyspeeddir >= 4)
+						if(chassis.crazydata.crazyspeeddir >= 3)
 								#if BRAKE_EN == 0
 								chassis.direction = !chassis.direction;
 								#elif BRAKE_EN == 1
 								brake_en = 1;
 								#endif				
-						else if(chassis.crazydata.crazyspeeddir < 4)
+						else if(chassis.crazydata.crazyspeeddir < 3)
 								chassis.direction = chassis.direction;
 		#endif
 
 					}
+					else if(chassis.crazydata.crazychangetime == 0 && chassis.powerlimit == limit_strict)
+					{
+						chassis.crazydata.crazyspeed			= rand()%100 + 500;
+						chassis.crazydata.crazychangetime		  	= rand()%70 + 200;
+
+		#if			CRAZY_DIR_CHANGE_MODE == 0
+						#if BRAKE_EN == 0
+						chassis.direction = !chassis.direction;
+						#elif BRAKE_EN == 1
+						brake_en = 1;
+						#endif
+		#elif			CRAZY_DIR_CHANGE_MODE == 1
+						chassis.crazydata.crazyspeeddir 	= rand()%10;
+						if(chassis.crazydata.crazyspeeddir >= 3)
+								#if BRAKE_EN == 0
+								chassis.direction = !chassis.direction;
+								#elif BRAKE_EN == 1
+								brake_en = 1;
+								#endif				
+						else if(chassis.crazydata.crazyspeeddir < 3)
+								chassis.direction = chassis.direction;
+		#endif
+
+					}
+					
 					chassis.crazydata.crazychangetime--;
 					chassis.crazydata.crazytime--;
 					if(chassis.crazydata.crazytime <= 0)
@@ -275,7 +300,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 							if(chassis.crazydata.crazyflag)
 								chassis.vx = -chassis.crazydata.crazyspeed;
 							else
-								chassis.vx = -550;
+								chassis.vx = -600;
 						}
 						break;
 						case direction_right:    //ÏòÓÒÔË¶¯
@@ -283,7 +308,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 							if(chassis.crazydata.crazyflag)
 								chassis.vx = chassis.crazydata.crazyspeed;
 							else
-								chassis.vx = 550;
+								chassis.vx = 600;
 						}
 						break;
 						
