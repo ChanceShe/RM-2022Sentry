@@ -184,7 +184,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //Ò£¿ØÆ÷¿ØÖÆ·¢Éä
         break;
         case FRICTION_WHEEL_ON:								//Ä¦²ÁÂÖÔËÐÐ
         {
-						LASER_ON();
+//						LASER_ON();
             if ( sw->switch_value1 == REMOTE_SWITCH_CHANGE_3TO1 ) //¹Ø±ÕÄ¦²ÁÂÖ
             {
                 friction_rotor = 2;
@@ -192,7 +192,7 @@ void RemoteShootControl ( RemoteSwitch_t *sw, uint8_t val ) //Ò£¿ØÆ÷¿ØÖÆ·¢Éä
                 frictionRamp.SetScale ( &frictionRamp, FRICTION_RAMP_OFF_TICK_COUNT );
                 frictionRamp.ResetCounter ( &frictionRamp );
                 SetShootState ( NOSHOOTING );  //²¦ÅÌÑ¡ÔñÊÇ·ñ¿ªÆô
-								LASER_OFF();
+//								LASER_OFF();
             }
             else if ( sw->switch_value_raw == 2 )
             {

@@ -33,8 +33,8 @@
 //#define Init_Pitch_Angle -15.0f
 
 #define PITCH_ZERO 0.0f
-#define PITCH_MIN (PITCH_ZERO-45.0f)
-#define PITCH_MAX (PITCH_ZERO+5.0f)
+#define PITCH_MIN (PITCH_ZERO-40.0f)
+#define PITCH_MAX (PITCH_ZERO+3.0f)
 #define Init_Pitch_Angle PITCH_ZERO-15
 #define PITCH_HIGHLAND Init_Pitch_Angle
 

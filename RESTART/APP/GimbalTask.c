@@ -89,12 +89,12 @@ void gimbal_param_init ( void )		//云台任务初始化
 //		Init_Yaw_Angle = GMYawEncoder.ecd_angle;
 		Init_Yaw_Angle = yaw_Angle;
 		PID_struct_init ( &pid_pit, POSITION_PID , 150, 20,
-                      15, 0.1, 100 );
+                      20, 0.1, 100 );
 		PID_struct_init ( &pid_pit_speed, POSITION_PID , 28000, 28000,
-                      150.0f, 0, 0 );
+                      200.0f, 0, 0 );
 
-		PID_struct_init ( &pid_yaw, POSITION_PID , 150, 20,
-                      20, 0.04, 300 );
+		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 20,
+                      20, 0.001, 300 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 28000,
                       200.0f, 0, 0 );
 	//斜坡初始化
@@ -141,8 +141,8 @@ void gimbal_init_handle( void )		//云台回初始位置
     else if ( gim.pid.yaw_angle_fdb - gim.pid.yaw_angle_ref < -180 )
         gim.pid.yaw_angle_ref -= 360;
 
-    if ( (gim.pid.yaw_angle_fdb-gim.pid.yaw_angle_ref>=-2.0f) && (gim.pid.yaw_angle_fdb-gim.pid.yaw_angle_ref<=2.0f) && \
-			 (gim.pid.pit_angle_fdb-gim.pid.pit_angle_ref >= -2.0f) && (gim.pid.pit_angle_fdb-gim.pid.pit_angle_ref<=2.0f) )    //云台回到初始角度后进入遥控器模式
+    if ( (gim.pid.yaw_angle_fdb-gim.pid.yaw_angle_ref>=-3.0f) && (gim.pid.yaw_angle_fdb-gim.pid.yaw_angle_ref<=3.0f) && \
+			 (gim.pid.pit_angle_fdb-gim.pid.pit_angle_ref >= -1.0f) && (gim.pid.pit_angle_fdb-gim.pid.pit_angle_ref<=1.0f) )    //云台回到初始角度后进入遥控器模式
 		{
         /* yaw arrive and switch gimbal state */
         gim.ctrl_mode = GIMBAL_REMOTE_MODE;

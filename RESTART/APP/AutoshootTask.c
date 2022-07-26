@@ -31,14 +31,14 @@ void parse_turret_command(unsigned char* content_address, unsigned int content_l
 	new_location.receNewDataFlag  =  1;
 	if(Uart4_Protobuf_Receive_Gimbal_Angle->target_pitch_ != 0&&Uart4_Protobuf_Receive_Gimbal_Angle->target_yaw_ != 0)		//idÑÕÉ«:0:Àº,1:À¶,2:ºì,3:×Ï.
 	{	
-		  LASER_ON();
+//		  LASER_ON();
 			new_location.pitch			= Uart4_Protobuf_Receive_Gimbal_Angle->target_pitch_;
 			new_location.yaw				= Uart4_Protobuf_Receive_Gimbal_Angle->target_yaw_;
 			new_location.recogflag	= 1;
 	}
 	else
 	{
-		  LASER_OFF();
+//		  LASER_OFF();
 			new_location.pitch				= 0;
 			new_location.yaw					= 0;
 			new_location.recogflag		= 0;

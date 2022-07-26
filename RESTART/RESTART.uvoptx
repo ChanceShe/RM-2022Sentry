@@ -231,12 +231,12 @@
         <Ww>
           <count>14</count>
           <WinNumber>1</WinNumber>
-          <ItemText>UART4_DMA_TX_BUF</ItemText>
+          <ItemText>refromData,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>15</count>
           <WinNumber>1</WinNumber>
-          <ItemText>testnum1</ItemText>
+          <ItemText>UART4_DMA_TX_BUF</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

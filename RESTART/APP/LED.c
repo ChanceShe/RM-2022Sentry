@@ -47,5 +47,7 @@ void Laser_Configuration()
     gpioInitStruct.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_Init ( GPIOA, &gpioInitStruct );
     GPIO_ResetBits ( GPIOA, GPIO_Pin_8 );
+		
+		LASER_ON();
 }
 

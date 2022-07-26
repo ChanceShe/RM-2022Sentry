@@ -16,6 +16,6 @@ int main(void)
   while(1)
 	{
     GREEN_LED_ON();
-		LASER_ON();
+//		LASER_ON();
 	}
 }

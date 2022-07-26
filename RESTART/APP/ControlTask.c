@@ -17,19 +17,14 @@ void Control_Task(void)
 	if(time_tick_1ms%5 == 1)
   {
 		shot_task();		
-	}		
+	}
 	if(time_tick_1ms%3== 0)
   {
 //		send_protocol(-GMPitchEncoder.ecd_angle+PITCH_ZERO,GMYawEncoder.ecd_angle,currentid);
 		send_protocol(pitch_Angle,yaw_Angle,currentid);
 
 	}
-	if(time_tick_1ms%3== 0)
-	{
-		testnum1 ++ ;
-		testnum2  = testnum2 +2 ;
-	}
-	
+
 	OutData[0] = 0;
 	OutData[1] = 0;
 	OutData[2] = 20000;
