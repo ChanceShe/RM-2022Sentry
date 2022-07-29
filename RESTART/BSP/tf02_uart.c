@@ -131,7 +131,7 @@ void USART2_IRQHandler(void)
 		  (void)USART2->DR;
 			DMA_Cmd(DMA1_Stream5, DISABLE);  
 			DMA_ClearFlag(DMA1_Stream5, DMA_FLAG_TCIF5 | DMA_FLAG_HTIF5);
-			TF02DataDeal (&TF02_L, USART2_DMA_RX_BUF );  //自瞄接收函数
+			TF02DataDeal (&TF02_R, USART2_DMA_RX_BUF );  //自瞄接收函数
 			DMA_SetCurrDataCounter(DMA1_Stream5,USART2_RX_BUF_LENGTH);
 			DMA_Cmd(DMA1_Stream5, ENABLE);
 		}       
@@ -144,7 +144,7 @@ void USART3_IRQHandler(void)
 		  (void)USART3->DR;
 			DMA_Cmd(DMA1_Stream1, DISABLE);  
 			DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1 | DMA_FLAG_HTIF1);
-			TF02DataDeal (&TF02_R, USART3_DMA_RX_BUF );  //自瞄接收函数
+			TF02DataDeal (&TF02_L, USART3_DMA_RX_BUF );  //自瞄接收函数
 			DMA_SetCurrDataCounter(DMA1_Stream1,USART3_RX_BUF_LENGTH);
 			DMA_Cmd(DMA1_Stream1, ENABLE);
 		}       
