@@ -54,11 +54,6 @@ typedef struct
     uint8_t	  Recognized_Flag;
     uint16_t   Recognized_Timer;
     int16_t   Continue_Recognized_Cnt;
-//    float Err_Pixels_Yaw;
-//    float Err_Pixels_Pit;
-//    float Distance;
-//    float Ballistic_Compensation;
-//    float Horizontal_Compensation;
     float Yaw_Gimbal_Delay_Compensation;
     float Pit_Gimbal_Delay_Compensation;
 //    uint8_t Image_Gimbal_Delay_Compensation_Flag;
@@ -70,6 +65,8 @@ typedef struct
 //    float Armor_pit;
 		float target_pit;
 		float target_yaw;
+		float last_target_pit;
+		float last_target_yaw;
 } Gimbal_Auto_Shoot_t;
 
 typedef struct

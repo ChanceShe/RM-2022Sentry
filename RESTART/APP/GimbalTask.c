@@ -10,7 +10,7 @@ float GMYawGyro = 0;
 float GMPitAngle = 0,GMPitLastAngle = 0;
 float GMPitGyro = 0;
 
-/*****************************		巡逻模式参数				*************************************/
+/*****************************		巡逻模式参数				************************************/
 /******************************   pitch角度范围      ************************************/
 int PITCH_PERIOD = 200 ;
 int16_t pitch_timer = 0;
@@ -62,7 +62,7 @@ void gimbal_task(void)
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
 		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, -( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
-//		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg (0, -( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg(0,0); 
 	 }
 	 else
@@ -75,7 +75,7 @@ void gimbal_task(void)
      pid_calc ( &pid_pit_speed, gim.pid.pit_speed_fdb, gim.pid.pit_speed_ref );
 		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out, -( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg (( int16_t ) pid_yaw_speed.out,0);
-//		 CAN2_Gimbal_Msg (0, ( int16_t ) pid_pit_speed.out );
+//		 CAN2_Gimbal_Msg (0, -( int16_t ) pid_pit_speed.out );
 //		 CAN2_Gimbal_Msg(0,0); 
 	 }
 }
@@ -88,13 +88,13 @@ void gimbal_param_init ( void )		//云台任务初始化
 		gim.input.action_angle   = 5.0f;
 //		Init_Yaw_Angle = GMYawEncoder.ecd_angle;
 		Init_Yaw_Angle = yaw_Angle;
-		PID_struct_init ( &pid_pit, POSITION_PID , 150, 20,
-                      20, 0.1, 100 );
+		PID_struct_init ( &pid_pit, POSITION_PID , 210, 20,
+                      20, 0.1, 300 );
 		PID_struct_init ( &pid_pit_speed, POSITION_PID , 28000, 28000,
-                      200.0f, 0, 0 );
+                      100.0f, 0, 0 );
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 20,
-                      20, 0.001, 300 );
+                      18, 0.001, 450 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 28000,
                       200.0f, 0, 0 );
 	//斜坡初始化
@@ -285,15 +285,14 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
     {
         Gimbal_Auto_Shoot.Recognized_Flag = 1;
         Gimbal_Auto_Shoot.Recognized_Timer = 0;
-
-//						Gimbal_Auto_Shoot.target_pit = -(new_location.pitch - PITCH_ZERO);
 				Gimbal_Auto_Shoot.target_pit 	= new_location.pitch ;
-        Gimbal_Auto_Shoot.target_yaw	= new_location.yaw;
+				Gimbal_Auto_Shoot.target_yaw	= new_location.yaw;
+
     }
     else
     {
         Gimbal_Auto_Shoot.Recognized_Timer++;
-        if ( Gimbal_Auto_Shoot.Recognized_Timer == 50 ) //200ms，时间太长，云台保持原有给定导致乱动作
+        if ( Gimbal_Auto_Shoot.Recognized_Timer == 100 ) //200ms，时间太长，云台保持原有给定导致乱动作
         {
             Gimbal_Auto_Shoot.Recognized_Flag 	= 0;
             Gimbal_Auto_Shoot.Recognized_Timer 	= 0;
@@ -314,27 +313,37 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
        
 
         //-/-------------------- 收到一帧图像识别的数据，进行处理 ---------------------/-//
-        //如果此时丢帧，那么new_location.x和new_location.y值将保持不变
+        //如果此时丢帧，那么new_location.x和new_location.y值将保持不变 
 				
-        if ( new_location.recogflag )
-        {
-						if(Gimbal_Auto_Shoot.target_pit!=0 && Gimbal_Auto_Shoot.target_yaw!= 0)
-						{
-								if(Gimbal_Auto_Shoot.target_pit<=PITCH_HIGHLAND)
-								{
-										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Init_Pitch_Angle - Gimbal_Auto_Shoot.target_pit)*(-1)-3.5;//环形高地上
-										testnum1=1;
-								}
-								else
-								{
-										Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Init_Pitch_Angle - Gimbal_Auto_Shoot.target_pit)*(-0.2)-2.5;//环形高地下
-										testnum1=2;
-								}
-								Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation =  -1.5;
+//        if ( new_location.recogflag )
+//        {
+								
+//							if(Gimbal_Auto_Shoot.target_pit<=PITCH_HIGHLAND)
+//							{
+//									Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Init_Pitch_Angle - Gimbal_Auto_Shoot.target_pit)*(-1)-3.5;//环形高地上
+//							}
+//							else
+//							{
+//									Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Init_Pitch_Angle - Gimbal_Auto_Shoot.target_pit)*(-0.2)-2.5;//环形高地下
+//							}
+							Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = -1;
+							Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation = 0;
+							
+							if(Gimbal_Auto_Shoot.Continue_Recognized_Cnt>2&&
+								(Gimbal_Auto_Shoot.target_yaw - Gimbal_Auto_Shoot.last_target_yaw>15||Gimbal_Auto_Shoot.target_yaw - Gimbal_Auto_Shoot.last_target_yaw<-15))
+							{
+								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.last_target_yaw + Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
+								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.last_target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
+							}
+							else
+							{
 								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw + Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
 								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
-						}
-        }
+								Gimbal_Auto_Shoot.last_target_pit = Gimbal_Auto_Shoot.target_pit;
+								Gimbal_Auto_Shoot.last_target_yaw = Gimbal_Auto_Shoot.target_yaw;
+							}
+
+//        }
 
 
      
