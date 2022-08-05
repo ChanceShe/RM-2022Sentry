@@ -21,7 +21,7 @@ void chassis_param_init(void)//底盘参数初始化
 	
   PID_struct_init ( &pid_spd, POSITION_PID, 12000, 3000, 45.0f, 0, 0 );
 	PID_struct_init ( &pid_brake, POSITION_PID, 10000,10000,60 , 0, 0 );
-	
+	patrolrange_init();
 //	  GPIO_InitTypeDef gpio;
 //    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
 //	  gpio.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
@@ -131,134 +131,133 @@ void chassis_remote_handle(void)		//遥控器控制
 //		}
 }
 
-
+uint16_t dis_sta= 0,dis_end = 0;				//随机运动区间起终点距立柱距离
+uint8_t sta_sec,end_sec;								//起始，终止段号
+uint8_t changedir_count = 0;						//变向计数
+void patrolrange_init(void)
+{
+	sta_sec = rand()%9+3;
+	end_sec = sta_sec+(rand()%3+3)-1;
+	dis_sta = (int)(DIS_L/15)*(sta_sec-1);		//起点距左立柱距离
+	dis_end = (int)(DIS_R/15)*(15-end_sec);		//终点距右立柱距离
+	changedir_count = 3;
+	if(TF02_L.Dist - dis_sta >= TF02_R.Dist - dis_end)
+	{
+		if(chassis.direction == direction_right)
+			brake_en = 1;
+	}
+	else
+	{
+		if(chassis.direction == direction_left)
+			brake_en = 1;
+	}
+	chassis.speed = rand()%100+500;
+}
 void chassis_patrol_handle(void)		//巡逻
 {
-//		if ( (judge_rece_mesg.game_robot_state.robot_id ==107 && judge_rece_mesg.game_robot_HP.blue_outpost_HP > 0) ||
-//					(judge_rece_mesg.game_robot_state.robot_id ==7 && judge_rece_mesg.game_robot_HP.red_outpost_HP > 0))
-//		{
-//				if(chassis.opt_switch_r == sensor_off)
+//			if(judge_rece_mesg.game_robot_state.remain_HP < last_remain_HP)
 //				{
-//						chassis.direction = direction_right;
+//					chassis.crazydata.crazyflag = 1;
+//					chassis.crazydata.crazytime = 1000;
 //				}
-//				else
-//				{
-//						chassis.direction = direction_stop;
-//				}
-//		}
-//		else
-//		{
-			if(judge_rece_mesg.game_robot_state.remain_HP < last_remain_HP)
-				{
-					chassis.crazydata.crazyflag = 1;
-					chassis.crazydata.crazytime = 1000;
-				}
-			//暴走模式
-				if(chassis.crazydata.crazyflag)
-				{
-					if(judge_rece_mesg.power_heat_data.chassis_power_buffer > WARNING_ENERGY)
-						chassis.powerlimit = limit_buffer;
-					else
-						chassis.powerlimit = limit_strict;
-					if(chassis.crazydata.crazychangetime == 0&&chassis.powerlimit == limit_buffer)
-					{
-						chassis.crazydata.crazyspeed			= rand()%100 + 600;
-						chassis.crazydata.crazychangetime		  	= rand()%100 + 100;
-
-		#if			CRAZY_DIR_CHANGE_MODE == 0
-						#if BRAKE_EN == 0
-						chassis.direction = !chassis.direction;
-						#elif BRAKE_EN == 1
-						brake_en = 1;
-						#endif
-		#elif			CRAZY_DIR_CHANGE_MODE == 1
-						chassis.crazydata.crazyspeeddir 	= rand()%10;
-						if(chassis.crazydata.crazyspeeddir >= 3)
-								#if BRAKE_EN == 0
-								chassis.direction = !chassis.direction;
-								#elif BRAKE_EN == 1
-								brake_en = 1;
-								#endif				
-						else if(chassis.crazydata.crazyspeeddir < 3)
-								chassis.direction = chassis.direction;
-		#endif
-
-					}
-					else if(chassis.crazydata.crazychangetime == 0 && chassis.powerlimit == limit_strict)
-					{
-						chassis.crazydata.crazyspeed			= rand()%100 + 500;
-						chassis.crazydata.crazychangetime		  	= rand()%70 + 200;
-
-		#if			CRAZY_DIR_CHANGE_MODE == 0
-						#if BRAKE_EN == 0
-						chassis.direction = !chassis.direction;
-						#elif BRAKE_EN == 1
-						brake_en = 1;
-						#endif
-		#elif			CRAZY_DIR_CHANGE_MODE == 1
-						chassis.crazydata.crazyspeeddir 	= rand()%10;
-						if(chassis.crazydata.crazyspeeddir >= 3)
-								#if BRAKE_EN == 0
-								chassis.direction = !chassis.direction;
-								#elif BRAKE_EN == 1
-								brake_en = 1;
-								#endif				
-						else if(chassis.crazydata.crazyspeeddir < 3)
-								chassis.direction = chassis.direction;
-		#endif
-
-					}
-					
-					chassis.crazydata.crazychangetime--;
-					chassis.crazydata.crazytime--;
-					if(chassis.crazydata.crazytime <= 0)
-					{
-						chassis.crazydata.crazyflag = 0;
-					}
-				}
+			if((chassis.direction == direction_left&&TF02_L.Dist < dis_sta)||(chassis.direction == direction_right&&TF02_R.Dist < dis_end))
+			{
+				changedir_count--;
+				if(changedir_count == 0)
+					patrolrange_init();
 				else
 				{
-						#if			POWER_LIMIT_MODE == 0
-							chassis.powerlimit = limit_strict;
-						#elif			POWER_LIMIT_MODE == 1
-							chassis.powerlimit = limit_buffer;
-						#endif
+					brake_en = 1;
+					chassis.speed = rand()%100+500;
 				}
-				
-				//检测防止撞柱
-//				if((chassis.opt_switch_l == switch_on) && chassis.direction == direction_left)						//变向
+			}
+//		//暴走模式
+//			if(chassis.crazydata.crazyflag)
+//			{
+//				if(judge_rece_mesg.power_heat_data.chassis_power_buffer > WARNING_ENERGY)
+//					chassis.powerlimit = limit_buffer;
+//				else
+//					chassis.powerlimit = limit_strict;
+//				if(chassis.crazydata.crazychangetime == 0&&chassis.powerlimit == limit_buffer)
 //				{
+//					chassis.crazydata.crazyspeed			= rand()%100 + 600;
+//					chassis.crazydata.crazychangetime		  	= rand()%100 + 100;
+
+//	#if			CRAZY_DIR_CHANGE_MODE == 0
 //					#if BRAKE_EN == 0
-//						chassis.direction = direction_right;
+//					chassis.direction = !chassis.direction;
 //					#elif BRAKE_EN == 1
-//						brake_en = 1;
-//					#endif	
+//					brake_en = 1;
+//					#endif
+//	#elif			CRAZY_DIR_CHANGE_MODE == 1
+//					chassis.crazydata.crazyspeeddir 	= rand()%10;
+//					if(chassis.crazydata.crazyspeeddir >= 3)
+//							#if BRAKE_EN == 0
+//							chassis.direction = !chassis.direction;
+//							#elif BRAKE_EN == 1
+//							brake_en = 1;
+//							#endif				
+//					else if(chassis.crazydata.crazyspeeddir < 3)
+//							chassis.direction = chassis.direction;
+//	#endif
+
 //				}
-//				else if(chassis.opt_switch_r == switch_on && chassis.direction == direction_right)			//变向
+//				else if(chassis.crazydata.crazychangetime == 0 && chassis.powerlimit == limit_strict)
 //				{
+//					chassis.crazydata.crazyspeed			= rand()%100 + 500;
+//					chassis.crazydata.crazychangetime		  	= rand()%70 + 200;
+
+//	#if			CRAZY_DIR_CHANGE_MODE == 0		//被击打即变向
 //					#if BRAKE_EN == 0
-//						chassis.direction = direction_left;
+//					chassis.direction = !chassis.direction;
 //					#elif BRAKE_EN == 1
-//						brake_en = 1;
-//					#endif	
+//					brake_en = 1;
+//					#endif
+//	#elif			CRAZY_DIR_CHANGE_MODE == 1
+//					chassis.crazydata.crazyspeeddir 	= rand()%10;
+//					if(chassis.crazydata.crazyspeeddir >= 3)
+//							#if BRAKE_EN == 0
+//							chassis.direction = !chassis.direction;
+//							#elif BRAKE_EN == 1
+//							brake_en = 1;
+//							#endif				
+//					else if(chassis.crazydata.crazyspeeddir < 3)
+//							chassis.direction = chassis.direction;
+//	#endif
+
 //				}
-//		}
-				if((TF02_L.Dist<50&&TF02_L.Dist>5) && chassis.direction == direction_left)						//变向
-				{
-					#if BRAKE_EN == 0
-						chassis.direction = direction_right;
-					#elif BRAKE_EN == 1
-						brake_en = 1;
-					#endif	
-				}
-				else if((TF02_R.Dist<50&&TF02_R.Dist>5) && chassis.direction == direction_right)			//变向
-				{
-					#if BRAKE_EN == 0
-						chassis.direction = direction_left;
-					#elif BRAKE_EN == 1
-						brake_en = 1;
-					#endif	
-				}
+//				chassis.crazydata.crazychangetime--;
+//				chassis.crazydata.crazytime--;
+//				if(chassis.crazydata.crazytime <= 0)
+//				{
+//					chassis.crazydata.crazyflag = 0;
+//				}
+//			}
+//			else
+//			{
+//					#if			POWER_LIMIT_MODE == 0
+//						chassis.powerlimit = limit_strict;
+//					#elif			POWER_LIMIT_MODE == 1
+//						chassis.powerlimit = limit_buffer;
+//					#endif
+//			}
+//			
+//			if((TF02_L.Dist<50&&TF02_L.Dist>5) && chassis.direction == direction_left)						//变向
+//			{
+//				#if BRAKE_EN == 0
+//					chassis.direction = direction_right;
+//				#elif BRAKE_EN == 1
+//					brake_en = 1;
+//				#endif	
+//			}
+//			else if((TF02_R.Dist<50&&TF02_R.Dist>5) && chassis.direction == direction_right)			//变向
+//			{
+//				#if BRAKE_EN == 0
+//					chassis.direction = direction_left;
+//				#elif BRAKE_EN == 1
+//					brake_en = 1;
+//				#endif	
+//			}
 		if(brake_en)
 		{
 			chassis.vx = 0;
@@ -300,7 +299,7 @@ void chassis_patrol_handle(void)		//巡逻
 							if(chassis.crazydata.crazyflag)
 								chassis.vx = -chassis.crazydata.crazyspeed;
 							else
-								chassis.vx = -600;
+								chassis.vx = -chassis.speed;
 						}
 						break;
 						case direction_right:    //向右运动
@@ -308,7 +307,7 @@ void chassis_patrol_handle(void)		//巡逻
 							if(chassis.crazydata.crazyflag)
 								chassis.vx = chassis.crazydata.crazyspeed;
 							else
-								chassis.vx = 600;
+								chassis.vx = chassis.speed ;
 						}
 						break;
 						

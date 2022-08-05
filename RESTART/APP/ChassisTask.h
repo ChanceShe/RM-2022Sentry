@@ -2,19 +2,17 @@
 #define __CHASSIS_TASK_H__
 #include "main.h"
 
-#define CHASSIS_SPEED_ATTENUATION   (1.0f)
-#define MAX_WHEEL_RPM  7400		//轮最大转速
-
 //左右立柱检测传感器
 #define SENSOR_TYPE 1		//0:光电管,1:激光雷达
-
+#define DIS_L 230			//左激光雷达测轨道全长
+#define DIS_R 350			//右激光雷达测轨道全长
 //暴走模式变向方案
 #define	CRAZY_DIR_CHANGE_MODE	1		//0:击打变向(反制视觉预测),1:全随机运动(反制操作手手打)
 
 //功率限制方案
 #define POWER_LIMIT_MODE   1   //0:严格限制,1:使用缓冲能量
 
-//刹车使能
+//机械刹车使能
 #define BRAKE_EN			1
 
 //缓冲能量警告下限
@@ -42,12 +40,6 @@ typedef enum
   CHASSIS_REMOTE  			 = 2,		//遥控器控制底盘
   CHASSIS_PATROL		 		 = 3,		//巡逻模式
 } chassis_mode_e;
-
-typedef enum
-{
-    switch_off 	    = 0,
-    switch_on       = 1,
-} opt_switch_e;			//		光电管状态
 
 typedef enum
 {
@@ -84,7 +76,8 @@ typedef enum
 
 typedef struct
 {
-  double           vx; // forward/back
+  double          vx; // forward/back
+	uint16_t				speed;
   
   chassis_mode_e  ctrl_mode;
   chassis_mode_e  last_ctrl_mode;
@@ -94,7 +87,6 @@ typedef struct
   int16_t         current;
   powerlimit_e		powerlimit;
 	
-	opt_switch_e		opt_switch_l,opt_switch_r;
 
 	crazydata_t			crazydata;
 	
@@ -114,6 +106,8 @@ void chassis_task(void);
 static void chassis_remote_handle(void);
 static void chassis_patrol_handle(void);
 static void chassis_stop_handle(void);
+static void patrolrange_init(void);
+
 
 
 typedef struct
