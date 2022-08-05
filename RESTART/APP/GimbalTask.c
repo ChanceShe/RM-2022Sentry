@@ -88,7 +88,7 @@ void gimbal_param_init ( void )		//云台任务初始化
 		gim.input.action_angle   = 5.0f;
 //		Init_Yaw_Angle = GMYawEncoder.ecd_angle;
 		Init_Yaw_Angle = yaw_Angle;
-		PID_struct_init ( &pid_pit, POSITION_PID , 210, 20,
+		PID_struct_init ( &pid_pit, POSITION_PID , 200, 20,
                       20, 0.1, 300 );
 		PID_struct_init ( &pid_pit_speed, POSITION_PID , 28000, 28000,
                       100.0f, 0, 0 );
@@ -329,19 +329,15 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
 							Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = -1;
 							Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation = 0;
 							
-							if(Gimbal_Auto_Shoot.Continue_Recognized_Cnt>2&&
-								(Gimbal_Auto_Shoot.target_yaw - Gimbal_Auto_Shoot.last_target_yaw>15||Gimbal_Auto_Shoot.target_yaw - Gimbal_Auto_Shoot.last_target_yaw<-15))
+							if(Gimbal_Auto_Shoot.Continue_Recognized_Cnt>2)
 							{
-								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.last_target_yaw + Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
-								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.last_target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
-							}
-							else
-							{
+								AvgFilter(Gimbal_Auto_Shoot.target_yaw);
+							}								
+							
 								gim.pid.yaw_angle_ref = Gimbal_Auto_Shoot.target_yaw + Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation;
 								gim.pid.pit_angle_ref = Gimbal_Auto_Shoot.target_pit + Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation;
 								Gimbal_Auto_Shoot.last_target_pit = Gimbal_Auto_Shoot.target_pit;
 								Gimbal_Auto_Shoot.last_target_yaw = Gimbal_Auto_Shoot.target_yaw;
-							}
 
 //        }
 
