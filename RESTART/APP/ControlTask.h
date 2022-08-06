@@ -9,6 +9,7 @@ typedef enum
   unkown = 2,
 } robot_color_e;
 extern robot_color_e robot_color ;
+extern uint8_t ShootFlag;
 
 extern uint32_t time_tick_1ms;
 extern uint8_t   is_judge_on;

@@ -516,7 +516,6 @@ extern client_show_data_t client_show;
 extern uint8_t  tx_buf[BSP_UART5_DMA_TX_BUF_LEN];   //裁判系统学生通讯发送数据
 
 extern uint32_t receive_buf1;
-extern uint8_t JudgeShoot;
 extern char* command;
 
 extern uint8_t  pdata[32];

@@ -261,6 +261,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 		if(brake_en)
 		{
 			chassis.vx = 0;
+			ShootFlag = 0;
 			if(chassis.direction == direction_left)
 			{
 				pid_brake.get = BrakeEncoder.filter_rate;
@@ -291,6 +292,7 @@ void chassis_patrol_handle(void)		//Ñ²Âß
 		}
 		else
 		{
+			ShootFlag = 1;
 			chassis_patrol_time++;
 				switch ( chassis.direction )
 				{

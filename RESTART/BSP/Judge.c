@@ -406,16 +406,7 @@ void judgement_data_handle ( uint8_t *p_frame, u16 rec_len ) //串口5中断中执行
             switch ( cmd_id )
             {
                 case GAME_STATE_ID:
-//                    if ( data_length == 3 )
                         memcpy ( &judge_rece_mesg.game_state , data_addr , data_length );
-								if ( judge_rece_mesg.game_state.game_progress == 4 && judge_rece_mesg.game_state.game_progress == 0)
-								{
-									JudgeShoot = 1;
-								}
-								else
-								{
-									JudgeShoot = 0;
-								}
                 case GAME_ROBOT_HP_ID ://机器人血量数据：0x0003。发送频率：1Hz
                     if ( data_length == 32 )
                         memcpy ( &judge_rece_mesg.game_robot_HP, data_addr, data_length ); //获得敌方血量进行自定义ui或者哨兵自瞄

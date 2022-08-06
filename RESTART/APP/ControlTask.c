@@ -6,7 +6,7 @@ int dir=1;
 robot_color_e robot_color ;
 char* command = "sc_r";
 uint8_t   is_judge_on = 0;
-uint8_t   JudgeShoot = 0;
+uint8_t   ShootFlag = 0;
 //***********************
 void Control_Task(void)
 {
@@ -19,7 +19,7 @@ void Control_Task(void)
   {
 		chassis_to_gimbal ( CAN2, RC_CtrlData.rc.ch2, RC_CtrlData.rc.ch3, RC_CtrlData.rc.s1, RC_CtrlData.rc.s2,\
 															robot_color, judge_rece_mesg.power_heat_data.shooter_id1_17mm_cooling_heat,\
-															 VehicleShootFlagLow, JudgeShoot );
+															 VehicleShootFlagLow, ShootFlag );
 		modeswitch_task();	
 	}	
 	
