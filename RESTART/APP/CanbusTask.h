@@ -27,7 +27,7 @@ typedef struct
     uint8_t s2;
     uint8_t color;
     uint8_t VehicleShootFlag;
-    uint8_t JudgeShootFlag;
+    uint8_t ShootFlag;
     uint8_t shoot_heart_l;
 		uint8_t shoot_heart_r;
 } refrom_mainboard_t;  //   云台通信接收结构体

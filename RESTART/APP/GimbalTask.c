@@ -94,7 +94,7 @@ void gimbal_param_init ( void )		//云台任务初始化
                       100.0f, 0, 0 );
 
 		PID_struct_init ( &pid_yaw, POSITION_PID , 200, 20,
-                      20, 0.001, 450 );
+                      25, 0.005, 450 );
 		PID_struct_init ( &pid_yaw_speed, POSITION_PID , 28000, 28000,
                       200.0f, 0, 0 );
 	//斜坡初始化
@@ -326,7 +326,7 @@ void gimbal_follow_handle(void)		//识别到目标跟随模式
 //							{
 //									Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = (Init_Pitch_Angle - Gimbal_Auto_Shoot.target_pit)*(-0.2)-2.5;//环形高地下
 //							}
-							Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = -2;
+							Gimbal_Auto_Shoot.Pit_Gimbal_Delay_Compensation = -1;
 							Gimbal_Auto_Shoot.Yaw_Gimbal_Delay_Compensation = 0;
 							
 							if(Gimbal_Auto_Shoot.Continue_Recognized_Cnt>2)
@@ -388,14 +388,14 @@ void auto_shoot_task(void)
     }
 
 
-    if ( gim.pid.yaw_angle_fdb < 1.5f + gim.pid.yaw_angle_ref	\
-            && gim.pid.yaw_angle_fdb > -1.5f + gim.pid.yaw_angle_ref )
+    if ( gim.pid.yaw_angle_fdb < 2.0f + gim.pid.yaw_angle_ref	\
+            && gim.pid.yaw_angle_fdb > -2.0f + gim.pid.yaw_angle_ref )
         dir_yaw = 1;
     else
         dir_yaw = 0;
 
-    if (  gim.pid.pit_angle_fdb < 1.0f + Gimbal_Auto_Shoot.target_pit	\
-            && gim.pid.pit_angle_fdb > -1.0f + Gimbal_Auto_Shoot.target_pit )
+    if (  gim.pid.pit_angle_fdb < 1.5f + Gimbal_Auto_Shoot.target_pit	\
+            && gim.pid.pit_angle_fdb > -1.5f + Gimbal_Auto_Shoot.target_pit )
     {
 			dir_pitch = 1;
 		}
@@ -419,7 +419,7 @@ void auto_shoot_task(void)
         case FRICTION_WHEEL_OFF:
         {
             frictionRamp.ResetCounter ( &frictionRamp );
-//            if ( refromData.s1 != 3  &&  ( new_location.recogflag != 0 ) && ( refromData.JudgeShootFlag == 1 )) //从关闭到start turning
+//            if ( refromData.s1 != 3  &&  ( new_location.recogflag != 0 ) && ( refromData.ShootFlag == 1 )) //从关闭到start turning
             if ( refromData.s1 != 3  &&  ( new_location.recogflag != 0 ) ) //从关闭到start turning
             {
                 SetShootState ( NOSHOOTING );
@@ -462,7 +462,7 @@ void auto_shoot_task(void)
                 frictionRamp.ResetCounter ( &frictionRamp );
                 SetShootState ( NOSHOOTING );
             }
-            else if (  ( dir_pitch == 1 ) &&  ( dir_yaw == 1 ) && ( new_location.recogflag != 0 ) )
+            else if (  (dir_pitch == 1) &&  (dir_yaw == 1) && (new_location.recogflag != 0) && (refromData.ShootFlag == 1) )
             {
                 SetShootState ( SHOOTING );
                 USARTShootFlag = 0;
